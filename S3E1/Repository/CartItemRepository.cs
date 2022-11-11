@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
@@ -18,7 +19,7 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        public async Task<IEnumerable<CartItemEntity>> GetCartItems()
+        public async Task<List<CartItemEntity>> GetCartItems()
         {
             var query = "SELECT * FROM CartItems";
 
@@ -40,11 +41,36 @@ namespace S3E1.Repository
                 return cartItem;
             }
         }
-        public async Task Createitem(CartItemEntity itemEntity)
+        public async Task<CartItemEntity> Createitem(CartItemEntity itemEntity)
         {
             _appDataContext.CartItems.Add(itemEntity);
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.CartItems.ToListAsync();
+
+            return itemEntity;
+        }
+
+        public async Task<CartItemEntity> Updateitem(CartItemEntity itemEntity)
+        {
+            var item = await _appDataContext.CartItems.FindAsync(itemEntity.ItemID);
+            item.ItemID = itemEntity.ItemID;
+            item.ItemName = itemEntity.ItemName;
+            item.ItemPrice = itemEntity.ItemPrice;
+
+            await _appDataContext.SaveChangesAsync();
+
+            return itemEntity;
+        }
+
+        public async Task<CartItemEntity> DeleteItem(Guid id)
+        {
+            var item = _appDataContext.CartItems.Find(id);
+
+            _appDataContext.CartItems.Remove(item);
+            await _appDataContext.SaveChangesAsync();
+            await _appDataContext.CartItems.ToListAsync();
+
+            return item;
         }
     }
 }

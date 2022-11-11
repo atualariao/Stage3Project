@@ -5,6 +5,6 @@ namespace S3E1.Contracts
     public interface IUserRepository
     {
         public Task<UserEntity> GetUserById(Guid id);
-        public Task CreateUser(UserEntity userEntity);
+        public Task<UserEntity> CreateUser(UserEntity userEntity);
     }
 }

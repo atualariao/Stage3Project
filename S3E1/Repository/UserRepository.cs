@@ -24,7 +24,7 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task CreateUser(UserEntity userEntity)
+        public async Task<UserEntity> CreateUser(UserEntity userEntity)
         {
             var query = "INSERT INTO Users (UserID, Username) VALUES (@UserID, @Username)";
 
@@ -35,6 +35,8 @@ namespace S3E1.Repository
             using (var connection = _connectionContext.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
+
+                return userEntity;
             }
         }
     }

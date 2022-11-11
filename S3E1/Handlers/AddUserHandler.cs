@@ -12,7 +12,7 @@ namespace S3E1.Handlers
 
         public async Task<UserEntity> Handle(AddIUserCommand request, CancellationToken cancellationToken)
         {
-            return await (Task<UserEntity>)_userRepository.CreateUser(request.User);
+            return await _userRepository.CreateUser(request.User);
         }
     }
 }

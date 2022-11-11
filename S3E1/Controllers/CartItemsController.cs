@@ -33,6 +33,18 @@ namespace S3E1.Controllers
         {
             return await _sender.Send(new AddCartItemCommand(cartItemEntity));
         }
+
+        [HttpPut]
+        public async Task<CartItemEntity> Update(CartItemEntity cartItemEntity)
+        {
+            return await _sender.Send(new UpdateCartitemCommand(cartItemEntity));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<CartItemEntity> Delete(Guid id)
+        {
+            return await _sender.Send(new DeleteCartItemCommand(id));
+        }
     }
 
     
