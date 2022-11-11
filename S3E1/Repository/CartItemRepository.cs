@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
 using S3E1.Entities;
@@ -9,9 +10,13 @@ namespace S3E1.Repository
     public class CartItemRepository : ICartItemRepository
     {
         private readonly DataConnectionContext _connectionContext;
+        private readonly AppDataContext _appDataContext;
 
-        public CartItemRepository(DataConnectionContext connectionContext) => _connectionContext = connectionContext;
-
+        public CartItemRepository(DataConnectionContext connectionContext, AppDataContext appDataContext)
+        {
+            _connectionContext = connectionContext;
+            _appDataContext = appDataContext;
+        }
 
         public async Task<IEnumerable<CartItemEntity>> GetCartItems()
         {
@@ -35,20 +40,11 @@ namespace S3E1.Repository
                 return cartItem;
             }
         }
-
         public async Task Createitem(CartItemEntity itemEntity)
         {
-            var query = "INSERT INTO CartItems (ItemID, ItemName, ItemPrice) VALUES (@ItemID, @ItemName, @ItemPrice)";
-
-            var parameters = new DynamicParameters();
-                parameters.Add("ItemID", itemEntity.ItemID, DbType.Guid);
-                parameters.Add("ItemName", itemEntity.ItemName, DbType.String);
-                parameters.Add("ItemPrice", itemEntity.ItemPrice, DbType.Double);
-
-            using (var connection = _connectionContext.CreateConnection())
-            {
-                await connection.ExecuteAsync(query, parameters);
-            }
+            _appDataContext.CartItems.Add(itemEntity);
+            await _appDataContext.SaveChangesAsync();
+            await _appDataContext.CartItems.ToListAsync();
         }
     }
 }
