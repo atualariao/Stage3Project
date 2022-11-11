@@ -26,8 +26,8 @@ builder.Services.AddMediatR(typeof(CartItemRepository).Assembly);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddMediatR(typeof(UserRepository).Assembly);
 
-//builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-//builder.Services.AddMediatR(typeof(OrderRepository).Assembly);
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddMediatR(typeof(OrderRepository).Assembly);
 
 
 //MediatR

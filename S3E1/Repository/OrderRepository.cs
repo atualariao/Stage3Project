@@ -11,7 +11,7 @@ namespace S3E1.Repository
 
         public OrderRepository(DataConnectionContext connectionContext) => _connectionContext = connectionContext;
 
-        public async Task<IEnumerable<OrderEntity>> GerOrders()
+        public async Task<List<OrderEntity>> GerOrders()
         {
             var query = "SELECT * FROM Orders";
 

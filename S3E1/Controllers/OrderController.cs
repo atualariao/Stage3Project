@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Contracts;
+using S3E1.Entities;
+using S3E1.Queries;
 using S3E1.Repository;
 
 namespace S3E1.Controllers
@@ -9,26 +12,20 @@ namespace S3E1.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly ISender _sender;
 
-        public OrderController(IOrderRepository orderRepository) => _orderRepository = orderRepository;
+        public OrderController(ISender sender) => _sender = sender;
 
         [HttpGet]
-        public async Task<IActionResult> GerOrders()
+        public async Task<List<OrderEntity>> Get()
         {
-            var orderList = await _orderRepository.GerOrders();
-
-            return Ok(orderList);
+            return await _sender.Send(new GetOrdersQuery());
         }
 
-        [HttpGet("{guid}", Name = "GetOrderById")]
-        public async Task<IActionResult> GetUserById(Guid guid)
+        [HttpGet("{id}")]
+        public async Task<OrderEntity> GetById(Guid id)
         {
-            var order = await _orderRepository.GetOrderById(guid);
-            if (order is null)
-                return NotFound();
-
-            return Ok(order);
+            return await _sender.Send(new GetOrdersByIdQuery(id));
         }
     }
 }

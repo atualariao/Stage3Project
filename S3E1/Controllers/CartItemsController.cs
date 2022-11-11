@@ -17,7 +17,7 @@ namespace S3E1.Controllers
         public CartItemsController(ISender sender) => _sender = sender;
 
         [HttpGet]
-        public async Task<IEnumerable<CartItemEntity>> Get()
+        public async Task<List<CartItemEntity>> Get()
         {
             return await _sender.Send(new GetItemsQuery());
         }
