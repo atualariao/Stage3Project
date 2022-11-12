@@ -16,8 +16,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Connection
-builder.Services.AddSingleton<DataConnectionContext>();
 
 //MediatR
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
@@ -29,14 +27,12 @@ builder.Services.AddMediatR(typeof(UserRepository).Assembly);
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddMediatR(typeof(OrderRepository).Assembly);
 
-
-//MediatR
-builder.Services.AddMediatR(typeof(Program));
-
 //Dependency Injection
 builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+));
+//Connection
+builder.Services.AddSingleton<DataConnectionContext>();
 
 var app = builder.Build();
 
