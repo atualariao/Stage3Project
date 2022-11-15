@@ -28,15 +28,15 @@ namespace S3E1.Migrations
                 columns: table => new
                 {
                     OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserRefID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderCreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.OrderID);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserRefID",
-                        column: x => x.UserRefID,
+                        name: "FK_Orders_Users_UserOrderId",
+                        column: x => x.UserOrderId,
                         principalTable: "Users",
                         principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
@@ -48,7 +48,6 @@ namespace S3E1.Migrations
                 {
                     ItemID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ItemName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ItemPrice = table.Column<double>(type: "float", nullable: false),
                     OrderEntityOrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -67,9 +66,9 @@ namespace S3E1.Migrations
                 column: "OrderEntityOrderID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserRefID",
+                name: "IX_Orders_UserOrderId",
                 table: "Orders",
-                column: "UserRefID");
+                column: "UserOrderId");
         }
 
         /// <inheritdoc />

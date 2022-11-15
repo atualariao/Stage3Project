@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using Azure;
+using Azure.Core;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;

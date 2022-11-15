@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
 using S3E1.Entities;
@@ -9,8 +10,13 @@ namespace S3E1.Repository
     public class UserRepository : IUserRepository
     {
         private readonly DataConnectionContext _connectionContext;
+        private readonly AppDataContext _appDataContext;
 
-        public UserRepository(DataConnectionContext connectionContext) => _connectionContext = connectionContext;
+        public UserRepository(DataConnectionContext connectionContext, AppDataContext appDataContext)
+        {
+            _connectionContext = connectionContext;
+            _appDataContext = appDataContext;
+        }
 
         public async Task<UserEntity> GetUserById(Guid id)
         {
@@ -26,18 +32,31 @@ namespace S3E1.Repository
 
         public async Task<UserEntity> CreateUser(UserEntity userEntity)
         {
-            var query = "INSERT INTO Users (UserID, Username) VALUES (@UserID, @Username)";
-
-            var parameters = new DynamicParameters();
-                parameters.Add("UserID", userEntity.UserID, DbType.Guid);
-                parameters.Add("Username", userEntity.Username, DbType.String);
-
-            using (var connection = _connectionContext.CreateConnection())
+            var user = new UserEntity()
             {
-                await connection.ExecuteAsync(query, parameters);
+                 UserID = Guid.NewGuid(),
+                 Username = userEntity.Username,
+            };
+            _appDataContext.Users.Add(user);
+            await _appDataContext.SaveChangesAsync();
+            await _appDataContext.Users.ToListAsync();
 
-                return userEntity;
-            }
+            return userEntity;
+
+
+            //DAPPER
+            //var query = "INSERT INTO Users (UserID, Username) VALUES (@UserID, @Username)";
+
+            //var parameters = new DynamicParameters();
+            //    parameters.Add("UserID", userEntity.UserID, DbType.Guid);
+            //    parameters.Add("Username", userEntity.Username, DbType.String);
+
+            //using (var connection = _connectionContext.CreateConnection())
+            //{
+            //    await connection.ExecuteAsync(query, parameters);
+
+            //    return userEntity;
+            //}
         }
     }
 }

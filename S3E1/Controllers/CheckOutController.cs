@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using S3E1.Commands;
+using S3E1.Data;
+using S3E1.Entities;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace S3E1.Controllers
 {
@@ -7,5 +14,26 @@ namespace S3E1.Controllers
     [ApiController]
     public class CheckOutController : ControllerBase
     {
+        private readonly ISender _sender;
+        private readonly AppDataContext _appDataContext;
+
+        public CheckOutController(ISender sender, AppDataContext appDataContext)
+        {
+            _sender = sender;
+            _appDataContext = appDataContext;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orderEntity)
+        {
+            if (orderEntity.CartItems.IsNullOrEmpty())
+                {
+                    return BadRequest();
+                } 
+            else 
+                {
+                    return await _sender.Send(new CheckOutCommand(orderEntity));
+                }
+        }
     }
 }

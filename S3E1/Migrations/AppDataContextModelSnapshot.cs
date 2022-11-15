@@ -33,9 +33,6 @@ namespace S3E1.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double>("ItemPrice")
-                        .HasColumnType("float");
-
                     b.Property<Guid?>("OrderEntityOrderID")
                         .HasColumnType("uniqueidentifier");
 
@@ -55,12 +52,12 @@ namespace S3E1.Migrations
                     b.Property<DateTime>("OrderCreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserRefID")
+                    b.Property<Guid>("UserOrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderID");
 
-                    b.HasIndex("UserRefID");
+                    b.HasIndex("UserOrderId");
 
                     b.ToTable("Orders");
                 });
@@ -90,23 +87,18 @@ namespace S3E1.Migrations
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
                 {
-                    b.HasOne("S3E1.Entities.UserEntity", "UserModel")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserRefID")
+                    b.HasOne("S3E1.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserModel");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
                 {
                     b.Navigation("CartItems");
-                });
-
-            modelBuilder.Entity("S3E1.Entities.UserEntity", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

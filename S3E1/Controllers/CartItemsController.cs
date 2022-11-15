@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
@@ -10,6 +11,7 @@ namespace S3E1.Controllers
 {
     [Route("api/cart-items")]
     [ApiController]
+    
     public class CartItemsController : ControllerBase
     {
         private ISender _sender;

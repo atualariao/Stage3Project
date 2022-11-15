@@ -8,15 +8,11 @@ namespace S3E1.Entities
     {
         [Key]
         public Guid OrderID { get; set; } = Guid.NewGuid();
-
-        [ForeignKey("UserModel")]
-        public Guid UserRefID { get; set; }
-        public UserEntity UserModel { get; set; }
-
+        [ForeignKey("User")]
+        public Guid UserOrderId { get; set; }
         //public double OrderTotalPrice { get; set; }
-
         public DateTime OrderCreatedDate { get; set; } = DateTime.Now;
-
-        public List<CartItemEntity> CartItems { get; set; } = new List<CartItemEntity>();
+        [Required]
+        public List<CartItemEntity>? CartItems { get; set; } = new List<CartItemEntity>();
     }
 }

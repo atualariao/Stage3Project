@@ -43,7 +43,14 @@ namespace S3E1.Repository
         }
         public async Task<CartItemEntity> Createitem(CartItemEntity itemEntity)
         {
-            _appDataContext.CartItems.Add(itemEntity);
+            var item = new CartItemEntity()
+            {
+                ItemID = Guid.NewGuid(),
+                ItemName = itemEntity.ItemName,
+                //ItemPrice = itemEntity.ItemPrice,
+            };
+
+            _appDataContext.CartItems.Add(item);
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.CartItems.ToListAsync();
 
@@ -55,7 +62,7 @@ namespace S3E1.Repository
             var item = await _appDataContext.CartItems.FindAsync(itemEntity.ItemID);
             item.ItemID = itemEntity.ItemID;
             item.ItemName = itemEntity.ItemName;
-            item.ItemPrice = itemEntity.ItemPrice;
+            //item.ItemPrice = itemEntity.ItemPrice;
 
             await _appDataContext.SaveChangesAsync();
 
