@@ -12,8 +12,8 @@ using S3E1.Data;
 namespace S3E1.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20221114015808_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221115085048_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,9 +32,14 @@ namespace S3E1.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ItemName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ItemPrice")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ItemStatus")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("OrderEntityOrderID")
                         .HasColumnType("uniqueidentifier");
@@ -55,12 +60,18 @@ namespace S3E1.Migrations
                     b.Property<DateTime>("OrderCreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("OrderTotalPrice")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("UserEntityUserID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserOrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderID");
 
-                    b.HasIndex("UserOrderId");
+                    b.HasIndex("UserEntityUserID");
 
                     b.ToTable("Orders");
                 });
@@ -73,8 +84,7 @@ namespace S3E1.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserID");
 
@@ -84,24 +94,25 @@ namespace S3E1.Migrations
             modelBuilder.Entity("S3E1.Entities.CartItemEntity", b =>
                 {
                     b.HasOne("S3E1.Entities.OrderEntity", null)
-                        .WithMany("CartItems")
+                        .WithMany("CartItemEntity")
                         .HasForeignKey("OrderEntityOrderID");
                 });
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
                 {
-                    b.HasOne("S3E1.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.HasOne("S3E1.Entities.UserEntity", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("UserEntityUserID");
                 });
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
                 {
-                    b.Navigation("CartItems");
+                    b.Navigation("CartItemEntity");
+                });
+
+            modelBuilder.Entity("S3E1.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

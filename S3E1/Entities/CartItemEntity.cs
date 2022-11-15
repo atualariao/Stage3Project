@@ -6,9 +6,8 @@ namespace S3E1.Entities
     {
         [Key]
         public Guid ItemID { get; set; } = Guid.NewGuid();
-        [Required]
         public string? ItemName { get; set; }
-       //[Required]
-       //public double ItemPrice { get; set; }
+        public double ItemPrice { get; set; }
+        public string ItemStatus { get; set; } = "Pending";
     }
 }

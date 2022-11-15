@@ -14,21 +14,31 @@ namespace S3E1.Repository
 
         public async Task<OrderEntity> Checkout(OrderEntity orderEntity)
         {
-            var cartItems = _context.CartItems.ToList();
+            var TotalPrice = _context.CartItems.Sum(item => item.ItemPrice);
+            var cartStatus = _context.CartItems.Where(status => status.ItemStatus == "Status").ToList();
 
-            var userOrder = new OrderEntity()
+            foreach (var item in cartStatus)
             {
-                OrderID = Guid.NewGuid(),
-                UserOrderId = orderEntity.UserOrderId,
-                OrderCreatedDate = DateTime.Now,
-                CartItems = cartItems,
-            };
-           
-            _context.Orders.Add(userOrder);
-            _context.SaveChanges();
-            await _context.Orders.ToListAsync();
+                var userOrder = new OrderEntity()
+                {
+                    OrderID = Guid.NewGuid(),
+                    UserOrderId = orderEntity.UserOrderId,
+                    OrderTotalPrice = TotalPrice,
+                    OrderCreatedDate = DateTime.Now,
+                    CartItemEntity = _context.CartItems.ToList()
+                };
 
-            return userOrder;
+                if (cartStatus != null)
+                {
+                    item.ItemStatus = "Processed";
+
+                    _context.Orders.Add(userOrder);
+                    _context.SaveChanges();
+                    await _context.Orders.ToListAsync();
+                }
+            }
+            return orderEntity;
+
         }
     }
 }

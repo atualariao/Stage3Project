@@ -47,7 +47,7 @@ namespace S3E1.Repository
             {
                 ItemID = Guid.NewGuid(),
                 ItemName = itemEntity.ItemName,
-                //ItemPrice = itemEntity.ItemPrice,
+                ItemPrice = itemEntity.ItemPrice,
             };
 
             _appDataContext.CartItems.Add(item);

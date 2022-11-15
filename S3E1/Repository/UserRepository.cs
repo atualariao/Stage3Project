@@ -20,11 +20,18 @@ namespace S3E1.Repository
 
         public async Task<UserEntity> GetUserById(Guid id)
         {
-            var query = "SELECT * FROM Users WHERE UserID = @id";
+            var query = "SELECT * FROM Users WHERE UserID = @id;" +
+                                "SELECT * FROM Orders WHERE UserOrderId = @id";
+            //+ "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
             using (var connection = _connectionContext.CreateConnection())
+            using (var multi = await connection.QueryMultipleAsync(query, new { id }))
             {
-                var user = await connection.QuerySingleOrDefaultAsync<UserEntity>(query, new { id });
+                var user = await multi.ReadSingleOrDefaultAsync<UserEntity>();
+                //var orders = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
+                if (user != null) //&& orders != null
+                    user.Orders = (await multi.ReadAsync<OrderEntity>()).ToList();
+                    //orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
                 return user;
             }
@@ -36,27 +43,13 @@ namespace S3E1.Repository
             {
                  UserID = Guid.NewGuid(),
                  Username = userEntity.Username,
+                 Orders = userEntity.Orders,
             };
             _appDataContext.Users.Add(user);
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.Users.ToListAsync();
 
             return userEntity;
-
-
-            //DAPPER
-            //var query = "INSERT INTO Users (UserID, Username) VALUES (@UserID, @Username)";
-
-            //var parameters = new DynamicParameters();
-            //    parameters.Add("UserID", userEntity.UserID, DbType.Guid);
-            //    parameters.Add("Username", userEntity.Username, DbType.String);
-
-            //using (var connection = _connectionContext.CreateConnection())
-            //{
-            //    await connection.ExecuteAsync(query, parameters);
-
-            //    return userEntity;
-            //}
         }
     }
 }

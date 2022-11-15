@@ -26,7 +26,7 @@ namespace S3E1.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orderEntity)
         {
-            if (orderEntity.CartItems.IsNullOrEmpty())
+            if (orderEntity.CartItemEntity.IsNullOrEmpty())
                 {
                     return BadRequest();
                 } 

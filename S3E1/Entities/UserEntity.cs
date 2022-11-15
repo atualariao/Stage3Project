@@ -8,5 +8,6 @@ namespace S3E1.Entities
         public Guid UserID { get; set; } = Guid.NewGuid();
         [Required]
         public string? Username { get; set; }
+        public List<OrderEntity>? Orders { get; set; }
     }
 }

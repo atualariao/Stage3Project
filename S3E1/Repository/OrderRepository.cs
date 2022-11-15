@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
 using S3E1.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace S3E1.Repository
 {
@@ -27,24 +29,25 @@ namespace S3E1.Repository
 
                 return orders.ToList();
             }
-        }
+        }  
 
         public async Task<OrderEntity> GetOrderById(Guid id)
         {
-            var query = "SELECT * FROM Orders WHERE OrderID = @id;"+
-                              "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
+            var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
+                                "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
-            using (var connection = _connectionContext.CreateConnection())
+            using(var connection = _connectionContext.CreateConnection())
             using (var multi = await connection.QueryMultipleAsync(query, new { id }))
             {
-                var order = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
+                var order =  await multi.ReadSingleOrDefaultAsync<OrderEntity>();
                 if (order != null)
-                    order.CartItems = (await multi.ReadAsync<CartItemEntity>()).ToList();
+                    order.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
+
                 return order;
             }
         }
 
-        public async Task<OrderEntity> UpdateOrder(OrderEntity orderEntity)
+public async Task<OrderEntity> UpdateOrder(OrderEntity orderEntity)
         {
             var order = await _appDataContext.Orders.FindAsync(orderEntity.OrderID);
             order.OrderID = orderEntity.OrderID;
