@@ -60,6 +60,11 @@ public async Task<OrderEntity> UpdateOrder(OrderEntity orderEntity)
         public async Task<OrderEntity> DeleteOrderById(Guid id)
         {
             var order = _appDataContext.Orders.Find(id);
+            var cartitems = _appDataContext.CartItems.ToList();
+            foreach (var item in cartitems)
+            {
+                item.ItemStatus = "Pending";
+            }
 
             _appDataContext.Orders.Remove(order);
             await _appDataContext.SaveChangesAsync();

@@ -24,8 +24,6 @@ namespace S3E1.Data
                 .HasOne(user => user.User)
                 .WithMany(order => order.Orders)
                 .HasForeignKey(fkey => fkey.UserOrderId);
-
-             
         }
         
 

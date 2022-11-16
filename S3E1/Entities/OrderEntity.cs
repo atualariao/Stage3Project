@@ -12,6 +12,6 @@ namespace S3E1.Entities
         public UserEntity User { get; set; }
         public double OrderTotalPrice { get; set; }
         public DateTime OrderCreatedDate { get; set; } = DateTime.Now;
-        public List<CartItemEntity>? CartItemEntity { get; set; }
+        public List<CartItemEntity> CartItemEntity { get; set; } = null!;
     }
 }
