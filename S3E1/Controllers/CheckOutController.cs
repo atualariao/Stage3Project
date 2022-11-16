@@ -15,20 +15,15 @@ namespace S3E1.Controllers
     public class CheckOutController : ControllerBase
     {
         private readonly ISender _sender;
-        private readonly AppDataContext _appDataContext;
 
-        public CheckOutController(ISender sender, AppDataContext appDataContext)
-        {
-            _sender = sender;
-            _appDataContext = appDataContext;
-        }
+        public CheckOutController(ISender sender, AppDataContext appDataContext) => _sender = sender;
 
         [HttpPost]
         public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orderEntity)
         {
             if (orderEntity.CartItemEntity.IsNullOrEmpty())
                 {
-                    return BadRequest();
+                    return BadRequest("Your cart is empty.");
                 } 
             else 
                 {

@@ -14,30 +14,29 @@ namespace S3E1.Repository
 
         public async Task<OrderEntity> Checkout(OrderEntity orderEntity)
         {
-            var TotalPrice = _context.CartItems.Sum(item => item.ItemPrice);
-            var cartStatus = _context.CartItems.Where(status => status.ItemStatus == "Status").ToList();
+            var cartItems = _context.CartItems.ToList();
+            var TotalPrice = _context.CartItems.Where(item => item.ItemStatus == "Pending").Sum(item => item.ItemPrice);
 
-            foreach (var item in cartStatus)
+            foreach (var item in cartItems)
             {
-                var userOrder = new OrderEntity()
-                {
-                    OrderID = Guid.NewGuid(),
-                    UserOrderId = orderEntity.UserOrderId,
-                    OrderTotalPrice = TotalPrice,
-                    OrderCreatedDate = DateTime.Now,
-                    CartItemEntity = _context.CartItems.ToList()
-                };
-
-                if (cartStatus != null)
+                if (item.ItemStatus == "Pending")
                 {
                     item.ItemStatus = "Processed";
-
-                    _context.Orders.Add(userOrder);
-                    _context.SaveChanges();
-                    await _context.Orders.ToListAsync();
                 }
             }
-            return orderEntity;
+
+            var userOrder = new OrderEntity()
+            {
+                OrderID = Guid.NewGuid(),
+                UserOrderId = orderEntity.UserOrderId,
+                OrderTotalPrice = TotalPrice,
+                OrderCreatedDate = DateTime.Now,
+                CartItemEntity = _context.CartItems.ToList()
+            };
+            _context.Orders.Add(userOrder);
+            _context.SaveChanges();
+            await _context.Orders.ToListAsync();
+            return userOrder;
 
         }
     }

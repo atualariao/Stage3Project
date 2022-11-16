@@ -30,23 +30,5 @@ namespace S3E1.Controllers
         {
             return await _sender.Send(new AddIUserCommand(userEntity));
         }
-
-        //[HttpGet("{guid}", Name = "GetUserById")]
-        //public async Task<IActionResult> GetUserById(Guid guid)
-        //{
-        //    var cartItem = await _userRepository.GetUserById(guid);
-        //    if (cartItem is null)
-        //        return NotFound();
-
-        //    return Ok(cartItem);
-        //}
-
-        //[HttpPost]
-        //public async Task<ActionResult> AddUser([FromBody] UserEntity user)
-        //{
-        //    var userEntity = await _sender.Send(new AddIUserCommand(user));
-
-        //    return Ok(userEntity);
-        //}
     }
 }

@@ -62,7 +62,7 @@ namespace S3E1.Repository
             var item = await _appDataContext.CartItems.FindAsync(itemEntity.ItemID);
             item.ItemID = itemEntity.ItemID;
             item.ItemName = itemEntity.ItemName;
-            //item.ItemPrice = itemEntity.ItemPrice;
+            item.ItemPrice = itemEntity.ItemPrice;
 
             await _appDataContext.SaveChangesAsync();
 
