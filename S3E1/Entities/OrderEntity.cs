@@ -7,11 +7,11 @@ namespace S3E1.Entities
     public class OrderEntity
     {
         [Key]
-        public Guid OrderID { get; set; } = Guid.NewGuid();
-        [ForeignKey("User")]
+        public Guid OrderID { get; set; }
         public Guid UserOrderId { get; set; }
+        public UserEntity User { get; set; }
         public double OrderTotalPrice { get; set; }
         public DateTime OrderCreatedDate { get; set; } = DateTime.Now;
-        public List<CartItemEntity> CartItemEntity { get; set; } = null!;
+        public List<CartItemEntity>? CartItemEntity { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using S3E1.Data;
 namespace S3E1.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20221116010224_initialMigration")]
+    [Migration("20221116015910_initialMigration")]
     partial class initialMigration
     {
         /// <inheritdoc />
@@ -63,15 +63,12 @@ namespace S3E1.Migrations
                     b.Property<double>("OrderTotalPrice")
                         .HasColumnType("float");
 
-                    b.Property<Guid?>("UserEntityUserID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UserOrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderID");
 
-                    b.HasIndex("UserEntityUserID");
+                    b.HasIndex("UserOrderId");
 
                     b.ToTable("Orders");
                 });
@@ -100,9 +97,13 @@ namespace S3E1.Migrations
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
                 {
-                    b.HasOne("S3E1.Entities.UserEntity", null)
+                    b.HasOne("S3E1.Entities.UserEntity", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserEntityUserID");
+                        .HasForeignKey("UserOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>

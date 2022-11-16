@@ -15,5 +15,6 @@ namespace S3E1.Data
         }
 
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
+
     }
 }
