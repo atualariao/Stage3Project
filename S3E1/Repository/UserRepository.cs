@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
+using S3E1.DTO;
 using S3E1.Entities;
 using System.Data;
 
@@ -37,19 +38,18 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<UserEntity> CreateUser(UserEntity userEntity)
+        public async Task<Users> CreateUser(Users users)
         {
             var user = new UserEntity()
             {
                  UserID = Guid.NewGuid(),
-                 Username = userEntity.Username,
-                 Orders = userEntity.Orders,
+                 Username = users.Username
             };
             _appDataContext.Users.Add(user);
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.Users.ToListAsync();
 
-            return userEntity;
+            return users;
         }
     }
 }

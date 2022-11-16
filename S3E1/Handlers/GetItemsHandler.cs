@@ -15,7 +15,7 @@ namespace S3E1.Handlers
 
         public async Task<List<CartItemEntity>> Handle(GetItemsQuery request, CancellationToken cancellationToken)
         {
-            return (List<CartItemEntity>)await _cartItemRepository.GetCartItems();
+            return await _cartItemRepository.GetCartItems();
         }
     }
 }

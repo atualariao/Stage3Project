@@ -1,4 +1,5 @@
-﻿using S3E1.Entities;
+﻿using S3E1.DTO;
+using S3E1.Entities;
 
 namespace S3E1.Contracts
 {
@@ -6,8 +7,8 @@ namespace S3E1.Contracts
     {
         public Task<List<CartItemEntity>> GetCartItems();
         public Task<CartItemEntity> GetCartItemEntity(Guid id);
-        public Task<CartItemEntity> Createitem(CartItemEntity itemEntity);
-        public Task<CartItemEntity> Updateitem(CartItemEntity itemEntity);
+        public Task<CartItems> Createitem(CartItems cartItems);
+        public Task<CartItems> Updateitem(CartItems cartItems);
         public Task<CartItemEntity> DeleteItem(Guid id);
     }
 }

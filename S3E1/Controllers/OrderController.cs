@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.Contracts;
+using S3E1.DTO;
 using S3E1.Entities;
 using S3E1.Queries;
 using S3E1.Repository;
@@ -19,7 +20,7 @@ namespace S3E1.Controllers
         public OrderController(ISender sender) => _sender = sender;
 
         [HttpGet]
-        public async Task<List<OrderEntity>> Get()
+        public async Task<List<Orders>> Get()
         {
             return await _sender.Send(new GetOrdersQuery());
         }
@@ -31,9 +32,9 @@ namespace S3E1.Controllers
         }
 
         [HttpPut]
-        public async Task<OrderEntity> UpdateOrder(OrderEntity orderEntity)
+        public async Task<Orders> UpdateOrder(Orders orders)
         {
-            return await _sender.Send(new UpdateOrderCommand(orderEntity));
+            return await _sender.Send(new UpdateOrderCommand(orders));
         }
 
         [HttpDelete("{id}")]

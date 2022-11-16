@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using S3E1.Commands;
 using S3E1.Data;
+using S3E1.DTO;
 using S3E1.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Linq;
 
 namespace S3E1.Controllers
 {
@@ -19,16 +21,18 @@ namespace S3E1.Controllers
         public CheckOutController(ISender sender, AppDataContext appDataContext) => _sender = sender;
 
         [HttpPost]
-        public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orderEntity)
+        public async Task<ActionResult<Orders>> Checkout(Orders orders)
         {
-            if (orderEntity.CartItemEntity.IsNullOrEmpty())
+            var status = orders.CartItemEntity.Where(item => item.ItemStatus != "Pending").ToList();
+            foreach (var item in status)
+            {
+                if (orders.CartItemEntity.IsNullOrEmpty() || orders.CartItemEntity.Contains(item))
                 {
                     return BadRequest("Your cart is empty.");
-                } 
-            else 
-                {
-                    return await _sender.Send(new CheckOutCommand(orderEntity));
                 }
+            }
+            return await _sender.Send(new CheckOutCommand(orders));
+
         }
     }
 }

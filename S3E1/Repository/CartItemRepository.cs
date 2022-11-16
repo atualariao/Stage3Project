@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
+using S3E1.DTO;
 using S3E1.Entities;
 using System.Data;
 
@@ -41,32 +42,32 @@ namespace S3E1.Repository
                 return cartItem;
             }
         }
-        public async Task<CartItemEntity> Createitem(CartItemEntity itemEntity)
+        public async Task<CartItems> Createitem(CartItems cartItems)
         {
             var item = new CartItemEntity()
             {
                 ItemID = Guid.NewGuid(),
-                ItemName = itemEntity.ItemName,
-                ItemPrice = itemEntity.ItemPrice,
+                ItemName = cartItems.ItemName,
+                ItemPrice = cartItems.ItemPrice,
             };
 
             _appDataContext.CartItems.Add(item);
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.CartItems.ToListAsync();
 
-            return itemEntity;
+            return cartItems;
         }
 
-        public async Task<CartItemEntity> Updateitem(CartItemEntity itemEntity)
+        public async Task<CartItems> Updateitem(CartItems cartItems)
         {
-            var item = await _appDataContext.CartItems.FindAsync(itemEntity.ItemID);
-            item.ItemID = itemEntity.ItemID;
-            item.ItemName = itemEntity.ItemName;
-            item.ItemPrice = itemEntity.ItemPrice;
+            var item = await _appDataContext.CartItems.FindAsync(cartItems.ItemID);
+            item.ItemID = cartItems.ItemID;
+            item.ItemName = cartItems.ItemName;
+            item.ItemPrice = cartItems.ItemPrice;
 
             await _appDataContext.SaveChangesAsync();
 
-            return itemEntity;
+            return cartItems;
         }
 
         public async Task<CartItemEntity> DeleteItem(Guid id)

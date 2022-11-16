@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.Contracts;
+using S3E1.DTO;
 using S3E1.Entities;
 using S3E1.Queries;
 
@@ -26,9 +27,9 @@ namespace S3E1.Controllers
         }
 
         [HttpPost]
-        public async Task<UserEntity> Post(UserEntity userEntity)
+        public async Task<Users> Post(Users users)
         {
-            return await _sender.Send(new AddIUserCommand(userEntity));
+            return await _sender.Send(new AddIUserCommand(users));
         }
     }
 }

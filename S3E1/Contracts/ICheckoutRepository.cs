@@ -1,10 +1,10 @@
-﻿using S3E1.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using S3E1.DTO;
+using S3E1.Entities;
 
 namespace S3E1.Contracts
 {
     public interface ICheckoutRepository
     {
-        public Task<OrderEntity> Checkout(OrderEntity orderEntity);
+        public Task<Orders> Checkout(Orders orders);
     }
 }

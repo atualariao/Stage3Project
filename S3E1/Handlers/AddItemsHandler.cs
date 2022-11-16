@@ -3,20 +3,21 @@ using MediatR;
 using S3E1.Commands;
 using S3E1.Contracts;
 using S3E1.Data;
+using S3E1.DTO;
 using S3E1.Entities;
 using System.Data;
 
 namespace S3E1.Handlers
 {
-    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItemEntity>
+    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItems>
     {
         private readonly ICartItemRepository _cartItemRepository;
 
         public AddItemsHandler(ICartItemRepository cartItemRepository) => _cartItemRepository = cartItemRepository;
 
-        public async Task<CartItemEntity> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
+        public async Task<CartItems> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
         {
-            return await  _cartItemRepository.Createitem(request.cartItem);
+            return await  _cartItemRepository.Createitem(request.CartItems);
         }
     }
 }

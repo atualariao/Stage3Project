@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.Contracts;
+using S3E1.DTO;
 using S3E1.Entities;
 using S3E1.Queries;
 
@@ -31,15 +32,15 @@ namespace S3E1.Controllers
         }
 
         [HttpPost]
-        public async Task<CartItemEntity> Post(CartItemEntity cartItemEntity)
+        public async Task<CartItems> Post(CartItems cartItems)
         {
-            return await _sender.Send(new AddCartItemCommand(cartItemEntity));
+            return await _sender.Send(new AddCartItemCommand(cartItems));
         }
 
         [HttpPut]
-        public async Task<CartItemEntity> Update(CartItemEntity cartItemEntity)
+        public async Task<CartItems> Update(CartItems cartItems)
         {
-            return await _sender.Send(new UpdateCartitemCommand(cartItemEntity));
+            return await _sender.Send(new UpdateCartitemCommand(cartItems));
         }
 
         [HttpDelete("{id}")]

@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using S3E1.Commands;
 using S3E1.Contracts;
+using S3E1.DTO;
 using S3E1.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace S3E1.Handlers
 {
-    public class CheckoutHandler : IRequestHandler<CheckOutCommand, OrderEntity>
+    public class CheckoutHandler : IRequestHandler<CheckOutCommand, Orders>
     {
         private readonly ICheckoutRepository _checkoutRepository;
 
@@ -15,9 +16,9 @@ namespace S3E1.Handlers
             _checkoutRepository = checkoutRepository;
         }
 
-        public async Task<OrderEntity> Handle(CheckOutCommand request, CancellationToken cancellationToken)
+        public async Task<Orders> Handle(CheckOutCommand request, CancellationToken cancellationToken)
         {
-            return await _checkoutRepository.Checkout( request.OrderEntity);
+            return await _checkoutRepository.Checkout( request.Orders);
         }
     }
 }
