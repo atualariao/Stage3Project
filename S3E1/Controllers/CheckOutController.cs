@@ -17,18 +17,26 @@ namespace S3E1.Controllers
     public class CheckOutController : ControllerBase
     {
         private readonly ISender _sender;
+        private readonly AppDataContext _appDataContext;
 
-        public CheckOutController(ISender sender, AppDataContext appDataContext) => _sender = sender;
+        public CheckOutController(ISender sender, AppDataContext appDataContext)
+        {
+            _sender = sender;
+            _appDataContext = appDataContext;
+        }
 
         [HttpPost]
         public async Task<ActionResult<Orders>> Checkout(Orders orders)
         {
-            var status = orders.CartItemEntity.Where(item => item.ItemStatus != "Pending").ToList();
-            foreach (var item in status)
+            var cartItems = _appDataContext.CartItems.ToList();
+            var orderItems = _appDataContext.Orders.ToList();
+
+            foreach (var order in orderItems)
             {
-                if (orders.CartItemEntity.IsNullOrEmpty() || orders.CartItemEntity.Contains(item))
+                foreach (var item in cartItems)
                 {
-                    return BadRequest("Your cart is empty.");
+                    if (order.CartItemEntity.IsNullOrEmpty() && item.ItemStatus != "Pending")
+                        return BadRequest("Your cart is empty.");
                 }
             }
             return await _sender.Send(new CheckOutCommand(orders));

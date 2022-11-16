@@ -16,15 +16,12 @@ namespace S3E1.Repository
         public async Task<Orders> Checkout(Orders orders)
         {
             var cartItems = _context.CartItems.ToList();
-            var TotalPrice = _context.CartItems.Where(item => item.ItemStatus == "Pending").Sum(item => item.ItemPrice);
 
-            foreach (var item in cartItems)
-            {
-                if (item.ItemStatus == "Pending")
-                {
-                    item.ItemStatus = "Processed";
-                }
-            }
+            var TotalPrice = _context.CartItems
+                                    .Where(item => item.ItemStatus == "Pending")
+                                    .Sum(item => item.ItemPrice);
+
+            var newItems = _context.CartItems.Where(item => item.ItemStatus == "Pending").ToList();
 
             var userOrder = new OrderEntity()
             {
@@ -32,12 +29,21 @@ namespace S3E1.Repository
                 UserOrderId = orders.UserOrderId,
                 OrderTotalPrice = TotalPrice,
                 OrderCreatedDate = DateTime.Now,
-                CartItemEntity = _context.CartItems.ToList()
+                CartItemEntity = newItems
+
             };
+            foreach (var item in cartItems)
+            {
+                if (item.ItemStatus == "Pending")
+                {
+                    item.ItemStatus = "Processed";
+                }
+            }
             _context.Orders.Add(userOrder);
             _context.SaveChanges();
             await _context.Orders.ToListAsync();
             return orders;
+
 
         }
     }

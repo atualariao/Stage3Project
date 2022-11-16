@@ -51,7 +51,7 @@ namespace S3E1.Repository
         public async Task<OrderEntity> GetOrderById(Guid id)
         {
             var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
-                                "SELECT * FROM CartItems WHERE itemStatus LIKE 'Processed'";
+                                "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
             using(var connection = _connectionContext.CreateConnection())
             using (var multi = await connection.QueryMultipleAsync(query, new { id }))
