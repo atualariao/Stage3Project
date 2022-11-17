@@ -7,7 +7,7 @@ namespace S3E1.Contracts
     {
         public Task<List<Orders>> GerOrders();
         public Task<OrderEntity> GetOrderById(Guid id);
-        public Task<Orders> UpdateOrder(Orders orders);
+        public Task<OrderEntity> UpdateOrder(OrderEntity orders);
         public Task<OrderEntity> DeleteOrderById(Guid id);
     }
 }

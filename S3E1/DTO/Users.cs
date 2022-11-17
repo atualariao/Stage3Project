@@ -8,6 +8,6 @@ namespace S3E1.DTO
         public Guid UserID { get; set; }
         [Required]
         public string? Username { get; set; }
-        public List<OrderEntity>? Orders { get; set; } = new List<OrderEntity>();
+        public List<Orders>? Orders { get; set; }
     }
 }

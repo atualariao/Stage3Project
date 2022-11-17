@@ -19,7 +19,7 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        public async Task<UserEntity> GetUserById(Guid id)
+        public async Task<Users> GetUserById(Guid id)
         {
             var query = "SELECT * FROM Users WHERE UserID = @id;" +
                                 "SELECT * FROM Orders WHERE UserOrderId = @id";
@@ -28,10 +28,10 @@ namespace S3E1.Repository
             using (var connection = _connectionContext.CreateConnection())
             using (var multi = await connection.QueryMultipleAsync(query, new { id }))
             {
-                var user = await multi.ReadSingleOrDefaultAsync<UserEntity>();
+                var user = await multi.ReadSingleOrDefaultAsync<Users>();
                 //var orders = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
                 if (user != null) //&& orders != null
-                    user.Orders = (await multi.ReadAsync<OrderEntity>()).ToList();
+                    user.Orders = (await multi.ReadAsync<Orders>()).ToList();
                     //orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
                 return user;

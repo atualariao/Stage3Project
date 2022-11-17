@@ -25,7 +25,7 @@ namespace S3E1.Data
                 .WithMany(order => order.Orders)
                 .HasForeignKey(fkey => fkey.UserOrderId);
         }
-        
+
 
     }
 }

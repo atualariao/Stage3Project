@@ -5,6 +5,6 @@ namespace S3E1.Contracts
 {
     public interface ICheckoutRepository
     {
-        public Task<Orders> Checkout(Orders orders);
+        public Task<OrderEntity> Checkout(OrderEntity orders);
     }
 }

@@ -7,7 +7,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace S3E1.Handlers
 {
-    public class CheckoutHandler : IRequestHandler<CheckOutCommand, Orders>
+    public class CheckoutHandler : IRequestHandler<CheckOutCommand, OrderEntity>
     {
         private readonly ICheckoutRepository _checkoutRepository;
 
@@ -16,7 +16,7 @@ namespace S3E1.Handlers
             _checkoutRepository = checkoutRepository;
         }
 
-        public async Task<Orders> Handle(CheckOutCommand request, CancellationToken cancellationToken)
+        public async Task<OrderEntity> Handle(CheckOutCommand request, CancellationToken cancellationToken)
         {
             return await _checkoutRepository.Checkout( request.Orders);
         }

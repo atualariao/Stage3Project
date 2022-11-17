@@ -13,7 +13,7 @@ namespace S3E1.Repository
 
         public CheckoutRepository(AppDataContext context) => _context = context;
 
-        public async Task<Orders> Checkout(Orders orders)
+        public async Task<OrderEntity> Checkout(OrderEntity orders)
         {
             var cartItems = _context.CartItems.ToList();
 

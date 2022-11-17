@@ -20,22 +20,6 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        //public async Task<List<OrderEntity>> GerOrders()
-        //{
-        //    var query = "SELECT * FROM Orders;" +
-        //                    "SELECT * FROM CartItems WHERE itemStatus LIKE 'Processed'";
-
-        //    using (var connection = _connectionContext.CreateConnection())
-        //    using(var multi = await connection.QueryMultipleAsync(query))
-        //    {
-        //        var orders = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
-        //        if(orders != null)
-        //            orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
-
-        //        return orders;
-        //    }
-        //}
-
         public async Task<List<Orders>> GerOrders()
         {
             var query = "SELECT * FROM Orders";
@@ -53,10 +37,10 @@ namespace S3E1.Repository
             var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
                                 "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
-            using(var connection = _connectionContext.CreateConnection())
+            using (var connection = _connectionContext.CreateConnection())
             using (var multi = await connection.QueryMultipleAsync(query, new { id }))
             {
-                var order =  await multi.ReadSingleOrDefaultAsync<OrderEntity>();
+                var order = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
                 if (order != null)
                     order.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
@@ -64,10 +48,12 @@ namespace S3E1.Repository
             }
         }
 
-public async Task<Orders> UpdateOrder(Orders orders)
+        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
         {
             var order = await _appDataContext.Orders.FindAsync(orders.OrderID);
             order.OrderID = orders.OrderID;
+            order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
+            order.CartItemEntity = orders.CartItemEntity;
 
             await _appDataContext.SaveChangesAsync();
 
@@ -77,10 +63,12 @@ public async Task<Orders> UpdateOrder(Orders orders)
         public async Task<OrderEntity> DeleteOrderById(Guid id)
         {
             var order = _appDataContext.Orders.Find(id);
-            var cartitems = _appDataContext.CartItems.ToList();
-            foreach (var item in cartitems)
+            var cartitem = _appDataContext.CartItems.Where(item => item.OrderEntityOrderID == order.OrderID);
+            foreach (var item in cartitem)
             {
-                item.ItemStatus = "Pending";
+                item.ItemStatus = "Processed";
+                item.OrderEntityOrderID = null;
+                _appDataContext.CartItems.Update(item);
             }
 
             _appDataContext.Orders.Remove(order);

@@ -12,7 +12,7 @@ using S3E1.Data;
 namespace S3E1.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20221116073719_initialMigration")]
+    [Migration("20221117015120_initialMigration")]
     partial class initialMigration
     {
         /// <inheritdoc />

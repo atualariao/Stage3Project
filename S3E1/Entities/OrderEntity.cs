@@ -8,6 +8,7 @@ namespace S3E1.Entities
     {
         [Key]
         public Guid OrderID { get; set; }
+        [ForeignKey("User")]
         public Guid UserOrderId { get; set; }
         public UserEntity User { get; set; } = null!;
         public double OrderTotalPrice { get; set; }

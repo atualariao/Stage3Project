@@ -87,9 +87,10 @@ namespace S3E1.Migrations
 
             modelBuilder.Entity("S3E1.Entities.CartItemEntity", b =>
                 {
-                    b.HasOne("S3E1.Entities.OrderEntity", null)
+                    b.HasOne("S3E1.Entities.OrderEntity", "OrderEntityOrderID")
                         .WithMany("CartItemEntity")
-                        .HasForeignKey("OrderEntityOrderID");
+                        .HasForeignKey("OrderEntityOrderID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>

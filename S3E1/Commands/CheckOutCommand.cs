@@ -4,5 +4,5 @@ using S3E1.Entities;
 
 namespace S3E1.Commands
 {
-    public record CheckOutCommand(Orders Orders) : IRequest<Orders>;
+    public record CheckOutCommand(OrderEntity Orders) : IRequest<OrderEntity>;
 }

@@ -32,7 +32,7 @@ namespace S3E1.Controllers
         }
 
         [HttpPut]
-        public async Task<Orders> UpdateOrder(Orders orders)
+        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
         {
             return await _sender.Send(new UpdateOrderCommand(orders));
         }

@@ -60,8 +60,9 @@ namespace S3E1.Migrations
                         name: "FK_CartItems_Orders_OrderEntityOrderID",
                         column: x => x.OrderEntityOrderID,
                         principalTable: "Orders",
-                        principalColumn: "OrderID");
-                });
+                        principalColumn: "OrderID",
+                        onDelete: ReferentialAction.Cascade);
+        });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_OrderEntityOrderID",

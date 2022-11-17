@@ -49,6 +49,7 @@ namespace S3E1.Repository
                 ItemID = Guid.NewGuid(),
                 ItemName = cartItems.ItemName,
                 ItemPrice = cartItems.ItemPrice,
+                ItemStatus = "Pending"
             };
 
             _appDataContext.CartItems.Add(item);
