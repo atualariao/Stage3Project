@@ -66,9 +66,7 @@ namespace S3E1.Repository
             var cartitem = _appDataContext.CartItems.Where(item => item.OrderEntityOrderID == order.OrderID);
             foreach (var item in cartitem)
             {
-                item.ItemStatus = "Processed";
-                item.OrderEntityOrderID = null;
-                _appDataContext.CartItems.Update(item);
+                _appDataContext.CartItems.Remove(item);
             }
 
             _appDataContext.Orders.Remove(order);

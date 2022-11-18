@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace S3E1.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,9 +60,8 @@ namespace S3E1.Migrations
                         name: "FK_CartItems_Orders_OrderEntityOrderID",
                         column: x => x.OrderEntityOrderID,
                         principalTable: "Orders",
-                        principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
-        });
+                        principalColumn: "OrderID");
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_OrderEntityOrderID",
