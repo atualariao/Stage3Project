@@ -20,13 +20,13 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        public async Task<List<CartItemEntity>> GetCartItems()
+        public async Task<List<CartItems>> GetCartItems()
         {
             var query = "SELECT * FROM CartItems";
 
             using (var connection = _connectionContext.CreateConnection())
             {
-                var cartItems = await connection.QueryAsync<CartItemEntity>(query);
+                var cartItems = await connection.QueryAsync<CartItems>(query);
 
                 return cartItems.ToList();
             }

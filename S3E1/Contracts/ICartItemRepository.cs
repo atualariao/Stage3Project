@@ -5,7 +5,7 @@ namespace S3E1.Contracts
 {
     public interface ICartItemRepository
     {
-        public Task<List<CartItemEntity>> GetCartItems();
+        public Task<List<CartItems>> GetCartItems();
         public Task<CartItemEntity> GetCartItemEntity(Guid id);
         public Task<CartItems> Createitem(CartItems cartItems);
         public Task<CartItems> Updateitem(CartItems cartItems);
