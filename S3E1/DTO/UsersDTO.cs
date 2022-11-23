@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace S3E1.DTO
 {
-    public class Users
+    public class UsersDTO
     {
         public Guid UserID { get; set; }
         [Required]
         public string? Username { get; set; }
-        public List<Orders>? Orders { get; set; }
+        public List<OrdersDTO>? Orders { get; set; }
     }
 }

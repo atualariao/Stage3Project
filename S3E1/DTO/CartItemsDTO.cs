@@ -1,6 +1,6 @@
 ﻿namespace S3E1.DTO
 {
-    public class CartItems
+    public class CartItemsDTO
     {
         public Guid ItemID { get; set; } = Guid.NewGuid();
         public string? ItemName { get; set; }

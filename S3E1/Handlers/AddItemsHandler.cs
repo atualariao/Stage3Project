@@ -9,13 +9,13 @@ using System.Data;
 
 namespace S3E1.Handlers
 {
-    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItems>
+    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItemEntity>
     {
         private readonly ICartItemRepository _cartItemRepository;
 
         public AddItemsHandler(ICartItemRepository cartItemRepository) => _cartItemRepository = cartItemRepository;
 
-        public async Task<CartItems> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
+        public async Task<CartItemEntity> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
         {
             return await  _cartItemRepository.Createitem(request.CartItems);
         }

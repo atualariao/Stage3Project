@@ -21,13 +21,13 @@ namespace S3E1.Controllers
         public UserController(ISender sender) => _sender = sender;
 
         [HttpGet("{id}")]
-        public async Task<Users> Get(Guid id)
+        public async Task<UserEntity> Get(Guid id)
         {
             return await _sender.Send(new GetUserByIdQuery(id));
         }
 
         [HttpPost]
-        public async Task<Users> Post(Users users)
+        public async Task<UserEntity> Post(UserEntity users)
         {
             return await _sender.Send(new AddIUserCommand(users));
         }

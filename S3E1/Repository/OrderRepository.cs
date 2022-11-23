@@ -20,13 +20,13 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        public async Task<List<Orders>> GerOrders()
+        public async Task<List<OrderEntity>> GetOrders()
         {
             var query = "SELECT * FROM Orders";
 
             using (var connection = _connectionContext.CreateConnection())
             {
-                var cartItems = await connection.QueryAsync<Orders>(query);
+                var cartItems = await connection.QueryAsync<OrderEntity>(query);
 
                 return cartItems.ToList();
             }

@@ -20,7 +20,7 @@ namespace S3E1.Controllers
         public CartItemsController(ISender sender) => _sender = sender;
 
         [HttpGet]
-        public async Task<List<CartItems>> Get()
+        public async Task<List<CartItemEntity>> Get()
         {
             return await _sender.Send(new GetItemsQuery());
         }
@@ -32,13 +32,13 @@ namespace S3E1.Controllers
         }
 
         [HttpPost]
-        public async Task<CartItems> Post(CartItems cartItems)
+        public async Task<CartItemEntity> Post(CartItemEntity cartItems)
         {
             return await _sender.Send(new AddCartItemCommand(cartItems));
         }
 
         [HttpPut]
-        public async Task<CartItems> Update(CartItems cartItems)
+        public async Task<CartItemEntity> Update(CartItemEntity cartItems)
         {
             return await _sender.Send(new UpdateCartitemCommand(cartItems));
         }

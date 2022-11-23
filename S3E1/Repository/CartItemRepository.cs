@@ -20,13 +20,13 @@ namespace S3E1.Repository
             _appDataContext = appDataContext;
         }
 
-        public async Task<List<CartItems>> GetCartItems()
+        public async Task<List<CartItemEntity>> GetCartItems()
         {
             var query = "SELECT * FROM CartItems";
 
             using (var connection = _connectionContext.CreateConnection())
             {
-                var cartItems = await connection.QueryAsync<CartItems>(query);
+                var cartItems = await connection.QueryAsync<CartItemEntity>(query);
 
                 return cartItems.ToList();
             }
@@ -42,7 +42,7 @@ namespace S3E1.Repository
                 return cartItem;
             }
         }
-        public async Task<CartItems> Createitem(CartItems cartItems)
+        public async Task<CartItemEntity> Createitem(CartItemEntity cartItems)
         {
             var item = new CartItemEntity()
             {
@@ -59,7 +59,7 @@ namespace S3E1.Repository
             return cartItems;
         }
 
-        public async Task<CartItems> Updateitem(CartItems cartItems)
+        public async Task<CartItemEntity> Updateitem(CartItemEntity cartItems)
         {
             var item = await _appDataContext.CartItems.FindAsync(cartItems.ItemID);
             item.ItemID = cartItems.ItemID;

@@ -20,7 +20,7 @@ namespace S3E1.Controllers
         public OrderController(ISender sender) => _sender = sender;
 
         [HttpGet]
-        public async Task<List<Orders>> Get()
+        public async Task<List<OrderEntity>> Get()
         {
             return await _sender.Send(new GetOrdersQuery());
         }

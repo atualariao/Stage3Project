@@ -6,12 +6,12 @@ using S3E1.Entities;
 
 namespace S3E1.Handlers
 {
-    public class AddUserHandler : IRequestHandler<AddIUserCommand, Users>
+    public class AddUserHandler : IRequestHandler<AddIUserCommand, UserEntity>
     {
         private readonly IUserRepository _userRepository;
         public AddUserHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-        public async Task<Users> Handle(AddIUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserEntity> Handle(AddIUserCommand request, CancellationToken cancellationToken)
         {
             return await _userRepository.CreateUser(request.Users);
         }

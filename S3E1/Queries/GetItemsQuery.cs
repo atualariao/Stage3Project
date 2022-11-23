@@ -5,5 +5,5 @@ using S3E1.Entities;
 
 namespace S3E1.Queries
 {
-    public record GetItemsQuery : IRequest<List<CartItems>>;
+    public record GetItemsQuery : IRequest<List<CartItemEntity>>;
 }
