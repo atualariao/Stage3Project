@@ -11,8 +11,8 @@ using S3E1.Queries;
 namespace S3E1.Controllers
 {
     [Route("api/cart-items")]
+    [Produces("application/json")]
     [ApiController]
-    
     public class CartItemsController : ControllerBase
     {
         private ISender _sender;

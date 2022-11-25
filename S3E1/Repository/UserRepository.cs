@@ -49,7 +49,7 @@ namespace S3E1.Repository
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.Users.ToListAsync();
 
-            return users;
+            return user;
         }
     }
 }

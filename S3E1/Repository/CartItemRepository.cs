@@ -56,7 +56,7 @@ namespace S3E1.Repository
             await _appDataContext.SaveChangesAsync();
             await _appDataContext.CartItems.ToListAsync();
 
-            return cartItems;
+            return item;
         }
 
         public async Task<CartItemEntity> Updateitem(CartItemEntity cartItems)
@@ -68,7 +68,7 @@ namespace S3E1.Repository
 
             await _appDataContext.SaveChangesAsync();
 
-            return cartItems;
+            return item;
         }
 
         public async Task<CartItemEntity> DeleteItem(Guid id)

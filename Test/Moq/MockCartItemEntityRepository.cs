@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Bogus;
+using Moq;
 using S3E1.Contracts;
 using S3E1.DTO;
 using S3E1.Entities;
@@ -72,3 +73,23 @@ namespace Test.Moq
         }
     }
 }
+
+//BOGUS FORMAT
+
+
+//public static List<item> GetItems()
+//{
+//    Faker<item> itemsGenerator = new Faker<item>()
+//        .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
+//        .RuleFor(item => item.ItemName, bogus => bogus.Random.Word())
+//        .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
+
+//    return itemsGenerator.Generate(5);
+//}
+//class item
+//{
+//    public Guid ItemID { get; set; }
+//    public string ItemName { get; set; }
+//    public double ItemPrice { get; set; }
+//    public string ItemStatus { get; set; } = "Pending";
+//}

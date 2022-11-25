@@ -57,7 +57,7 @@ namespace S3E1.Repository
 
             await _appDataContext.SaveChangesAsync();
 
-            return orders;
+            return order;
         }
 
         public async Task<OrderEntity> DeleteOrderById(Guid id)

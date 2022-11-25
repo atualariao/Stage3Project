@@ -6,6 +6,7 @@ using Test.Moq;
 using S3E1.DTO;
 using FluentAssertions;
 using S3E1.Entities;
+using Shouldly;
 
 namespace UnitTest.Orders.Queries
 {
@@ -42,6 +43,7 @@ namespace UnitTest.Orders.Queries
 
             result.Should().BeOfType<OrderEntity>();
             result.OrderID.Should().Be(order.OrderID);
+            result.CartItemEntity.ShouldNotBeNull();
         }
     }
 }

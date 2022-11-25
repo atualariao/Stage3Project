@@ -42,7 +42,7 @@ namespace S3E1.Repository
             _context.Orders.Add(userOrder);
             _context.SaveChanges();
             await _context.Orders.ToListAsync();
-            return orders;
+            return userOrder;
 
 
         }

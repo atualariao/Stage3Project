@@ -9,7 +9,7 @@ using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Filters;
@@ -44,11 +44,17 @@ builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.U
     builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 
+//In Memory
+//builder.Services.AddDbContext<AppDataContext>(contextOptions =>
+//{
+//    contextOptions.UseInMemoryDatabase("TestDB");
+//});
+
 //Connection
 builder.Services.AddScoped<DataConnectionContext>();
 
 //Auth
-builder.Services.AddAuthentication();
+//builder.Services.AddAuthentication();
 
 //Swagger UI Auth
 builder.Services.AddSwaggerGen();
@@ -68,9 +74,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseUserAuth();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+    //Expose the Program class for use in integration test project with WebAppFactory<T>
+}
