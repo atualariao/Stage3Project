@@ -1,6 +1,6 @@
 ﻿using Moq;
 using S3E1.Contracts;
-using S3E1.DTO;
+
 using S3E1.Entities;
 
 namespace Test.Moq

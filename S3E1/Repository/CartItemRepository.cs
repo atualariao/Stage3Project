@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
-using S3E1.DTO;
+
 using S3E1.Entities;
 using System.Data;
 
@@ -11,35 +11,45 @@ namespace S3E1.Repository
 {
     public class CartItemRepository : ICartItemRepository
     {
-        private readonly DataConnectionContext _connectionContext;
-        private readonly AppDataContext _appDataContext;
+        private readonly DbContext _dbContext;
+        private IDbConnection _connection;
 
-        public CartItemRepository(DataConnectionContext connectionContext, AppDataContext appDataContext)
-        {
-            _connectionContext = connectionContext;
-            _appDataContext = appDataContext;
-        }
+        public CartItemRepository(DbContext dbContext) => _dbContext = dbContext;
 
         public async Task<List<CartItemEntity>> GetCartItems()
         {
             var query = "SELECT * FROM CartItems";
-
-            using (var connection = _connectionContext.CreateConnection())
+            try
             {
-                var cartItems = await connection.QueryAsync<CartItemEntity>(query);
+                using (var connection = _dbContext.Database.GetDbConnection())
+                {
+                    var itemList = await connection.QueryAsync<CartItemEntity>(query);
 
-                return cartItems.ToList();
+                    return itemList.ToList();
+                }
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
         public async Task<CartItemEntity> GetCartItemEntity(Guid id)
         {
-            var query = "SELECT * FROM CartItems WHERE ItemID = @id";
+            var query = $"SELECT * FROM CartItems WHERE ItemID = @id";
 
-            using (var connection = _connectionContext.CreateConnection())
+            try
             {
-                var cartItem = await connection.QuerySingleOrDefaultAsync<CartItemEntity>(query, new { id });
+                using (var connection = _dbContext.Database.GetDbConnection())
+                {
+                    var cartItem = await connection.QuerySingleOrDefaultAsync<CartItemEntity>(query, new { id });
 
-                return cartItem;
+                    return cartItem;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task<CartItemEntity> Createitem(CartItemEntity cartItems)
@@ -52,32 +62,30 @@ namespace S3E1.Repository
                 ItemStatus = "Pending"
             };
 
-            _appDataContext.CartItems.Add(item);
-            await _appDataContext.SaveChangesAsync();
-            await _appDataContext.CartItems.ToListAsync();
+            _dbContext.Set<CartItemEntity>().Add(item);
+            await _dbContext.SaveChangesAsync();
 
             return item;
         }
 
         public async Task<CartItemEntity> Updateitem(CartItemEntity cartItems)
         {
-            var item = await _appDataContext.CartItems.FindAsync(cartItems.ItemID);
+            var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
             item.ItemID = cartItems.ItemID;
             item.ItemName = cartItems.ItemName;
             item.ItemPrice = cartItems.ItemPrice;
 
-            await _appDataContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return item;
         }
 
         public async Task<CartItemEntity> DeleteItem(Guid id)
         {
-            var item = _appDataContext.CartItems.Find(id);
+            var item = _dbContext.Set<CartItemEntity>().Find(id);
 
-            _appDataContext.CartItems.Remove(item);
-            await _appDataContext.SaveChangesAsync();
-            await _appDataContext.CartItems.ToListAsync();
+            _dbContext.Set<CartItemEntity>().Remove(item);
+            await _dbContext.SaveChangesAsync();
 
             return item;
         }

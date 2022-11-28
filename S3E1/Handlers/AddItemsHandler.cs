@@ -1,11 +1,7 @@
-﻿using Dapper;
-using MediatR;
+﻿using MediatR;
 using S3E1.Commands;
 using S3E1.Contracts;
-using S3E1.Data;
-using S3E1.DTO;
 using S3E1.Entities;
-using System.Data;
 
 namespace S3E1.Handlers
 {

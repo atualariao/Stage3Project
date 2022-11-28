@@ -39,19 +39,19 @@ builder.Services.AddMediatR(typeof(OrderRepository).Assembly);
 builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
 builder.Services.AddMediatR(typeof(CheckoutRepository).Assembly);
 
-//DB Context
-builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-));
+builder.Services.AddScoped<DbContext>(s =>
+{
+    var dbContextFactory = new MsSqlDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    return dbContextFactory.CreateDbContext();
+});
 
-//In Memory
-//builder.Services.AddDbContext<AppDataContext>(contextOptions =>
-//{
-//    contextOptions.UseInMemoryDatabase("TestDB");
-//});
+////DB Context
+//builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
+//    builder.Configuration.GetConnectionString("DefaultConnection")
+//));
 
-//Connection
-builder.Services.AddScoped<DataConnectionContext>();
+////Connection
+//builder.Services.AddScoped<DataConnectionContext>();
 
 //Auth
 //builder.Services.AddAuthentication();

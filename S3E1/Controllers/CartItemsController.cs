@@ -1,10 +1,6 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
-using S3E1.Contracts;
-using S3E1.DTO;
 using S3E1.Entities;
 using S3E1.Queries;
 

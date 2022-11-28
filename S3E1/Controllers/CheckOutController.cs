@@ -1,18 +1,13 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using S3E1.Commands;
-using S3E1.Data;
-using S3E1.DTO;
 using S3E1.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
 
 namespace S3E1.Controllers
 {
     [Route("api/checkout")]
+    [Produces("application/json")]
     [ApiController]
     public class CheckOutController : ControllerBase
     {

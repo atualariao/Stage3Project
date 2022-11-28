@@ -1,27 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
-using S3E1.Data;
-using S3E1.DTO;
 using S3E1.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Data;
 
 namespace S3E1.Repository
 {
     public class CheckoutRepository : ICheckoutRepository
     {
-        private readonly AppDataContext _context;
+        private readonly DbContext _dbContext;
+        private IDbConnection _connection;
 
-        public CheckoutRepository(AppDataContext context) => _context = context;
+        public CheckoutRepository(DbContext context) => _dbContext = context;
 
         public async Task<OrderEntity> Checkout(OrderEntity orders)
         {
-            var cartItems = _context.CartItems.ToList();
+            var cartItems = _dbContext.Set<CartItemEntity>().ToList();
 
-            var TotalPrice = _context.CartItems
+            var TotalPrice = _dbContext.Set<CartItemEntity>()
                                     .Where(item => item.ItemStatus == "Pending")
                                     .Sum(item => item.ItemPrice);
 
-            var newItems = _context.CartItems.Where(item => item.ItemStatus == "Pending").ToList();
+            var newItems = _dbContext.Set<CartItemEntity>().Where(item => item.ItemStatus == "Pending").ToList();
 
             var userOrder = new OrderEntity()
             {
@@ -39,9 +38,9 @@ namespace S3E1.Repository
                     item.ItemStatus = "Processed";
                 }
             }
-            _context.Orders.Add(userOrder);
-            _context.SaveChanges();
-            await _context.Orders.ToListAsync();
+            _dbContext.Set<OrderEntity>().Add(userOrder);
+            _dbContext.SaveChanges();
+            await _dbContext.Set<CartItemEntity>().ToListAsync();
             return userOrder;
 
 

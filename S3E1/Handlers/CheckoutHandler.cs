@@ -1,9 +1,7 @@
 ﻿using MediatR;
 using S3E1.Commands;
 using S3E1.Contracts;
-using S3E1.DTO;
 using S3E1.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace S3E1.Handlers
 {

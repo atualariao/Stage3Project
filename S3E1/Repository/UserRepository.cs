@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using S3E1.Contracts;
 using S3E1.Data;
-using S3E1.DTO;
+
 using S3E1.Entities;
 using System.Data;
 
@@ -10,14 +10,10 @@ namespace S3E1.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DataConnectionContext _connectionContext;
-        private readonly AppDataContext _appDataContext;
+        private readonly DbContext _dbContext;
+        private IDbConnection _connection;
 
-        public UserRepository(DataConnectionContext connectionContext, AppDataContext appDataContext)
-        {
-            _connectionContext = connectionContext;
-            _appDataContext = appDataContext;
-        }
+        public UserRepository(DbContext dbContext) => _dbContext = dbContext;
 
         public async Task<UserEntity> GetUserById(Guid id)
         {
@@ -25,7 +21,7 @@ namespace S3E1.Repository
                                 "SELECT * FROM Orders WHERE UserOrderId = @id";
             //+ "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
-            using (var connection = _connectionContext.CreateConnection())
+            using (var connection = _dbContext.Database.GetDbConnection())
             using (var multi = await connection.QueryMultipleAsync(query, new { id }))
             {
                 var user = await multi.ReadSingleOrDefaultAsync<UserEntity>();
@@ -45,9 +41,8 @@ namespace S3E1.Repository
                  UserID = Guid.NewGuid(),
                  Username = users.Username
             };
-            _appDataContext.Users.Add(user);
-            await _appDataContext.SaveChangesAsync();
-            await _appDataContext.Users.ToListAsync();
+            _dbContext.Set<UserEntity>().Add(user);
+            await _dbContext.SaveChangesAsync();
 
             return user;
         }
