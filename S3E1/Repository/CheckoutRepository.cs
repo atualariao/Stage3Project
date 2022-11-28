@@ -24,7 +24,7 @@ namespace S3E1.Repository
 
             var userOrder = new OrderEntity()
             {
-                OrderID = Guid.NewGuid(),
+                OrderID = orders.OrderID,
                 UserOrderId = orders.UserOrderId,
                 OrderTotalPrice = TotalPrice,
                 OrderCreatedDate = DateTime.Now,

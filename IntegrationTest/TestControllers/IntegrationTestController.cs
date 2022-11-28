@@ -225,15 +225,12 @@ namespace IntegrationTest.TestControllers
 
             var updateOrder = new OrderEntity
             {
-                OrderID = newCartitemListFromOrderCheckout.OrderID,
-                UserOrderId = newCartitemListFromOrderCheckout.UserOrderId,
-                User = newCartitemListFromOrderCheckout.User,
-                OrderTotalPrice = newCartitemListFromOrderCheckout.OrderTotalPrice,
-                OrderCreatedDate = newCartitemListFromOrderCheckout.OrderCreatedDate,
-                CartItemEntity = new List<CartItemEntity>
-                {
-                    getItemListFromOrder
-                }
+                OrderID = orderCheckout.OrderID,
+                UserOrderId = orderCheckout.UserOrderId,
+                User = orderCheckout.User,
+                OrderTotalPrice = orderCheckout.OrderTotalPrice,
+                OrderCreatedDate = orderCheckout.OrderCreatedDate,
+                CartItemEntity = new List<CartItemEntity> { updateItemInOrder }
             };
 
             // Act
@@ -245,7 +242,7 @@ namespace IntegrationTest.TestControllers
             var updatedOrder = await orderUpdateResponse.Content.ReadFromJsonAsync<OrderEntity>();
             updatedOrder.Should().NotBeNull();
             updatedOrder.OrderID.Should().Be(fetchedOrder.OrderID);
-            updatedOrder.OrderTotalPrice.Should().Be(fetchedOrder.OrderTotalPrice);
+            updatedOrder.OrderTotalPrice.Should().NotBe(fetchedOrder.OrderTotalPrice);
             updatedOrder.OrderCreatedDate.Should().Be(fetchedOrder.OrderCreatedDate);
             updatedOrder.UserOrderId.Should().Be(fetchedOrder.UserOrderId);
             updatedOrder.CartItemEntity.Should().NotBeEquivalentTo(fetchedOrder.CartItemEntity);
@@ -258,7 +255,7 @@ namespace IntegrationTest.TestControllers
             deleteOrderResponse.EnsureSuccessStatusCode();
             deleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var deletedItem = await deleteOrderResponse.Content.ReadFromJsonAsync<OrderEntity>();
-            deletedItem.Should().BeEquivalentTo(newCartitemListFromOrderCheckout);
+            deletedItem.Should().BeEquivalentTo(updatedOrder);
         }
     }
 }
