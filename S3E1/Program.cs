@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using S3E1.Middleware;
 using S3E1.Controllers.V1;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,14 @@ builder.Services.AddApiVersioning(options =>
     options.Conventions.Controller<UserController>()
     .HasApiVersion(1, 0);
 });
+
+//Serilog Logger
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 //MediatR DIs
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();

@@ -12,12 +12,18 @@ namespace S3E1.Controllers.V1
     public class CheckOutController : ControllerBase
     {
         private readonly ISender _sender;
+        private readonly ILogger<CheckOutController> _logger;
 
-        public CheckOutController(ISender sender) => _sender = sender;
+        public CheckOutController(ISender sender, ILogger<CheckOutController> logger)
+        {
+            _logger = logger;
+            _sender = sender;
+        }
 
         [HttpPost]
         public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orders)
         {
+            _logger.LogInformation("POST order checkout executing...");
             if (orders.CartItemEntity.IsNullOrEmpty())
                 return BadRequest("Your cart is empty.");
             return await _sender.Send(new CheckOutCommand(orders));
