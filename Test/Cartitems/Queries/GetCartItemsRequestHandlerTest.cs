@@ -25,7 +25,7 @@ namespace Test.Cartitems.Queries
             var result = await handler.Handle(new GetItemsQuery(), CancellationToken.None);
 
             result.Should().BeOfType<List<CartItemEntity>>();
-            result.Count.Should().Be(3);
+            result.Count.Should().Be(4);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Test.Cartitems.Queries
         {
             var items = await _mockRepo.Object.GetCartItems();
 
-            var item = items.Where(x => x.ItemID == new Guid("dd4ebf94-0d42-4a2b-a4d2-d69889f495eb")).First();
+            var item = items.FirstOrDefault();
 
             var handler = new GetItemByIdHandler(_mockRepo.Object);
 

@@ -8,7 +8,6 @@ using System.Security.Policy;
 using S3E1.Data;
 using Microsoft.Extensions.DependencyInjection;
 using S3E1.Commands;
-using Bogus;
 
 namespace IntegrationTest.TestControllers
 {

@@ -1,39 +1,26 @@
-﻿using Moq;
+﻿using Bogus;
+using Bogus.Extensions;
+using Moq;
 using S3E1.Entities;
 using S3E1.IRepository;
 
 namespace Test.Moq
 {
-    public static class MockCartItemEntityRepository
+    public class MockCartItemEntityRepository
     {
+        public static List<CartItemEntity> GenerateItems()
+        {
+            Faker<CartItemEntity> itemsGenerator = new Faker<CartItemEntity>()
+                .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
+                .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
+                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
+
+            return itemsGenerator.Generate(4);
+        }
         public static Mock<ICartItemRepository> CartitemRepo()
         {
-            var items = new List<CartItemEntity>
-            {
-                new CartItemEntity
-                {
-                    ItemID = new Guid("e9d124ab-355a-4b11-8066-39fdccf7d051"),
-                    ItemName = "item 1",
-                    ItemPrice = 34.56,
-                    ItemStatus = "Pending"
-                },
-
-                new CartItemEntity
-                {
-                    ItemID = new Guid("c2eb76e6-1367-4908-903a-0896b35cda77"),
-                    ItemName = "Item 2",
-                    ItemPrice = 69.69,
-                    ItemStatus = "Pending"
-                },
-
-                new CartItemEntity
-                {
-                    ItemID = new Guid("dd4ebf94-0d42-4a2b-a4d2-d69889f495eb"),
-                    ItemName = "Item 3",
-                    ItemPrice = 32.54,
-                    ItemStatus = "Pending"
-                }
-            };
+            var items = GenerateItems();
+            
 
             var mockRepo = new Mock<ICartItemRepository>();
 
@@ -72,22 +59,4 @@ namespace Test.Moq
     }
 }
 
-//BOGUS FORMAT
 
-
-//public static List<item> GetItems()
-//{
-//    Faker<item> itemsGenerator = new Faker<item>()
-//        .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
-//        .RuleFor(item => item.ItemName, bogus => bogus.Random.Word())
-//        .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
-
-//    return itemsGenerator.Generate(5);
-//}
-//class item
-//{
-//    public Guid ItemID { get; set; }
-//    public string ItemName { get; set; }
-//    public double ItemPrice { get; set; }
-//    public string ItemStatus { get; set; } = "Pending";
-//}

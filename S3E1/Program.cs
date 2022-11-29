@@ -59,9 +59,6 @@ builder.Services.AddScoped<DbContext>(s =>
     return dbContextFactory.CreateDbContext();
 });
 
-//Autofact Dis
-builder.Services.AddAutofac();
-
 ////DB Context
 //builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
 //    builder.Configuration.GetConnectionString("DefaultConnection")

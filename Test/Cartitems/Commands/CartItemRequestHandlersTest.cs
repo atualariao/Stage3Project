@@ -19,11 +19,12 @@ namespace Test.Cartitems.Commands
 
             _cartItem = new CartItemEntity()
             {
-                ItemID = new Guid("670a0719-64c6-42e7-8c41-cd799dd09d46"),
+                ItemID = Guid.NewGuid(),
                 ItemName = "Test Item",
                 ItemPrice = 45.67,
                 ItemStatus = "Pending"
             };
+
         }
 
         [Fact]
@@ -37,37 +38,40 @@ namespace Test.Cartitems.Commands
 
             result.Should().BeOfType<CartItemEntity>();
 
-            cartItems.Count.Should().Be(4);
+            cartItems.Count.Should().Be(5);
         }
 
         [Fact]
         public async Task Handle_Should_Update_Item()
         {
-            var test = await _mockRepo.Object.GetCartItems();
+            var itemlist = await _mockRepo.Object.GetCartItems();
 
-            var updated = test.Where(x => x.ItemID == new Guid("dd4ebf94-0d42-4a2b-a4d2-d69889f495eb")).First();
+            foreach (var item in itemlist)
+            {
+                var handler = new UpdateCartItemHandler(_mockRepo.Object);
 
-            var handler = new UpdateCartItemHandler(_mockRepo.Object);
+                var result = await handler.Handle(new UpdateCartitemCommand(item), CancellationToken.None);
 
-            var result = await handler.Handle(new UpdateCartitemCommand(updated), CancellationToken.None);
-
-            result.ItemName.Should().Be("Item 3");
+                result.ItemID.Should().Be(item.ItemID);
+                result.ItemName.Should().Be(item.ItemName);
+                result.ItemPrice.Should().Be(item.ItemPrice);
+            }
         }
 
         [Fact]
         public async Task Handle_Should_Delete_Item()
         {
-            var item = new Guid("dd4ebf94-0d42-4a2b-a4d2-d69889f495eb");
+            var itemList = await _mockRepo.Object.GetCartItems();
+
+            var itemToDelete = itemList.FirstOrDefault();
 
             var handler = new DeleteCartItemsHandler(_mockRepo.Object);
 
-            var result = await handler.Handle(new DeleteCartItemCommand(item), CancellationToken.None);
-
-            var itemList = await _mockRepo.Object.GetCartItems();
+            var result = await handler.Handle(new DeleteCartItemCommand(itemToDelete.ItemID), CancellationToken.None);
 
             result.Should().BeOfType<CartItemEntity>();
+            itemList.Count.Should().Be(3);
 
-            itemList.Count.Should().Be(2);
         }
     }
 }
