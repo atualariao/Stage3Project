@@ -4,7 +4,7 @@ using S3E1.Commands;
 using S3E1.Entities;
 using S3E1.Queries;
 
-namespace S3E1.Controllers
+namespace S3E1.Controllers.V1
 {
     [Route("api/orders")]
     [Produces("application/json")]

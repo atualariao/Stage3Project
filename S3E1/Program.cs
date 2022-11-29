@@ -2,18 +2,13 @@ using S3E1.Data;
 using Microsoft.EntityFrameworkCore;
 
 using MediatR;
-using S3E1.Entities;
 using S3E1.Contracts;
 using S3E1.Repository;
-using System.Security.Claims;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Swashbuckle.AspNetCore.Filters;
+using Microsoft.AspNetCore.Mvc;
 using S3E1.Middleware;
+using S3E1.Controllers.V1;
+using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +20,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//API Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = ApiVersion.Default;
+    options.ReportApiVersions = true;
+
+    //Controller Versions
+    options.Conventions.Controller<CartItemsController>()
+    .HasApiVersion(1, 0);
+    options.Conventions.Controller<CheckOutController>()
+    .HasApiVersion(1, 0);
+    options.Conventions.Controller<OrderController>()
+    .HasApiVersion(1, 0);
+    options.Conventions.Controller<UserController>()
+    .HasApiVersion(1, 0);
+});
 
 //MediatR DIs
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
@@ -49,9 +61,6 @@ builder.Services.AddScoped<DbContext>(s =>
 //builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
 //    builder.Configuration.GetConnectionString("DefaultConnection")
 //));
-
-////Connection
-//builder.Services.AddScoped<DataConnectionContext>();
 
 //Auth
 //builder.Services.AddAuthentication();
@@ -85,3 +94,4 @@ public partial class Program
 {
     //Expose the Program class for use in integration test project with WebAppFactory<T>
 }
+

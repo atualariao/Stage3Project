@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using S3E1.Commands;
 using S3E1.Entities;
 
-namespace S3E1.Controllers
+namespace S3E1.Controllers.V1
 {
     [Route("api/checkout")]
     [Produces("application/json")]
