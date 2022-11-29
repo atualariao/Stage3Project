@@ -24,14 +24,30 @@ namespace S3E1.Controllers.V1
         public async Task<UserEntity> Get(Guid id)
         {
             _logger.LogInformation("GET user by Guid executing...");
-            return await _sender.Send(new GetUserByIdQuery(id));
+            try
+            {
+                return await _sender.Send(new GetUserByIdQuery(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GET by Guid Method User Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<UserEntity> Post(UserEntity users)
         {
             _logger.LogInformation("POST user executing...");
-            return await _sender.Send(new AddIUserCommand(users));
+            try
+            {
+                return await _sender.Send(new AddIUserCommand(users));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("POST Method User Error Details: {0}", ex);
+                throw;
+            }
         }
     }
 }

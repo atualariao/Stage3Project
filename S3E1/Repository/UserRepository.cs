@@ -11,9 +11,14 @@ namespace S3E1.Repository
     public class UserRepository : IUserRepository
     {
         private readonly DbContext _dbContext;
+        private readonly ILogger<UserRepository> _logger;
         private IDbConnection _connection;
 
-        public UserRepository(DbContext dbContext) => _dbContext = dbContext;
+        public UserRepository(DbContext dbContext, ILogger<UserRepository> logger)
+        {
+            _logger = logger;
+            _dbContext = dbContext;
+        }
 
         public async Task<UserEntity> GetUserById(Guid id)
         {
@@ -28,7 +33,7 @@ namespace S3E1.Repository
                 //var orders = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
                 if (user != null) //&& orders != null
                     user.Orders = (await multi.ReadAsync<OrderEntity>()).ToList();
-                    //orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
+                //orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
                 return user;
             }
@@ -36,15 +41,23 @@ namespace S3E1.Repository
 
         public async Task<UserEntity> CreateUser(UserEntity users)
         {
-            var user = new UserEntity()
+            try
             {
-                 UserID = Guid.NewGuid(),
-                 Username = users.Username
-            };
-            _dbContext.Set<UserEntity>().Add(user);
-            await _dbContext.SaveChangesAsync();
+                var user = new UserEntity()
+                {
+                    UserID = Guid.NewGuid(),
+                    Username = users.Username
+                };
+                _dbContext.Set<UserEntity>().Add(user);
+                await _dbContext.SaveChangesAsync();
 
-            return user;
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Creating User Details: {0}", ex);
+                throw;
+            }
         }
     }
 }

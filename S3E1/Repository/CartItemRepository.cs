@@ -12,9 +12,14 @@ namespace S3E1.Repository
     public class CartItemRepository : ICartItemRepository
     {
         private readonly DbContext _dbContext;
+        private readonly ILogger<CartItemRepository> _logger;
         private IDbConnection _connection;
 
-        public CartItemRepository(DbContext dbContext) => _dbContext = dbContext;
+        public CartItemRepository(DbContext dbContext, ILogger<CartItemRepository> logger)
+        {
+            _logger = logger;
+            _dbContext = dbContext;
+        }
 
         public async Task<List<CartItemEntity>> GetCartItems()
         {
@@ -32,7 +37,7 @@ namespace S3E1.Repository
             {
                 throw ex;
             }
-            
+
         }
         public async Task<CartItemEntity> GetCartItemEntity(Guid id)
         {
@@ -54,40 +59,64 @@ namespace S3E1.Repository
         }
         public async Task<CartItemEntity> Createitem(CartItemEntity cartItems)
         {
-            var item = new CartItemEntity()
+            try
             {
-                ItemID = Guid.NewGuid(),
-                ItemName = cartItems.ItemName,
-                ItemPrice = cartItems.ItemPrice,
-                ItemStatus = "Pending"
-            };
+                var item = new CartItemEntity()
+                {
+                    ItemID = Guid.NewGuid(),
+                    ItemName = cartItems.ItemName,
+                    ItemPrice = cartItems.ItemPrice,
+                    ItemStatus = "Pending"
+                };
 
-            _dbContext.Set<CartItemEntity>().Add(item);
-            await _dbContext.SaveChangesAsync();
+                _dbContext.Set<CartItemEntity>().Add(item);
+                await _dbContext.SaveChangesAsync();
 
-            return item;
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Creating Cart Item Details: {0}", ex);
+                throw;
+            }
         }
 
         public async Task<CartItemEntity> Updateitem(CartItemEntity cartItems)
         {
-            var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
-            item.ItemID = cartItems.ItemID;
-            item.ItemName = cartItems.ItemName;
-            item.ItemPrice = cartItems.ItemPrice;
+            try
+            {
+                var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
+                item.ItemID = cartItems.ItemID;
+                item.ItemName = cartItems.ItemName;
+                item.ItemPrice = cartItems.ItemPrice;
 
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return item;
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Updating Cart Item Details: {0}", ex);
+                throw;
+            }
         }
 
         public async Task<CartItemEntity> DeleteItem(Guid id)
         {
-            var item = _dbContext.Set<CartItemEntity>().Find(id);
+            try
+            {
+                var item = _dbContext.Set<CartItemEntity>().Find(id);
 
-            _dbContext.Set<CartItemEntity>().Remove(item);
-            await _dbContext.SaveChangesAsync();
+                _dbContext.Set<CartItemEntity>().Remove(item);
+                await _dbContext.SaveChangesAsync();
 
-            return item;
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Deleting Cart Item Details: {0}", ex);
+                throw;
+            }
         }
     }
 }

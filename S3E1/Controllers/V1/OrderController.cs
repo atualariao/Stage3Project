@@ -24,28 +24,60 @@ namespace S3E1.Controllers.V1
         public async Task<List<OrderEntity>> Get()
         {
             _logger.LogInformation("GET all orders executing");
-            return await _sender.Send(new GetOrdersQuery());
+            try
+            {
+                return await _sender.Send(new GetOrdersQuery());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GET All Method Order Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<OrderEntity> GetById(Guid id)
         {
             _logger.LogInformation("GET order by Guid executing");
-            return await _sender.Send(new GetOrdersByIdQuery(id));
+            try
+            {
+                return await _sender.Send(new GetOrdersByIdQuery(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GET by Guid Method Order Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpPut]
         public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
-            return await _sender.Send(new UpdateOrderCommand(orders));
+            try
+            {
+                return await _sender.Send(new UpdateOrderCommand(orders));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PUT/UPDATE Method Order Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<OrderEntity> DeleteOrder(Guid id)
         {
             _logger.LogInformation("DELETE order by Guid executing");
-            return await _sender.Send(new DeleteOrderCommand(id));
+            try
+            {
+                return await _sender.Send(new DeleteOrderCommand(id));
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogError("DELETE by Guid Method Order Error Details: {0}", ex); 
+                throw; 
+            }
         }
     }
 }

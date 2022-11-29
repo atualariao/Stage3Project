@@ -24,9 +24,17 @@ namespace S3E1.Controllers.V1
         public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orders)
         {
             _logger.LogInformation("POST order checkout executing...");
-            if (orders.CartItemEntity.IsNullOrEmpty())
-                return BadRequest("Your cart is empty.");
-            return await _sender.Send(new CheckOutCommand(orders));
+            try
+            {
+                if (orders.CartItemEntity.IsNullOrEmpty())
+                    return BadRequest("Your cart is empty.");
+                return await _sender.Send(new CheckOutCommand(orders));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("POST Method Order Checkout Error Details: {0}", ex);
+                throw;
+            }
 
         }
     }

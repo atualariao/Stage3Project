@@ -13,9 +13,14 @@ namespace S3E1.Repository
     public class OrderRepository : IOrderRepository
     {
         private readonly DbContext _dbContext;
+        private readonly ILogger<OrderRepository> _logger;
         private IDbConnection _connection;
 
-        public OrderRepository(DbContext dbContext) => _dbContext = dbContext;
+        public OrderRepository(DbContext dbContext, ILogger<OrderRepository> logger)
+        {
+            _logger = logger;
+            _dbContext = dbContext;
+        }
 
         public async Task<List<OrderEntity>> GetOrders()
         {
@@ -52,29 +57,45 @@ namespace S3E1.Repository
 
         public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
         {
-            var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
-            order.OrderID = orders.OrderID;
-            order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
-            order.CartItemEntity = orders.CartItemEntity;
+            try
+            {
+                var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
+                order.OrderID = orders.OrderID;
+                order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
+                order.CartItemEntity = orders.CartItemEntity;
 
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return order;
+                return order;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Updating Order Details: {0}", ex);
+                throw;
+            }
         }
 
         public async Task<OrderEntity> DeleteOrderById(Guid id)
         {
-            var order = _dbContext.Set<OrderEntity>().Find(id);
-            var cartitem = _dbContext.Set<CartItemEntity>().Where(item => item.OrderEntityOrderID == order.OrderID);
-            foreach (var item in cartitem)
+            try
             {
-                _dbContext.Set<CartItemEntity>().Remove(item);
+                var order = _dbContext.Set<OrderEntity>().Find(id);
+                var cartitem = _dbContext.Set<CartItemEntity>().Where(item => item.OrderEntityOrderID == order.OrderID);
+                foreach (var item in cartitem)
+                {
+                    _dbContext.Set<CartItemEntity>().Remove(item);
+                }
+
+                _dbContext.Set<OrderEntity>().Remove(order);
+                await _dbContext.SaveChangesAsync();
+
+                return order;
             }
-
-            _dbContext.Set<OrderEntity>().Remove(order);
-            await _dbContext.SaveChangesAsync();
-
-            return order;
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in Deleting Order Details: {0}", ex);
+                throw;
+            }
         }
     }
 }

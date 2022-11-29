@@ -24,35 +24,75 @@ namespace S3E1.Controllers.V1
         public async Task<List<CartItemEntity>> Get()
         {
             _logger.LogInformation("GET all cart items executing...");
-            return await _sender.Send(new GetItemsQuery());
+            try
+            {
+                return await _sender.Send(new GetItemsQuery());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GET Method Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<CartItemEntity> Get(Guid id)
         {
             _logger.LogInformation("GET cart item by Guid executing...");
-            return await _sender.Send(new GetItemByIdQuery(id));
+            try
+            {
+                return await _sender.Send(new GetItemByIdQuery(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GET Cart By Item Guid Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<CartItemEntity> Post(CartItemEntity cartItems)
         {
             _logger.LogInformation("POST cart items executing...");
-            return await _sender.Send(new AddCartItemCommand(cartItems));
+            try
+            {
+                return await _sender.Send(new AddCartItemCommand(cartItems));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("POST Cart Item Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpPut]
         public async Task<CartItemEntity> Update(CartItemEntity cartItems)
         {
             _logger.LogInformation("PUT/UPDATE cart item executing...");
-            return await _sender.Send(new UpdateCartitemCommand(cartItems));
+            try
+            {
+                return await _sender.Send(new UpdateCartitemCommand(cartItems));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PUT/UPDATE Cart Item Error Details: {0}", ex);
+                throw;
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<CartItemEntity> Delete(Guid id)
         {
             _logger.LogInformation("DELETE cart item executing...");
-            return await _sender.Send(new DeleteCartItemCommand(id));
+            try
+            {
+                return await _sender.Send(new DeleteCartItemCommand(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DELETE Cart Item Error Details: {0}", ex);
+                throw;
+            }
         }
     }
 
