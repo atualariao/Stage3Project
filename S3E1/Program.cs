@@ -1,17 +1,23 @@
-using S3E1.Data;
-using Microsoft.EntityFrameworkCore;
-
-using MediatR;
-using S3E1.Contracts;
-using S3E1.Repository;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using S3E1.Middleware;
-using S3E1.Controllers.V1;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
+using Microsoft.EntityFrameworkCore;
+using S3E1;
+using S3E1.Controllers.V1;
+using S3E1.Data;
+using S3E1.Middleware;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Autofac DIs
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(builder =>
+    {
+        builder.RegisterModule(new AutofacDependencyInjection());
+    });
 
 // Add services to the container.
 
@@ -47,24 +53,14 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-//MediatR DIs
-builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
-builder.Services.AddMediatR(typeof(CartItemRepository).Assembly);
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddMediatR(typeof(UserRepository).Assembly);
-
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddMediatR(typeof(OrderRepository).Assembly);
-
-builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
-builder.Services.AddMediatR(typeof(CheckoutRepository).Assembly);
-
 builder.Services.AddScoped<DbContext>(s =>
 {
     var dbContextFactory = new MsSqlDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     return dbContextFactory.CreateDbContext();
 });
+
+//Autofact Dis
+builder.Services.AddAutofac();
 
 ////DB Context
 //builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(

@@ -1,8 +1,7 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.Contracts;
 using S3E1.Entities;
+using S3E1.IRepository;
 using System.Data;
 
 namespace S3E1.Repository

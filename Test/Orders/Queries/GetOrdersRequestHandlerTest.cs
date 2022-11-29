@@ -1,14 +1,11 @@
-﻿using Moq;
-using S3E1.Contracts;
-using S3E1.Handlers;
-using S3E1.Queries;
-using Test.Moq;
-
-
-
-using FluentAssertions;
+﻿using FluentAssertions;
+using Moq;
 using S3E1.Entities;
+using S3E1.Handlers;
+using S3E1.IRepository;
+using S3E1.Queries;
 using Shouldly;
+using Test.Moq;
 
 namespace UnitTest.Orders.Queries
 {

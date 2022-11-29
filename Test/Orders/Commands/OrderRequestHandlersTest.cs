@@ -1,11 +1,10 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using S3E1.Commands;
-using S3E1.Contracts;
-
-using S3E1.Handlers;
-using Test.Moq;
-using FluentAssertions;
 using S3E1.Entities;
+using S3E1.Handlers;
+using S3E1.IRepository;
+using Test.Moq;
 
 namespace UnitTest.Orders.Commands
 {

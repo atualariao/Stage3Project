@@ -1,15 +1,9 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using S3E1.Contracts;
-using S3E1.Data;
-using S3E1.Entities;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Data;
-using Azure.Core;
-using MediatR;
 using Newtonsoft.Json;
+using S3E1.Entities;
+using S3E1.IRepository;
+using System.Data;
 
 namespace S3E1.Repository
 {

@@ -1,9 +1,6 @@
 ﻿using Moq;
-using S3E1.Contracts;
-
-
-
 using S3E1.Entities;
+using S3E1.IRepository;
 
 namespace Test.Moq
 {

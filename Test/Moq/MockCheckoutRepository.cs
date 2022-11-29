@@ -1,7 +1,6 @@
 ﻿using Moq;
-using S3E1.Contracts;
-
 using S3E1.Entities;
+using S3E1.IRepository;
 
 namespace Test.Moq
 {
@@ -30,7 +29,7 @@ namespace Test.Moq
 
                         new CartItemEntity
                         {
-                            ItemID = new Guid("f1dc6760-267e-4f22-ab57-7aa5d22c4fe1"), 
+                            ItemID = new Guid("f1dc6760-267e-4f22-ab57-7aa5d22c4fe1"),
                             ItemName = "Item 2",
                             ItemPrice = 500.25,
                             ItemStatus = "Processed",

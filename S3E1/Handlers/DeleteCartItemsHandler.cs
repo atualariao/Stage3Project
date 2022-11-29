@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using Newtonsoft.Json;
 using S3E1.Commands;
-using S3E1.Contracts;
 using S3E1.Entities;
-using S3E1.Repository;
+using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {

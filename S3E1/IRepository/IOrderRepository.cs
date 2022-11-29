@@ -1,7 +1,7 @@
 ﻿
 using S3E1.Entities;
 
-namespace S3E1.Contracts
+namespace S3E1.IRepository
 {
     public interface IOrderRepository
     {

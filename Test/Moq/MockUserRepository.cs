@@ -1,7 +1,6 @@
 ﻿using Moq;
-using S3E1.Contracts;
-
 using S3E1.Entities;
+using S3E1.IRepository;
 
 namespace Test.Moq
 {
@@ -16,7 +15,7 @@ namespace Test.Moq
                      UserID = new Guid("0c82cd53-b718-4416-ae61-54a419eac438"),
                      Username = "User 1",
                 },
-                
+
                 new UserEntity
                 {
                      UserID = new Guid("f0b4b22b-63f4-4ece-a010-a4ecf8eadcc8"),

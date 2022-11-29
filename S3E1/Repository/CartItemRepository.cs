@@ -1,13 +1,8 @@
-﻿using Azure.Core;
-using Dapper;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.Contracts;
-using S3E1.Data;
-
 using S3E1.Entities;
+using S3E1.IRepository;
 using System.Data;
 
 namespace S3E1.Repository
