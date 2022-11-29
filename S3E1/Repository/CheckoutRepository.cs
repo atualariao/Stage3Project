@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using S3E1.Contracts;
 using S3E1.Entities;
 using System.Data;
@@ -47,7 +49,8 @@ namespace S3E1.Repository
                 }
                 _dbContext.Set<OrderEntity>().Add(userOrder);
                 _dbContext.SaveChanges();
-                await _dbContext.Set<CartItemEntity>().ToListAsync();
+
+                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(userOrder).ToUpper());
                 return userOrder;
             }
             catch (Exception ex)

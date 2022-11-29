@@ -7,6 +7,9 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 using System.Data;
+using Azure.Core;
+using MediatR;
+using Newtonsoft.Json;
 
 namespace S3E1.Repository
 {
@@ -24,34 +27,52 @@ namespace S3E1.Repository
 
         public async Task<List<OrderEntity>> GetOrders()
         {
-            var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserOrderId = u.UserID";
-
-            using (var connection = _dbContext.Database.GetDbConnection())
+            try
             {
-                var cartItems = await connection.QueryAsync<OrderEntity, UserEntity, OrderEntity>(query, (order, user) =>
-                {
-                    order.User = user;
-                    return order;
-                },
-                splitOn: "UserID");
+                var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserOrderId = u.UserID";
 
-                return cartItems.ToList();
+                using (var connection = _dbContext.Database.GetDbConnection())
+                {
+                    var cartItems = await connection.QueryAsync<OrderEntity, UserEntity, OrderEntity>(query, (order, user) =>
+                    {
+                        order.User = user;
+                        return order;
+                    },
+                    splitOn: "UserID");
+
+                    _logger.LogInformation("Order list retrieved from database");
+                    return cartItems.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in retrieving Order list, Details: {0}", ex);
+                throw;
             }
         }
 
         public async Task<OrderEntity> GetOrderById(Guid id)
         {
-            var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
+            try
+            {
+                var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
                                 "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
-            using (var connection = _dbContext.Database.GetDbConnection())
-            using (var multi = await connection.QueryMultipleAsync(query, new { id }))
-            {
-                var order = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
-                if (order != null)
-                    order.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
+                using (var connection = _dbContext.Database.GetDbConnection())
+                using (var multi = await connection.QueryMultipleAsync(query, new { id }))
+                {
+                    var order = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
+                    if (order != null)
+                        order.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
-                return order;
+                    _logger.LogInformation("Order retrieved from the database, Guid: {0}", order.OrderID.ToString().ToUpper());
+                    return order;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in retrieving cart item, Details: {0}", ex);
+                throw;
             }
         }
 
@@ -66,6 +87,7 @@ namespace S3E1.Repository
 
                 await _dbContext.SaveChangesAsync();
 
+                _logger.LogInformation("Order Updated from database, Object: {0}", JsonConvert.SerializeObject(order).ToUpper());
                 return order;
             }
             catch (Exception ex)
@@ -89,6 +111,7 @@ namespace S3E1.Repository
                 _dbContext.Set<OrderEntity>().Remove(order);
                 await _dbContext.SaveChangesAsync();
 
+                _logger.LogInformation("Order has been removed from the database, Guid: {0}", order.OrderID.ToString().ToUpper());
                 return order;
             }
             catch (Exception ex)

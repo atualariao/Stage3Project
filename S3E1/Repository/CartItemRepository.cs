@@ -1,6 +1,9 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using S3E1.Contracts;
 using S3E1.Data;
 
@@ -30,6 +33,7 @@ namespace S3E1.Repository
                 {
                     var itemList = await connection.QueryAsync<CartItemEntity>(query);
 
+                    _logger.LogInformation("Cart Item List retrieved from the database");
                     return itemList.ToList();
                 }
             }
@@ -49,12 +53,14 @@ namespace S3E1.Repository
                 {
                     var cartItem = await connection.QuerySingleOrDefaultAsync<CartItemEntity>(query, new { id });
 
+                    _logger.LogInformation("Cart Item retrieved from database, Guid: {0}", cartItem.ItemID.ToString().ToUpper());
                     return cartItem;
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError("Error in retrieving cart item, Details: {0}", ex);
+                throw;
             }
         }
         public async Task<CartItemEntity> Createitem(CartItemEntity cartItems)
@@ -72,6 +78,7 @@ namespace S3E1.Repository
                 _dbContext.Set<CartItemEntity>().Add(item);
                 await _dbContext.SaveChangesAsync();
 
+                _logger.LogInformation("New Item Created in the Database, Object: {0}", JsonConvert.SerializeObject(item).ToUpper());
                 return item;
             }
             catch (Exception ex)
@@ -92,6 +99,7 @@ namespace S3E1.Repository
 
                 await _dbContext.SaveChangesAsync();
 
+                _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(item).ToUpper());
                 return item;
             }
             catch (Exception ex)
@@ -110,6 +118,7 @@ namespace S3E1.Repository
                 _dbContext.Set<CartItemEntity>().Remove(item);
                 await _dbContext.SaveChangesAsync();
 
+                _logger.LogInformation("Cart Item Has been Removed from the database, Guid: {0}", item.ItemID.ToString().ToUpper());
                 return item;
             }
             catch (Exception ex)
