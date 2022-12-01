@@ -23,19 +23,28 @@ namespace S3E1.Repository
         {
             try
             {
-                var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserOrderId = u.UserID";
-
+                var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserOrderId = u.UserID INNER JOIN CartItems c ON o.OrderID = c.OrderEntityOrderID";
+                Dictionary<Guid, OrderEntity> orderDict = new();
                 using (var connection = _dbContext.Database.GetDbConnection())
                 {
-                    var cartItems = await connection.QueryAsync<OrderEntity, UserEntity, OrderEntity>(query, (order, user) =>
+                    var orders = (await connection.QueryAsync<OrderEntity, UserEntity, CartItemEntity, OrderEntity>(query, (order, user, item) =>
                     {
+                        if (!orderDict.TryGetValue(order.OrderID, out OrderEntity? orderEntity))
+                        {
+                            orderEntity = order;
+                            orderEntity.CartItemEntity ??= new List<CartItemEntity>();
+                            orderDict.Add(order.OrderID, orderEntity);
+                        }
+
+                        if (item is not null) orderEntity.CartItemEntity.Add(item);
                         order.User = user;
-                        return order;
+
+                        return orderEntity;
                     },
-                    splitOn: "UserID");
+                    splitOn: "UserID, ItemID")).Distinct().ToList();
 
                     _logger.LogInformation("Order list retrieved from database");
-                    return cartItems.ToList();
+                    return orders;
                 }
             }
             catch (Exception ex)
