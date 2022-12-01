@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Bogus;
+using Moq;
 using S3E1.Entities;
 using S3E1.IRepository;
 
@@ -6,57 +7,35 @@ namespace Test.Moq
 {
     public static class MockOrderEntityRepository
     {
+        public static List<CartItemEntity> GenerateItems()
+        {
+            var items = new Faker<CartItemEntity>()
+            .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
+            .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
+            .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
+
+            return items.Generate(2);
+        }
+        public static List<OrderEntity> GenerateOrders()
+        {
+            var userEntity = new Faker<UserEntity>()
+                .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
+                .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
+
+            Faker<OrderEntity> orderGenerator = new Faker<OrderEntity>()
+                .RuleFor(order => order.OrderID, bogus => bogus.Random.Guid())
+                .RuleFor(order => order.UserOrderId, bogus => bogus.Random.Guid())
+                .RuleFor(order => order.User, bogus => userEntity)
+                .RuleFor(order => order.OrderTotalPrice, bogus => bogus.Random.Double())
+                .RuleFor(order => order.OrderCreatedDate, bogus => bogus.Date.Recent())
+                .RuleFor(order => order.CartItemEntity, bogus => GenerateItems());
+
+            return orderGenerator.Generate(4);
+        }
+
         public static Mock<IOrderRepository> OrderRepo()
         {
-            var orders = new List<OrderEntity>
-            {
-                new OrderEntity
-                {
-                     OrderID = new Guid("2daa4319-933e-4eea-9123-1e1877d8aa01"),
-                     UserOrderId = new Guid("1b05a316-a044-444d-a81b-02f92cb4ab9d"),
-                     OrderTotalPrice = 23.54,
-                     OrderCreatedDate = DateTime.Now,
-                     CartItemEntity = new()
-                      {
-                         new CartItemEntity()
-                         {
-                             ItemID = new Guid("4f7cd377-4eda-4b27-bc9b-f28cdc401b26"),
-                             ItemName = "Item 1",
-                             ItemPrice = 45.65,
-                             ItemStatus = "Pending",
-                             OrderEntityOrderID = new Guid("2daa4319-933e-4eea-9123-1e1877d8aa01")
-                         },
-
-                         new CartItemEntity()
-                         {
-                             ItemID = new Guid("96021179-8911-452f-8816-948ebb244732"),
-                             ItemName = "Item 2",
-                             ItemPrice = 65.87,
-                             ItemStatus = "Pending",
-                             OrderEntityOrderID = new Guid("2daa4319-933e-4eea-9123-1e1877d8aa01")
-                         }
-                      }
-                },
-
-                new OrderEntity
-                {
-                    OrderID = new Guid("d43866ae-89c1-445a-bcac-1ac1eebd0cae"),
-                    UserOrderId = new Guid("1b05a316-a044-444d-a81b-02f92cb4ab9d"),
-                    OrderTotalPrice = 54.87,
-                    OrderCreatedDate = DateTime.Now,
-                    CartItemEntity = new()
-                     {
-                        new CartItemEntity()
-                        {
-                            ItemID = new Guid("2ddc05a2-e9cd-41fc-8076-6ca747231ff1"),
-                            ItemName = "Item 2",
-                            ItemPrice = 65.87,
-                            ItemStatus = "Pending",
-                            OrderEntityOrderID = new Guid("d43866ae-89c1-445a-bcac-1ac1eebd0cae")
-                        }
-                     }
-                }
-            };
+            var orders = GenerateOrders();
 
             var mockRepo = new Mock<IOrderRepository>();
 

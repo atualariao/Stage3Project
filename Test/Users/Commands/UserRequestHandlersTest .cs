@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using Moq;
 using S3E1.Commands;
 using S3E1.Entities;
@@ -14,14 +15,18 @@ namespace UnitTest.Users.Commands
         private readonly Mock<IUserRepository> _mockRepo;
         private readonly UserEntity _userEntity;
 
+        public static UserEntity CreateNewUser()
+        {
+            var newUserEntity = new Faker<UserEntity>()
+                .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
+                .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
+
+            return newUserEntity;
+        }
         public CartItemRequestHandlersTest()
         {
             _mockRepo = MockUserRepository.UserRepo();
-            _userEntity = new UserEntity()
-            {
-                UserID = new Guid("483cbf3c-17b4-4668-af61-6c3ecaa21416"),
-                Username = "New Test User"
-            };
+            _userEntity = CreateNewUser();
         }
 
         [Fact]

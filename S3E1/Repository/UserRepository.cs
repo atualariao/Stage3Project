@@ -25,16 +25,13 @@ namespace S3E1.Repository
             {
                 var query = "SELECT * FROM Users WHERE UserID = @id;" +
                                 "SELECT * FROM Orders WHERE UserOrderId = @id";
-                //+ "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
 
                 using (var connection = _dbContext.Database.GetDbConnection())
                 using (var multi = await connection.QueryMultipleAsync(query, new { id }))
                 {
                     var user = await multi.ReadSingleOrDefaultAsync<UserEntity>();
-                    //var orders = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
-                    if (user != null) //&& orders != null
+                    if (user != null)
                         user.Orders = (await multi.ReadAsync<OrderEntity>()).ToList();
-                    //orders.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
 
                     _logger.LogInformation("User retrieved from database, Guid: {0}", user.UserID.ToString().ToUpper());
                     return user;

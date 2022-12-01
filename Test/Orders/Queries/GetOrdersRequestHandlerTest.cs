@@ -26,7 +26,7 @@ namespace UnitTest.Orders.Queries
             var result = await handler.Handle(new GetOrdersQuery(), CancellationToken.None);
 
             result.Should().BeOfType<List<OrderEntity>>();
-            result.Count.Should().Be(2);
+            result.Count.Should().Be(4);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace UnitTest.Orders.Queries
         {
             var orders = await _mockRepo.Object.GetOrders();
 
-            var order = orders.Where(id => id.OrderID == new Guid("d43866ae-89c1-445a-bcac-1ac1eebd0cae")).First();
+            var order = orders.FirstOrDefault();
 
             var handler = new GetOrdersByIdHandler(_mockRepo.Object);
 

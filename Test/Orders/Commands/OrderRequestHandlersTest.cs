@@ -22,15 +22,13 @@ namespace UnitTest.Orders.Commands
         {
             var orders = await _mockRepo.Object.GetOrders();
 
-            var updated = orders.Where(x => x.OrderID == new Guid("2daa4319-933e-4eea-9123-1e1877d8aa01")).First();
+            foreach (var order in orders)
+            {
+                var handler = new UpdateOrderHandler(_mockRepo.Object);
 
-            var handler = new UpdateOrderHandler(_mockRepo.Object);
-
-            var result = await handler.Handle(new UpdateOrderCommand(updated), CancellationToken.None);
-
-            result.CartItemEntity.Should().BeOfType<List<CartItemEntity>>();
-            result.CartItemEntity.Count.Should().Be(2);
-            orders.Count.Should().Be(2);
+                var result = await handler.Handle(new UpdateOrderCommand(order), CancellationToken.None);
+            }
+            orders.Count.Should().Be(4);
         }
 
         [Fact]
@@ -38,14 +36,14 @@ namespace UnitTest.Orders.Commands
         {
             var orders = await _mockRepo.Object.GetOrders();
 
-            var item = orders.Where(x => x.OrderID == new Guid("2daa4319-933e-4eea-9123-1e1877d8aa01")).First();
+            var order = orders.FirstOrDefault();
 
             var handler = new DeleteOrderHandler(_mockRepo.Object);
 
-            var result = await handler.Handle(new DeleteOrderCommand(item.OrderID), CancellationToken.None);
+            var result = await handler.Handle(new DeleteOrderCommand(order.OrderID), CancellationToken.None);
 
             result.Should().BeOfType<OrderEntity>();
-            orders.Count.Should().Be(1);
+            orders.Count.Should().Be(3);
         }
     }
 }

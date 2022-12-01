@@ -11,7 +11,6 @@ namespace UnitTest.Users.Queries
     public class GetOrdersRequestHandlerTest
     {
         private readonly Mock<IUserRepository> _mockRepo;
-
         public GetOrdersRequestHandlerTest()
         {
             _mockRepo = MockUserRepository.UserRepo();
@@ -20,7 +19,9 @@ namespace UnitTest.Users.Queries
         [Fact]
         public async Task Handle_Should_Get_User_Id()
         {
-            var user = await _mockRepo.Object.GetUserById(new Guid("f0b4b22b-63f4-4ece-a010-a4ecf8eadcc8"));
+            var userList = MockUserRepository.UserList;
+
+            var user = userList.FirstOrDefault();
 
             var handler = new GetuserByIdHandler(_mockRepo.Object);
 
@@ -28,6 +29,7 @@ namespace UnitTest.Users.Queries
 
             result.Should().BeOfType<UserEntity>();
             result.UserID.Should().Be(user.UserID);
+            userList.Count.Should().Be(5);
         }
     }
 }

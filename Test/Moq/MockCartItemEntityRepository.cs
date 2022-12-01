@@ -20,7 +20,7 @@ namespace Test.Moq
         public static Mock<ICartItemRepository> CartitemRepo()
         {
             var items = GenerateItems();
-            
+
 
             var mockRepo = new Mock<ICartItemRepository>();
 
