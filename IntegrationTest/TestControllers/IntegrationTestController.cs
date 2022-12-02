@@ -8,11 +8,24 @@ using System.Security.Policy;
 using S3E1.Data;
 using Microsoft.Extensions.DependencyInjection;
 using S3E1.Commands;
+using AutoMapper;
+using S3E1.DTOs;
+using S3E1.Profiles;
 
 namespace IntegrationTest.TestControllers
 {
     public class TestCartitemController : IntegrationTestBaseClass
     {
+        private readonly IMapper _mapper;
+        public TestCartitemController()
+        {
+            MapperConfiguration mapConfig = new(c =>
+            {
+                c.AddProfile<Profiles>();
+            });
+            _mapper = mapConfig.CreateMapper();
+        }
+
         [Fact]
         public async Task Test_Cartitem_Controller()
         {
@@ -20,41 +33,37 @@ namespace IntegrationTest.TestControllers
             //POST CART ITEM
             // Arrange
             string url = "api/cart-items";
-            var item = new CartItemEntity
+            var item = new CartItemDTO
             {
-                ItemID = Guid.NewGuid(),
                 ItemName = "Item Name",
                 ItemPrice = 55.5,
-                ItemStatus = "Pending",
-                OrderEntityOrderID = null
             };
 
+            CartItemEntity itemEntity = _mapper.Map<CartItemEntity>(item);
             //Act
-            var postResponse = await _httpClient.PostAsJsonAsync(url, item);
+            var postResponse = await _httpClient.PostAsJsonAsync(url, itemEntity);
 
             //Assert
             postResponse.EnsureSuccessStatusCode();
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var newItem = await postResponse.Content.ReadFromJsonAsync<CartItemEntity>();
+            var newItem = await postResponse.Content.ReadFromJsonAsync<CartItemDTO>();
             newItem.ItemName.Should().Be(item.ItemName);
             newItem.ItemPrice.Should().Be(item.ItemPrice);
-            newItem.ItemStatus.Should().Be(item.ItemStatus);
 
             //GET ALL ITEMS
             // Arrange
             var itemList = await _httpClient.GetFromJsonAsync<List<CartItemEntity>>(url);
 
             //Assert
-            var newAddedItem = itemList.First(i => i.ItemID == newItem.ItemID);
+            var newAddedItem = itemList.First(i => i.ItemName == item.ItemName);
             newAddedItem.Should().NotBeNull();
             newAddedItem.Should().BeEquivalentTo(newItem);
             newAddedItem.ItemName.Should().Be(newItem.ItemName);
             newAddedItem.ItemPrice.Should().Be(newItem.ItemPrice);
-            newAddedItem.ItemStatus.Should().Be(newItem.ItemStatus);
 
             //GET CART ITEM BY ID
             // Arrange
-            var id = newItem.ItemID;
+            var id = newAddedItem.ItemID;
             var urlWithId = url + "/" + id.ToString();
 
             // Act
@@ -65,17 +74,16 @@ namespace IntegrationTest.TestControllers
 
             //UPDATE CART ITEM
             // Arrange
-            var itemToUpdateRequest = new CartItemEntity
+            var itemToUpdateRequest = new CartItemDTO
             {
                 ItemID = fetchedItem.ItemID,
                 ItemName = "Updated Item Name",
-                ItemPrice = fetchedItem.ItemPrice,
-                ItemStatus = fetchedItem.ItemStatus,
-                OrderEntityOrderID = fetchedItem.OrderEntityOrderID,
+                ItemPrice = fetchedItem.ItemPrice
             };
 
+            CartItemEntity itemDTO = _mapper.Map<CartItemEntity>(itemToUpdateRequest);
             // Act
-            var itemUpdateResponse = await _httpClient.PutAsJsonAsync(url, itemToUpdateRequest);
+            var itemUpdateResponse = await _httpClient.PutAsJsonAsync(url, itemDTO);
 
             // Assert
             itemUpdateResponse.StatusCode.Should().Be(HttpStatusCode.OK);

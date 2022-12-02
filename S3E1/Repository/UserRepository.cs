@@ -44,15 +44,10 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<UserEntity> CreateUser(UserEntity users)
+        public async Task<UserEntity> CreateUser(UserEntity user)
         {
             try
             {
-                var user = new UserEntity()
-                {
-                    UserID = Guid.NewGuid(),
-                    Username = users.Username
-                };
                 _dbContext.Set<UserEntity>().Add(user);
                 await _dbContext.SaveChangesAsync();
 

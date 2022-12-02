@@ -29,7 +29,7 @@ namespace UnitTest.Users.Queries
 
             result.Should().BeOfType<UserEntity>();
             result.UserID.Should().Be(user.UserID);
-            userList.Count.Should().Be(5);
+            userList.Count.Should().Be(4);
         }
     }
 }

@@ -8,6 +8,7 @@ using S3E1;
 using S3E1.Controllers.V1;
 using S3E1.Data;
 using S3E1.Middleware;
+using S3E1.Profiles;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//AutoMapper
+builder.Services.AddAutoMapper(typeof(Profiles).Assembly);
 
 //API Versioning
 builder.Services.AddApiVersioning(options =>
@@ -53,6 +57,7 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
+//DB Context Factory
 builder.Services.AddScoped<DbContext>(s =>
 {
     var dbContextFactory = new MsSqlDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));

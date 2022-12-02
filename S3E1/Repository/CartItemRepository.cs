@@ -1,6 +1,10 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Azure.Core;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using S3E1.Data;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
 using System.Data;
@@ -11,12 +15,13 @@ namespace S3E1.Repository
     {
         private readonly DbContext _dbContext;
         private readonly ILogger<CartItemRepository> _logger;
-        private IDbConnection _connection;
+        private readonly IMapper _mapper;
 
-        public CartItemRepository(DbContext dbContext, ILogger<CartItemRepository> logger)
+        public CartItemRepository(DbContext dbContext, ILogger<CartItemRepository> logger, IMapper mapper)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public async Task<List<CartItemEntity>> GetCartItems()
@@ -62,19 +67,11 @@ namespace S3E1.Repository
         {
             try
             {
-                var item = new CartItemEntity()
-                {
-                    ItemID = Guid.NewGuid(),
-                    ItemName = cartItems.ItemName,
-                    ItemPrice = cartItems.ItemPrice,
-                    ItemStatus = "Pending"
-                };
-
-                _dbContext.Set<CartItemEntity>().Add(item);
+                _dbContext.Set<CartItemEntity>().Add(cartItems);
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("New Item Created in the Database, Object: {0}", JsonConvert.SerializeObject(item).ToUpper());
-                return item;
+                _logger.LogInformation("New Item Created in the Database, Object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
+                return cartItems;
             }
             catch (Exception ex)
             {
@@ -87,15 +84,16 @@ namespace S3E1.Repository
         {
             try
             {
-                var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
-                item.ItemID = cartItems.ItemID;
-                item.ItemName = cartItems.ItemName;
-                item.ItemPrice = cartItems.ItemPrice;
+                if (cartItems != null)
+                {
+                    var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
+                    item.ItemName = cartItems.ItemName;
+                    item.ItemPrice = cartItems.ItemPrice;
 
-                await _dbContext.SaveChangesAsync();
-
-                _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(item).ToUpper());
-                return item;
+                    await _dbContext.SaveChangesAsync();
+                }
+                    _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
+                    return cartItems;
             }
             catch (Exception ex)
             {

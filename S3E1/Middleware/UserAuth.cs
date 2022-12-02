@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using S3E1.Data;
-using System.Threading.Tasks;
-using System.Web.Http.Filters;
-
-namespace S3E1.Middleware
+﻿namespace S3E1.Middleware
 {
     // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class UserAuth

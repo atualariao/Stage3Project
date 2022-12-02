@@ -1,15 +1,19 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Moq;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
+using S3E1.Profiles;
 using Test.Moq;
 
 namespace Test.Cartitems.Commands
 {
     public class CartItemRequestHandlersTest
     {
+        private readonly IMapper _mapper;
         private readonly Mock<ICartItemRepository> _mockRepo;
         private readonly CartItemEntity _cartItem;
 
@@ -25,14 +29,22 @@ namespace Test.Cartitems.Commands
                 ItemStatus = "Pending"
             };
 
+            MapperConfiguration mapConfig = new(c =>
+            {
+                c.AddProfile<Profiles>();
+            });
+            _mapper = mapConfig.CreateMapper();
+
         }
 
         [Fact]
         public async Task Handle_Should_Add_Item()
         {
-            var handler = new AddItemsHandler(_mockRepo.Object);
+            var handler = new AddItemsHandler(_mockRepo.Object, _mapper);
 
-            var result = await handler.Handle(new AddCartItemCommand(_cartItem), CancellationToken.None);
+            CartItemDTO cartItem = _mapper.Map<CartItemDTO>(_cartItem);
+
+            var result = await handler.Handle(new AddCartItemCommand(cartItem), CancellationToken.None);
 
             var cartItems = await _mockRepo.Object.GetCartItems();
 
@@ -48,9 +60,11 @@ namespace Test.Cartitems.Commands
 
             foreach (var item in itemlist)
             {
-                var handler = new UpdateCartItemHandler(_mockRepo.Object);
+                var handler = new UpdateCartItemHandler(_mockRepo.Object, _mapper);
 
-                var result = await handler.Handle(new UpdateCartitemCommand(item), CancellationToken.None);
+                CartItemDTO cartItem = _mapper.Map<CartItemDTO>(item);
+
+                var result = await handler.Handle(new UpdateCartitemCommand(cartItem), CancellationToken.None);
 
                 result.ItemID.Should().Be(item.ItemID);
                 result.ItemName.Should().Be(item.ItemName);

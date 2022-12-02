@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Queries;
 
@@ -36,7 +37,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<UserEntity> Post(UserEntity users)
+        public async Task<UserEntity> Post(UserDTO users)
         {
             _logger.LogInformation("POST user executing...");
             try

@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Bogus.Extensions;
 using Moq;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
 

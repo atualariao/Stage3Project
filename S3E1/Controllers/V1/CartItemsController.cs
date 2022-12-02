@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Queries;
 
@@ -51,7 +52,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<CartItemEntity> Post(CartItemEntity cartItems)
+        public async Task<CartItemEntity> Post(CartItemDTO cartItems)
         {
             _logger.LogInformation("POST cart items executing...");
             try
@@ -66,7 +67,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPut]
-        public async Task<CartItemEntity> Update(CartItemEntity cartItems)
+        public async Task<CartItemEntity> Update(CartItemDTO cartItems)
         {
             _logger.LogInformation("PUT/UPDATE cart item executing...");
             try
