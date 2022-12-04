@@ -1,10 +1,15 @@
-﻿using Bogus;
+﻿using AutoMapper;
+using Bogus;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using S3E1.Commands;
+using S3E1.Data;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
+using S3E1.Profiles;
 using Shouldly;
 using Test.Moq;
 
@@ -40,20 +45,34 @@ namespace UnitTest.Checkout.Commands
 
         private readonly Mock<ICheckoutRepository> _mockRepo;
         private readonly OrderEntity _orderEntity;
+        private readonly IMapper _mapper;
+        //private readonly DbContext _dbContext;
 
         public CheckoutRequestHandlersTest()
         {
             _mockRepo = MockCheckoutRepository.CheckoutRepo();
 
             _orderEntity = GenerateOrder();
+
+            MapperConfiguration mapConfig = new(c =>
+            {
+                c.AddProfile<Profiles>();
+            });
+            _mapper = mapConfig.CreateMapper();
+
+            // Initialize DBContext (inMemory)
+            //DbContext dbContextOptionsdbContextOptions = new DbContext();
+            //var connection = dbContextOptionsdbContextOptions.UseSqlServer("DefaultConnection");
+            //_dbContext = connection.Options;
         }
 
         [Fact]
         public async Task Handle_Should_Checkout_Order()
         {
-            var handler = new CheckoutHandler(_mockRepo.Object);
+            var handler = new CheckoutHandler(_mockRepo.Object, _mapper); // _dbContext
 
-            var result = await handler.Handle(new CheckOutCommand(_orderEntity), CancellationToken.None);
+            OrderDTO orderDTO = _mapper.Map<OrderDTO>(_orderEntity);
+            var result = await handler.Handle(new CheckOutCommand(orderDTO), CancellationToken.None);
 
             result.Should().BeOfType<OrderEntity>();
             result.ShouldNotBeNull();

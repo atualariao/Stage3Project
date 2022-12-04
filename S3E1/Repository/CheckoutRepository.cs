@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
 using System.Data;
@@ -10,8 +12,6 @@ namespace S3E1.Repository
     {
         private readonly DbContext _dbContext;
         private readonly ILogger<CheckoutRepository> _logger;
-        private IDbConnection _connection;
-
         public CheckoutRepository(DbContext context, ILogger<CheckoutRepository> logger)
         {
             _logger = logger;
@@ -22,35 +22,11 @@ namespace S3E1.Repository
         {
             try
             {
-                var cartItems = _dbContext.Set<CartItemEntity>().ToList();
-
-                var TotalPrice = _dbContext.Set<CartItemEntity>()
-                                        .Where(item => item.ItemStatus == "Pending")
-                                        .Sum(item => item.ItemPrice);
-
-                var newItems = _dbContext.Set<CartItemEntity>().Where(item => item.ItemStatus == "Pending").ToList();
-
-                var userOrder = new OrderEntity()
-                {
-                    OrderID = orders.OrderID,
-                    UserOrderId = orders.UserOrderId,
-                    OrderTotalPrice = TotalPrice,
-                    OrderCreatedDate = DateTime.Now,
-                    CartItemEntity = newItems
-
-                };
-                foreach (var item in cartItems)
-                {
-                    if (item.ItemStatus == "Pending")
-                    {
-                        item.ItemStatus = "Processed";
-                    }
-                }
-                _dbContext.Set<OrderEntity>().Add(userOrder);
+                _dbContext.Set<OrderEntity>().Add(orders);
                 _dbContext.SaveChanges();
 
-                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(userOrder).ToUpper());
-                return userOrder;
+                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
+                return orders;
             }
             catch (Exception ex)
             {

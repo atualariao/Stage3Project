@@ -83,15 +83,19 @@ namespace S3E1.Repository
         {
             try
             {
-                var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
-                order.OrderID = orders.OrderID;
-                order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
-                order.CartItemEntity = orders.CartItemEntity;
+                if (orders != null)
+                {
+                    var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
+                    order.OrderID = orders.OrderID;
+                    order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
+                    order.CartItemEntity = orders.CartItemEntity;
 
-                await _dbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
+                }
 
-                _logger.LogInformation("Order Updated from database, Object: {0}", JsonConvert.SerializeObject(order).ToUpper());
-                return order;
+
+                _logger.LogInformation("Order Updated from database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
+                return orders;
             }
             catch (Exception ex)
             {

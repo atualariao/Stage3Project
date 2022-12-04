@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 
 namespace S3E1.Controllers.V1
@@ -9,19 +11,22 @@ namespace S3E1.Controllers.V1
     [Route("api/checkout")]
     [Produces("application/json")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class CheckOutController : ControllerBase
     {
         private readonly ISender _sender;
         private readonly ILogger<CheckOutController> _logger;
+        private readonly IMapper _mapper;
 
-        public CheckOutController(ISender sender, ILogger<CheckOutController> logger)
+        public CheckOutController(ISender sender, ILogger<CheckOutController> logger, IMapper mapper)
         {
             _logger = logger;
             _sender = sender;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderEntity>> Checkout(OrderEntity orders)
+        public async Task<ActionResult<OrderEntity>> Checkout(OrderDTO orders)
         {
             _logger.LogInformation("POST order checkout executing...");
             try

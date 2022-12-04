@@ -10,6 +10,7 @@ namespace S3E1.Controllers.V1
     [Route("api/cart-items")]
     [Produces("application/json")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class CartItemsController : ControllerBase
     {
         private ISender _sender;

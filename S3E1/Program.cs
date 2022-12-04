@@ -38,15 +38,15 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = ApiVersion.Default;
     options.ReportApiVersions = true;
 
-    //Controller Versions
-    options.Conventions.Controller<CartItemsController>()
-    .HasApiVersion(1, 0);
-    options.Conventions.Controller<CheckOutController>()
-    .HasApiVersion(1, 0);
-    options.Conventions.Controller<OrderController>()
-    .HasApiVersion(1, 0);
-    options.Conventions.Controller<UserController>()
-    .HasApiVersion(1, 0);
+    ////Controller Versions
+    //options.Conventions.Controller<CartItemsController>()
+    //.HasApiVersion(1, 0);
+    //options.Conventions.Controller<CheckOutController>()
+    //.HasApiVersion(1, 0);
+    //options.Conventions.Controller<OrderController>()
+    //.HasApiVersion(1, 0);
+    //options.Conventions.Controller<UserController>()
+    //.HasApiVersion(1, 0);
 });
 
 //Serilog Logger

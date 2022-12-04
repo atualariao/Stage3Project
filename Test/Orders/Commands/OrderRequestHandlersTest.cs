@@ -1,9 +1,12 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Moq;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
+using S3E1.Profiles;
 using Test.Moq;
 
 namespace UnitTest.Orders.Commands
@@ -11,10 +14,16 @@ namespace UnitTest.Orders.Commands
     public class CartItemRequestHandlersTest
     {
         private readonly Mock<IOrderRepository> _mockRepo;
+        private readonly IMapper _mapper;
 
         public CartItemRequestHandlersTest()
         {
             _mockRepo = MockOrderEntityRepository.OrderRepo();
+            MapperConfiguration mapConfig = new(c =>
+            {
+                c.AddProfile<Profiles>();
+            });
+            _mapper = mapConfig.CreateMapper();
         }
 
         [Fact]
@@ -26,7 +35,9 @@ namespace UnitTest.Orders.Commands
             {
                 var handler = new UpdateOrderHandler(_mockRepo.Object);
 
-                var result = await handler.Handle(new UpdateOrderCommand(order), CancellationToken.None);
+                OrderDTO orderDTO = _mapper.Map<OrderDTO>(order);
+
+                var result = await handler.Handle(new UpdateOrderCommand(orderDTO), CancellationToken.None);
             }
             orders.Count.Should().Be(4);
         }

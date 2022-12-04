@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
+using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Queries;
 
@@ -9,6 +10,7 @@ namespace S3E1.Controllers.V1
     [Route("api/orders")]
     [Produces("application/json")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class OrderController : ControllerBase
     {
         private readonly ISender _sender;
@@ -51,7 +53,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPut]
-        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
+        public async Task<OrderEntity> UpdateOrder(OrderDTO orders)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
             try
