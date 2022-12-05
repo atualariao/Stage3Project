@@ -8,10 +8,10 @@ using S3E1.Entities;
 
 namespace S3E1.Controllers.V1
 {
-    [Route("api/checkout")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/checkout")]
     [Produces("application/json")]
     [ApiController]
-    [ApiVersion("1.0")]
     public class CheckOutController : ControllerBase
     {
         private readonly ISender _sender;

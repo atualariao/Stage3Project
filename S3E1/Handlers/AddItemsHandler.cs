@@ -22,10 +22,8 @@ namespace S3E1.Handlers
         {
             var item = new CartItemEntity()
             {
-                ItemID = Guid.NewGuid(),
                 ItemName = request.CartItems.ItemName,
                 ItemPrice = request.CartItems.ItemPrice,
-                ItemStatus = "Pending"
             };
 
             return await _cartItemRepository.Createitem(item);

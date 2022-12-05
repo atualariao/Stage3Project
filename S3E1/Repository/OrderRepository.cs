@@ -87,12 +87,13 @@ namespace S3E1.Repository
                 {
                     var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
                     order.OrderID = orders.OrderID;
+                    order.UserOrderId = orders.UserOrderId;
+                    order.OrderCreatedDate = orders.OrderCreatedDate;
                     order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
                     order.CartItemEntity = orders.CartItemEntity;
 
                     await _dbContext.SaveChangesAsync();
                 }
-
 
                 _logger.LogInformation("Order Updated from database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
                 return orders;

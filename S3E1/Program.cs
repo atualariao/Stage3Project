@@ -1,9 +1,13 @@
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using S3E1;
 using S3E1.Controllers.V1;
 using S3E1.Data;
@@ -13,6 +17,8 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
+
 //Autofac DIs
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     .ConfigureContainer<ContainerBuilder>(builder =>
@@ -20,33 +26,24 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
         builder.RegisterModule(new AutofacDependencyInjection());
     });
 
-// Add services to the container.
-
+//Add Controllers
 builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(Profiles).Assembly);
 
 //API Versioning
-builder.Services.AddApiVersioning(options =>
+builder.Services.AddApiVersioning(opt =>
 {
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = ApiVersion.Default;
-    options.ReportApiVersions = true;
-
-    ////Controller Versions
-    //options.Conventions.Controller<CartItemsController>()
-    //.HasApiVersion(1, 0);
-    //options.Conventions.Controller<CheckOutController>()
-    //.HasApiVersion(1, 0);
-    //options.Conventions.Controller<OrderController>()
-    //.HasApiVersion(1, 0);
-    //options.Conventions.Controller<UserController>()
-    //.HasApiVersion(1, 0);
+    opt.ReportApiVersions = true;
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.DefaultApiVersion = ApiVersion.Default;
+    opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+builder.Services.AddVersionedApiExplorer(setup =>
+{
+    setup.GroupNameFormat = "'v'VVV";
+    setup.SubstituteApiVersionInUrl = true;
 });
 
 //Serilog Logger
@@ -64,6 +61,10 @@ builder.Services.AddScoped<DbContext>(s =>
     return dbContextFactory.CreateDbContext();
 });
 
+//builder.Services.AddDbContextFactory<AppDataContext>(o =>
+//           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+//           ServiceLifetime.Scoped);
+
 ////DB Context
 //builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
 //    builder.Configuration.GetConnectionString("DefaultConnection")
@@ -72,8 +73,28 @@ builder.Services.AddScoped<DbContext>(s =>
 //Auth
 //builder.Services.AddAuthentication();
 
-//Swagger UI Auth
-builder.Services.AddSwaggerGen();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "WebApi E-commerce",
+        Description = "A simple example for swagger api information",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Adriane Troy U. Alariao",
+            Email = "atualariao.itd.pps@gmail.com",
+            Url = new Uri("https://example.com"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Use under OpenApiLicense",
+            Url = new Uri("https://example.com/license"),
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -81,9 +102,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    app.UseSwaggerUI(options =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Stage 3 Exercise 1");
+        var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+        foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint(
+                    $"/swagger/{description.GroupName}/swagger.json",
+                    description.ApiVersion.ToString()
+                );
+        }
     });
 }
 

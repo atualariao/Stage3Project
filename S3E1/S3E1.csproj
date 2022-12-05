@@ -18,6 +18,7 @@
 		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
 		<PackageReference Include="Microsoft.data.sqlclient" Version="5.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />

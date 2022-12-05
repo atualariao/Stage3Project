@@ -21,7 +21,6 @@ namespace S3E1.Handlers
         {
             var user = new UserDTO()
             {
-                UserID = Guid.NewGuid(),
                 Username = request.newUser.Username
             };
 

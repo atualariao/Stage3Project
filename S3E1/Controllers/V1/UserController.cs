@@ -7,10 +7,10 @@ using S3E1.Queries;
 
 namespace S3E1.Controllers.V1
 {
-    [Route("api/users")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/users")]
     [Produces("application/json")]
     [ApiController]
-    [ApiVersion("1.0")]
     public class UserController : ControllerBase
     {
         private readonly ISender _sender;

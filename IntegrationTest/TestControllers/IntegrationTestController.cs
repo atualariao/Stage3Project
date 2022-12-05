@@ -32,7 +32,7 @@ namespace IntegrationTest.TestControllers
 
             //POST CART ITEM
             // Arrange
-            string url = "api/cart-items";
+            string url = "api/v1/cart-items";
             var item = new CartItemDTO
             {
                 ItemName = "Item Name",
@@ -112,10 +112,9 @@ namespace IntegrationTest.TestControllers
         {
             //POST CART ITEM
             // Arrange
-            string url = "api/users";
+            string url = "api/v1/users";
             var user = new UserEntity
             {
-                UserID = Guid.NewGuid(),
                 Username = "Username"
             };
 
@@ -146,22 +145,20 @@ namespace IntegrationTest.TestControllers
         {
             //POST ORDER
             // Arrange
-            string url = "api/checkout";
-            string orderUrl = "api/orders";
-            string userUrl = "api/users";
-            string itemUrl = "api/cart-items";
+            string url = "api/v1/checkout";
+            string orderUrl = "api/v1/orders";
+            string userUrl = "api/v1/users";
+            string itemUrl = "api/v1/cart-items";
 
             // UserEntity
             var user = new UserEntity
             {
-                UserID = Guid.NewGuid(),
                 Username = "Username"
             };
 
             // CartItem
             var cartItem = new CartItemEntity
             {
-                ItemID = Guid.NewGuid(),
                 ItemName = "Item 1",
                 ItemPrice = 5.25,
                 OrderEntityOrderID = null
@@ -179,11 +176,9 @@ namespace IntegrationTest.TestControllers
             // Checkout
             var orderCheckout = new OrderEntity
             {
-                OrderID = Guid.NewGuid(),
                 UserOrderId = getUser.UserID,
                 User = getUser,
                 OrderTotalPrice = 5.5,
-                OrderCreatedDate = DateTime.Now,
                 CartItemEntity = new List<CartItemEntity>
                 {
                     getItem
@@ -234,7 +229,6 @@ namespace IntegrationTest.TestControllers
             {
                 OrderID = orderCheckout.OrderID,
                 UserOrderId = orderCheckout.UserOrderId,
-                User = orderCheckout.User,
                 OrderTotalPrice = orderCheckout.OrderTotalPrice,
                 OrderCreatedDate = orderCheckout.OrderCreatedDate,
                 CartItemEntity = new List<CartItemEntity> { updateItemInOrder }
@@ -251,7 +245,6 @@ namespace IntegrationTest.TestControllers
             updatedOrder.OrderID.Should().Be(fetchedOrder.OrderID);
             updatedOrder.OrderTotalPrice.Should().NotBe(fetchedOrder.OrderTotalPrice);
             updatedOrder.OrderCreatedDate.Should().Be(fetchedOrder.OrderCreatedDate);
-            updatedOrder.UserOrderId.Should().Be(fetchedOrder.UserOrderId);
             updatedOrder.CartItemEntity.Should().NotBeEquivalentTo(fetchedOrder.CartItemEntity);
 
             //DELETE ORDER

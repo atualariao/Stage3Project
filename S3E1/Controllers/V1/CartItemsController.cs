@@ -7,10 +7,10 @@ using S3E1.Queries;
 
 namespace S3E1.Controllers.V1
 {
-    [Route("api/cart-items")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/cart-items")]
     [Produces("application/json")]
     [ApiController]
-    [ApiVersion("1.0")]
     public class CartItemsController : ControllerBase
     {
         private ISender _sender;

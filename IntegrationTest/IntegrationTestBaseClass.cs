@@ -21,7 +21,7 @@ namespace IntegrationTest
                 {
                     builder.ConfigureServices(services =>
                     {
-                        services.RemoveAll(typeof(AppDataContext));
+                        services.RemoveAll(typeof(DbContextOptions<AppDataContext>));
                         services.AddScoped<DbContext>(s =>
                         {
                             var dbContextFactory = new TestDbFactory();

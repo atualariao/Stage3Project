@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace IntegrationTest
 {
-    public class TestDbFactory : IDbContextFactory
+    public class TestDbFactory
     {
         public AppDataContext CreateDbContext()
         {
             var builder = new DbContextOptionsBuilder<AppDataContext>();
             builder.UseSqlite("DataSource=file::memory:");
-            //builder.UseInMemoryDatabase("TestDB");
 
             return new AppDataContext(builder.Options);
 ;        }

@@ -7,7 +7,7 @@ namespace S3E1.Entities
     public class OrderEntity
     {
         [Key]
-        public Guid OrderID { get; set; }
+        public Guid OrderID { get; set; } = Guid.NewGuid();
         [ForeignKey("User")]
         public Guid UserOrderId { get; set; }
         public UserEntity User { get; set; } = null!;

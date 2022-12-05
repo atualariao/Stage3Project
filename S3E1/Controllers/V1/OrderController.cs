@@ -7,10 +7,10 @@ using S3E1.Queries;
 
 namespace S3E1.Controllers.V1
 {
-    [Route("api/orders")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/orders")]
     [Produces("application/json")]
     [ApiController]
-    [ApiVersion("1.0")]
     public class OrderController : ControllerBase
     {
         private readonly ISender _sender;
@@ -53,7 +53,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPut]
-        public async Task<OrderEntity> UpdateOrder(OrderDTO orders)
+        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
             try

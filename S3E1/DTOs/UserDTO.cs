@@ -2,7 +2,7 @@
 {
     public class UserDTO
     {
-        public Guid UserID { get; set; }
+        public Guid UserID { get; set; } = Guid.NewGuid();
         public string? Username { get; set; }
     }
 }

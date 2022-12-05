@@ -37,7 +37,9 @@ namespace UnitTest.Orders.Commands
 
                 OrderDTO orderDTO = _mapper.Map<OrderDTO>(order);
 
-                var result = await handler.Handle(new UpdateOrderCommand(orderDTO), CancellationToken.None);
+                OrderEntity orderEntity = _mapper.Map<OrderEntity>(orderDTO);
+
+                var result = await handler.Handle(new UpdateOrderCommand(orderEntity), CancellationToken.None);
             }
             orders.Count.Should().Be(4);
         }

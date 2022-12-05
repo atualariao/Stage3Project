@@ -46,7 +46,6 @@ namespace UnitTest.Checkout.Commands
         private readonly Mock<ICheckoutRepository> _mockRepo;
         private readonly OrderEntity _orderEntity;
         private readonly IMapper _mapper;
-        //private readonly DbContext _dbContext;
 
         public CheckoutRequestHandlersTest()
         {
@@ -59,17 +58,12 @@ namespace UnitTest.Checkout.Commands
                 c.AddProfile<Profiles>();
             });
             _mapper = mapConfig.CreateMapper();
-
-            // Initialize DBContext (inMemory)
-            //DbContext dbContextOptionsdbContextOptions = new DbContext();
-            //var connection = dbContextOptionsdbContextOptions.UseSqlServer("DefaultConnection");
-            //_dbContext = connection.Options;
         }
 
         [Fact]
         public async Task Handle_Should_Checkout_Order()
         {
-            var handler = new CheckoutHandler(_mockRepo.Object, _mapper); // _dbContext
+            var handler = new CheckoutHandler(_mockRepo.Object, _mapper);
 
             OrderDTO orderDTO = _mapper.Map<OrderDTO>(_orderEntity);
             var result = await handler.Handle(new CheckOutCommand(orderDTO), CancellationToken.None);

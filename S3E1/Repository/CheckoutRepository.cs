@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using S3E1.DTOs;
@@ -22,11 +23,32 @@ namespace S3E1.Repository
         {
             try
             {
-                _dbContext.Set<OrderEntity>().Add(orders);
+                var cartItems = _dbContext.Set<CartItemEntity>().ToList();
+
+                var TotalPrice = _dbContext.Set<CartItemEntity>()
+                                        .Where(item => item.ItemStatus == "Pending")
+                                        .Sum(item => item.ItemPrice);
+
+                var newItems = _dbContext.Set<CartItemEntity>().Where(item => item.ItemStatus == "Pending").ToList();
+                foreach (var item in cartItems)
+                {
+                    if (item.ItemStatus == "Pending")
+                    {
+                        item.ItemStatus = "Processed";
+                    }
+                }
+                var userOrder = new OrderEntity()
+                {
+                    UserOrderId = orders.UserOrderId,
+                    OrderTotalPrice = TotalPrice,
+                    CartItemEntity = newItems,
+
+                };
+                _dbContext.Set<OrderEntity>().Add(userOrder);
                 _dbContext.SaveChanges();
 
-                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
-                return orders;
+                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(userOrder).ToUpper());
+                return userOrder;
             }
             catch (Exception ex)
             {

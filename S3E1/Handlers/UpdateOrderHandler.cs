@@ -16,6 +16,8 @@ namespace S3E1.Handlers
             var orderUpdate = new OrderEntity()
             {
                 OrderID = request.Orders.OrderID,
+                UserOrderId = request.Orders.UserOrderId,
+                OrderCreatedDate = request.Orders.OrderCreatedDate,
                 OrderTotalPrice = request.Orders.CartItemEntity.Sum(item => item.ItemPrice),
                 CartItemEntity = request.Orders.CartItemEntity
             };
