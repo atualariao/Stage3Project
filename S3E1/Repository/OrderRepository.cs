@@ -59,7 +59,7 @@ namespace S3E1.Repository
             try
             {
                 var query = "SELECT * FROM Orders WHERE PrimaryID = @id;" +
-                                "SELECT * FROM CartItems WHERE PrimaryID = @id";
+                                "SELECT * FROM CartItems WHERE OrderPrimaryID = @id";
 
                 using (var connection = _dbContext.Database.GetDbConnection())
                 using (var multi = await connection.QueryMultipleAsync(query, new { id }))
@@ -89,7 +89,6 @@ namespace S3E1.Repository
                     order.PrimaryID = orders.PrimaryID;
                     order.UserPrimaryID = orders.UserPrimaryID;
                     order.User = orders.User;
-                    order.OrderCreatedDate = orders.OrderCreatedDate;
                     order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
                     order.CartItemEntity = orders.CartItemEntity;
 

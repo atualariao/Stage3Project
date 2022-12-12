@@ -16,7 +16,6 @@ namespace S3E1.Controllers.V1
     [ApiController]
     public class CheckOutController : ControllerBase
     {
-        private const string Message = "POST Method Order Checkout Error Details: {0}";
         private readonly ISender _sender;
         private readonly ILogger<CheckOutController> _logger;
         private readonly DbContext _dbContext;
@@ -29,8 +28,6 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Order>> Checkout(CheckOutDTO orders)
         {
             _logger.LogInformation("POST order checkout executing...");
@@ -45,7 +42,7 @@ namespace S3E1.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(Message, ex);
+                _logger.LogError("POST Method Order Checkout Error Details: {0}", ex);
                 throw;
             }
 
