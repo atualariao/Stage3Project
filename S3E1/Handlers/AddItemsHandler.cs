@@ -7,7 +7,7 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItemEntity>
+    public class AddItemsHandler : IRequestHandler<AddCartItemCommand, CartItem>
     {
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IMapper _mapper;
@@ -18,9 +18,9 @@ namespace S3E1.Handlers
             _mapper = mapper;
         }
 
-        public async Task<CartItemEntity> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
+        public async Task<CartItem> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
         {
-            var item = new CartItemEntity()
+            var item = new CartItem()
             {
                 ItemName = request.CartItems.ItemName,
                 ItemPrice = request.CartItems.ItemPrice,

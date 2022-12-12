@@ -6,18 +6,16 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, OrderEntity>
+    public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Order>
     {
         private readonly IOrderRepository _orderRepository;
         public UpdateOrderHandler(IOrderRepository orderRepository) => _orderRepository = orderRepository;
 
-        public async Task<OrderEntity> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Order> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderUpdate = new OrderEntity()
+            var orderUpdate = new Order()
             {
-                OrderID = request.Orders.OrderID,
-                UserOrderId = request.Orders.UserOrderId,
-                OrderCreatedDate = request.Orders.OrderCreatedDate,
+                UserPrimaryID = request.Orders.UserPrimaryID,
                 OrderTotalPrice = request.Orders.CartItemEntity.Sum(item => item.ItemPrice),
                 CartItemEntity = request.Orders.CartItemEntity
             };

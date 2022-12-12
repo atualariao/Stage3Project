@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace S3E1.Migrations
 {
-    public partial class initialMigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,17 +25,18 @@ namespace S3E1.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserPrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderTotalPrice = table.Column<double>(type: "float", nullable: false),
-                    OrderCreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    OrderCreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderID);
+                    table.PrimaryKey("PK_Orders", x => x.PrimaryID);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserOrderId",
-                        column: x => x.UserOrderId,
+                        name: "FK_Orders_Users_UserPrimaryID",
+                        column: x => x.UserPrimaryID,
                         principalTable: "Users",
                         principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
@@ -46,30 +47,30 @@ namespace S3E1.Migrations
                 columns: table => new
                 {
                     ItemID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemPrice = table.Column<double>(type: "float", nullable: false),
-                    ItemStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderEntityOrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    OrderPrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CartItems", x => x.ItemID);
                     table.ForeignKey(
-                        name: "FK_CartItems_Orders_OrderEntityOrderID",
-                        column: x => x.OrderEntityOrderID,
+                        name: "FK_CartItems_Orders_OrderPrimaryID",
+                        column: x => x.OrderPrimaryID,
                         principalTable: "Orders",
-                        principalColumn: "OrderID");
+                        principalColumn: "PrimaryID");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_OrderEntityOrderID",
+                name: "IX_CartItems_OrderPrimaryID",
                 table: "CartItems",
-                column: "OrderEntityOrderID");
+                column: "OrderPrimaryID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserOrderId",
+                name: "IX_Orders_UserPrimaryID",
                 table: "Orders",
-                column: "UserOrderId");
+                column: "UserPrimaryID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -23,8 +23,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.11">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.0.0" />	
@@ -32,9 +32,9 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
 		</ItemGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<InternalsVisibleTo Include="IntegrationTest" />
 		<InternalsVisibleTo Include="UnitTest" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 </Project>

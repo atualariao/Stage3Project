@@ -11,7 +11,6 @@ namespace S3E1.Repository
     {
         private readonly DbContext _dbContext;
         private readonly ILogger<UserRepository> _logger;
-        private IDbConnection _connection;
 
         public UserRepository(DbContext dbContext, ILogger<UserRepository> logger)
         {
@@ -19,19 +18,19 @@ namespace S3E1.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<UserEntity> GetUserById(Guid id)
+        public async Task<User> GetUserById(Guid id)
         {
             try
             {
                 var query = "SELECT * FROM Users WHERE UserID = @id;" +
-                                "SELECT * FROM Orders WHERE UserOrderId = @id";
+                                "SELECT * FROM Orders WHERE UserPrimaryID = @id";
 
                 using (var connection = _dbContext.Database.GetDbConnection())
                 using (var multi = await connection.QueryMultipleAsync(query, new { id }))
                 {
-                    var user = await multi.ReadSingleOrDefaultAsync<UserEntity>();
+                    var user = await multi.ReadSingleOrDefaultAsync<User>();
                     if (user != null)
-                        user.Orders = (await multi.ReadAsync<OrderEntity>()).ToList();
+                        user.Orders = (await multi.ReadAsync<Order>()).ToList();
 
                     _logger.LogInformation("User retrieved from database, Guid: {0}", user.UserID.ToString().ToUpper());
                     return user;
@@ -44,11 +43,11 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<UserEntity> CreateUser(UserEntity user)
+        public async Task<User> CreateUser(User user)
         {
             try
             {
-                _dbContext.Set<UserEntity>().Add(user);
+                _dbContext.Set<User>().Add(user);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("New User Created in the Database, Object: {0}", JsonConvert.SerializeObject(user).ToUpper());

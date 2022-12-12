@@ -1,8 +1,16 @@
-﻿namespace S3E1.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace S3E1.DTOs
 {
-    public class UserDTO
+    public class CreateUserDTO
     {
-        public Guid UserID { get; set; } = Guid.NewGuid();
-        public string? Username { get; set; }
+        [Required]
+        public string Username { get; set; } = null!;
     }
+
+    public class UserDTO : CreateUserDTO
+    {
+        public Guid UserID { get; set; }
+    }
+
 }

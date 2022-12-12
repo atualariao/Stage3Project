@@ -23,7 +23,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<List<CartItemEntity>> Get()
+        public async Task<List<CartItemDTO>> Get()
         {
             _logger.LogInformation("GET all cart items executing...");
             try
@@ -38,7 +38,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpGet("{id}")]
-        public async Task<CartItemEntity> Get(Guid id)
+        public async Task<CartItem> Get(Guid id)
         {
             _logger.LogInformation("GET cart item by Guid executing...");
             try
@@ -53,7 +53,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<CartItemEntity> Post(CartItemDTO cartItems)
+        public async Task<CartItem> Post([FromBody]CreateCartItemDTO cartItems)
         {
             _logger.LogInformation("POST cart items executing...");
             try
@@ -68,7 +68,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPut]
-        public async Task<CartItemEntity> Update(CartItemDTO cartItems)
+        public async Task<CartItem> Update(CartItemDTO cartItems)
         {
             _logger.LogInformation("PUT/UPDATE cart item executing...");
             try
@@ -83,7 +83,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpDelete("{id}")]
-        public async Task<CartItemEntity> Delete(Guid id)
+        public async Task<CartItem> Delete(Guid id)
         {
             _logger.LogInformation("DELETE cart item executing...");
             try

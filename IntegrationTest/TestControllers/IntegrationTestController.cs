@@ -229,6 +229,7 @@ namespace IntegrationTest.TestControllers
             {
                 OrderID = orderCheckout.OrderID,
                 UserOrderId = orderCheckout.UserOrderId,
+                User = orderCheckout.User,
                 OrderTotalPrice = orderCheckout.OrderTotalPrice,
                 OrderCreatedDate = orderCheckout.OrderCreatedDate,
                 CartItemEntity = new List<CartItemEntity> { updateItemInOrder }

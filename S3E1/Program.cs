@@ -1,18 +1,15 @@
 using Autofac;
-using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using S3E1;
-using S3E1.Controllers.V1;
+using S3E1.Configurations;
 using S3E1.Data;
 using S3E1.Middleware;
-using S3E1.Profiles;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +27,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 builder.Services.AddControllers();
 
 //AutoMapper
-builder.Services.AddAutoMapper(typeof(Profiles).Assembly);
+builder.Services.AddAutoMapper(typeof(AutoMapperInitializer).Assembly);
 
 //API Versioning
 builder.Services.AddApiVersioning(opt =>
@@ -65,10 +62,10 @@ builder.Services.AddScoped<DbContext>(s =>
 //           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
 //           ServiceLifetime.Scoped);
 
-////DB Context
-//builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
-//    builder.Configuration.GetConnectionString("DefaultConnection")
-//));
+//DB Context
+builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+));
 
 //Auth
 //builder.Services.AddAuthentication();

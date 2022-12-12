@@ -23,7 +23,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpGet("{id}")]
-        public async Task<UserEntity> Get(Guid id)
+        public async Task<User> Get(Guid id)
         {
             _logger.LogInformation("GET user by Guid executing...");
             try
@@ -38,7 +38,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<UserEntity> Post(UserDTO users)
+        public async Task<User> Post([FromBody]CreateUserDTO users)
         {
             _logger.LogInformation("POST user executing...");
             try

@@ -23,7 +23,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<List<OrderEntity>> Get()
+        public async Task<List<OrderDTO>> Get()
         {
             _logger.LogInformation("GET all orders executing");
             try
@@ -38,7 +38,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpGet("{id}")]
-        public async Task<OrderEntity> GetById(Guid id)
+        public async Task<Order> GetById(Guid id)
         {
             _logger.LogInformation("GET order by Guid executing");
             try
@@ -53,7 +53,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpPut]
-        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
+        public async Task<Order> UpdateOrder(Order orders)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
             try
@@ -68,7 +68,7 @@ namespace S3E1.Controllers.V1
         }
 
         [HttpDelete("{id}")]
-        public async Task<OrderEntity> DeleteOrder(Guid id)
+        public async Task<Order> DeleteOrder(Guid id)
         {
             _logger.LogInformation("DELETE order by Guid executing");
             try
