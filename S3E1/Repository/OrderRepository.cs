@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using S3E1.Data;
 using S3E1.Entities;
 using S3E1.IRepository;
 using System.Data;
@@ -9,11 +10,11 @@ namespace S3E1.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<OrderRepository> _logger;
         private IDbConnection _connection;
 
-        public OrderRepository(DbContext dbContext, ILogger<OrderRepository> logger)
+        public OrderRepository(AppDataContext dbContext, ILogger<OrderRepository> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -85,7 +86,7 @@ namespace S3E1.Repository
             {
                 if (orders != null)
                 {
-                    var order = await _dbContext.Set<Order>().FindAsync(orders.PrimaryID);
+                    var order = await _dbContext.Orders.FindAsync(orders.PrimaryID);
                     order.PrimaryID = orders.PrimaryID;
                     order.UserPrimaryID = orders.UserPrimaryID;
                     order.User = orders.User;
@@ -109,14 +110,14 @@ namespace S3E1.Repository
         {
             try
             {
-                var order = _dbContext.Set<Order>().Find(id);
-                var cartitem = _dbContext.Set<CartItem>().Where(item => item.OrderPrimaryID == order.PrimaryID);
+                var order = _dbContext.Orders.Find(id);
+                var cartitem = _dbContext.CartItems.Where(item => item.OrderPrimaryID == order.PrimaryID);
                 foreach (var item in cartitem)
                 {
-                    _dbContext.Set<CartItem>().Remove(item);
+                    _dbContext.CartItems.Remove(item);
                 }
 
-                _dbContext.Set<Order>().Remove(order);
+                _dbContext.Orders.Remove(order);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("Order has been removed from the database, Guid: {0}", order.PrimaryID.ToString().ToUpper());

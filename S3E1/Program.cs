@@ -51,21 +51,9 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-//DB Context Factory
-builder.Services.AddScoped<DbContext>(s =>
-{
-    var dbContextFactory = new MsSqlDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
-    return dbContextFactory.CreateDbContext();
-});
-
-//builder.Services.AddDbContextFactory<AppDataContext>(o =>
-//           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
-//           ServiceLifetime.Scoped);
-
-//DB Context
-builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-));
+builder.Services.AddDbContextFactory<AppDataContext>(o =>
+           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+           ServiceLifetime.Scoped);
 
 //Auth
 //builder.Services.AddAuthentication();

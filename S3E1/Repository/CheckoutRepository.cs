@@ -3,14 +3,15 @@ using Newtonsoft.Json;
 using S3E1.Entities;
 using S3E1.IRepository;
 using S3E1.Enumerations;
+using S3E1.Data;
 
 namespace S3E1.Repository
 {
     public class CheckoutRepository : ICheckoutRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<CheckoutRepository> _logger;
-        public CheckoutRepository(DbContext context, ILogger<CheckoutRepository> logger)
+        public CheckoutRepository(AppDataContext context, ILogger<CheckoutRepository> logger)
         {
             _logger = logger;
             _dbContext = context;
@@ -21,14 +22,14 @@ namespace S3E1.Repository
             try
             {
                 var userOrder = _dbContext
-                    .Set<Order>()
+                    .Orders
                     .FirstOrDefault(user => user.UserPrimaryID == orders.UserPrimaryID);
                 var itemList = _dbContext
-                    .Set<CartItem>()
+                    .CartItems
                     .Where(status => status.OrderStatus == OrderStatus.Pending)
                     .ToList();
                 var orderList = _dbContext
-                    .Set<Order>()
+                    .Orders
                     .Where(status => status.OrderStatus == OrderStatus.Pending && status.UserPrimaryID == orders.UserPrimaryID)
                     .ToList();
                 var TotalPrice = itemList
@@ -40,14 +41,14 @@ namespace S3E1.Repository
                         order.OrderTotalPrice = TotalPrice;
                         order.OrderStatus = OrderStatus.Processed;
 
-                        _dbContext.Set<Order>().Update(order);
+                        _dbContext.Orders.Update(order);
                     }
 
                     foreach (var item in itemList)
                     {
                         item.OrderStatus = OrderStatus.Processed;
 
-                        _dbContext.Set<CartItem>().Update(item);
+                        _dbContext.CartItems.Update(item);
                     }
                     await _dbContext.SaveChangesAsync();
                 }

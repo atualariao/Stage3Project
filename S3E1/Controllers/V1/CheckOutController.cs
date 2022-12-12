@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using S3E1.Commands;
+using S3E1.Data;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Enumerations;
@@ -18,9 +19,9 @@ namespace S3E1.Controllers.V1
     {
         private readonly ISender _sender;
         private readonly ILogger<CheckOutController> _logger;
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
 
-        public CheckOutController(ISender sender, ILogger<CheckOutController> logger, DbContext dbContext)
+        public CheckOutController(ISender sender, ILogger<CheckOutController> logger, AppDataContext dbContext)
         {
             _logger = logger;
             _sender = sender;
@@ -32,7 +33,7 @@ namespace S3E1.Controllers.V1
         {
             _logger.LogInformation("POST order checkout executing...");
             var order = _dbContext
-                .Set<Order>()
+                .Orders
                 .Where(user => user.UserPrimaryID == orders.UserPrimaryID && user.OrderStatus == OrderStatus.Pending)
                 .ToList();
             try

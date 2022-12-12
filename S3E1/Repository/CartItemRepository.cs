@@ -5,16 +5,17 @@ using Newtonsoft.Json;
 using S3E1.Entities;
 using S3E1.IRepository;
 using S3E1.Enumerations;
+using S3E1.Data;
 
 namespace S3E1.Repository
 {
     public class CartItemRepository : ICartItemRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<CartItemRepository> _logger;
         private readonly IMapper _mapper;
 
-        public CartItemRepository(DbContext dbContext, ILogger<CartItemRepository> logger, IMapper mapper)
+        public CartItemRepository(AppDataContext dbContext, ILogger<CartItemRepository> logger, IMapper mapper)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -66,13 +67,13 @@ namespace S3E1.Repository
             {
 
                 var user = _dbContext
-                    .Set<User>()
+                    .Users
                     .FirstOrDefault();
                 var userOrder = _dbContext
-                    .Set<Order>()
+                    .Orders
                     .FirstOrDefault(userOrder => userOrder.UserPrimaryID == user.UserID && userOrder.OrderStatus == OrderStatus.Pending);
                 var itemlist = _dbContext
-                    .Set<CartItem>()
+                    .CartItems
                     .Where(status => status.OrderStatus == OrderStatus.Pending)
                     .ToList();
                 itemlist.Add(cartItems);
@@ -83,7 +84,7 @@ namespace S3E1.Repository
                         userOrder.OrderTotalPrice = totalPrice;
                         userOrder.CartItemEntity = itemlist;
 
-                        _dbContext.Set<Order>().Update(userOrder);
+                        _dbContext.Orders.Update(userOrder);
                 }
                 else
                 {
@@ -95,7 +96,7 @@ namespace S3E1.Repository
                         CartItemEntity = itemlist
                     };
 
-                    _dbContext.Set<Order>().Add(order);
+                    _dbContext.Orders.Add(order);
                 }
                 await _dbContext.SaveChangesAsync();
 
@@ -115,7 +116,7 @@ namespace S3E1.Repository
             {
                 if (cartItems != null)
                 {
-                    var item = await _dbContext.Set<CartItem>().FindAsync(cartItems.ItemID);
+                    var item = await _dbContext.CartItems.FindAsync(cartItems.ItemID);
                     item.ItemName = cartItems.ItemName;
                     item.ItemPrice = cartItems.ItemPrice;
 
@@ -135,9 +136,9 @@ namespace S3E1.Repository
         {
             try
             {
-                var item = _dbContext.Set<CartItem>().Find(id);
+                var item = _dbContext.CartItems.Find(id);
 
-                _dbContext.Set<CartItem>().Remove(item);
+                _dbContext.CartItems.Remove(item);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("Cart Item Has been Removed from the database, Guid: {0}", item.ItemID.ToString().ToUpper());

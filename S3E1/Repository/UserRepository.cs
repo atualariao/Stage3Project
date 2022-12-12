@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using S3E1.Data;
 using S3E1.Entities;
 using S3E1.IRepository;
 using System.Data;
@@ -9,10 +10,10 @@ namespace S3E1.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(DbContext dbContext, ILogger<UserRepository> logger)
+        public UserRepository(AppDataContext dbContext, ILogger<UserRepository> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -47,7 +48,7 @@ namespace S3E1.Repository
         {
             try
             {
-                _dbContext.Set<User>().Add(user);
+                _dbContext.Users.Add(user);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("New User Created in the Database, Object: {0}", JsonConvert.SerializeObject(user).ToUpper());
