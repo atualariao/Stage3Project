@@ -57,7 +57,7 @@ builder.Services.AddDbContextFactory<AppDataContext>(o =>
            ServiceLifetime.Scoped);
 
 //Auth
-//builder.Services.AddAuthentication();
+builder.Services.AddAuthentication();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -80,6 +80,9 @@ builder.Services.AddSwaggerGen(c => {
             Url = new Uri("https://example.com/license"),
         }
     });
+
+    c.EnableAnnotations();
+     
 });
 
 var app = builder.Build();
@@ -105,7 +108,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseUserAuth();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

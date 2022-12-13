@@ -8,6 +8,7 @@ using S3E1.Data;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Enumerations;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace S3E1.Controllers.V1
 {
@@ -28,6 +29,9 @@ namespace S3E1.Controllers.V1
             _dbContext = dbContext;
         }
 
+        [SwaggerOperation(
+            Summary = "Updates order and cart item status to processed",
+            Description = "Updates order and cart item status to processed")]
         [HttpPost]
         public async Task<ActionResult<Order>> Checkout(CheckOutDTO orders)
         {
