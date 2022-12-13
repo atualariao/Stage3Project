@@ -12,7 +12,6 @@ namespace S3E1.Repository
     {
         private readonly AppDataContext _dbContext;
         private readonly ILogger<OrderRepository> _logger;
-        private IDbConnection _connection;
 
         public OrderRepository(AppDataContext dbContext, ILogger<OrderRepository> logger)
         {

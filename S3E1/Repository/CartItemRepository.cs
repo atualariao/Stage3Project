@@ -13,13 +13,11 @@ namespace S3E1.Repository
     {
         private readonly AppDataContext _dbContext;
         private readonly ILogger<CartItemRepository> _logger;
-        private readonly IMapper _mapper;
 
-        public CartItemRepository(AppDataContext dbContext, ILogger<CartItemRepository> logger, IMapper mapper)
+        public CartItemRepository(AppDataContext dbContext, ILogger<CartItemRepository> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         public async Task<List<CartItem>> GetCartItems()

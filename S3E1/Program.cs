@@ -51,6 +51,7 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
+//AppDataContext DI
 builder.Services.AddDbContextFactory<AppDataContext>(o =>
            o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
            ServiceLifetime.Scoped);

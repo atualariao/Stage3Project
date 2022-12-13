@@ -17,9 +17,9 @@ namespace S3E1.Controllers.V1
     [ApiController]
     public class CheckOutController : ControllerBase
     {
-        private readonly ISender _sender;
-        private readonly ILogger<CheckOutController> _logger;
         private readonly AppDataContext _dbContext;
+        private readonly ILogger<CheckOutController> _logger;
+        private readonly ISender _sender;
 
         public CheckOutController(ISender sender, ILogger<CheckOutController> logger, AppDataContext dbContext)
         {
