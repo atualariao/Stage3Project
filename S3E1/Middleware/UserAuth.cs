@@ -20,24 +20,21 @@ namespace S3E1.Middleware
         public async Task Invoke(HttpContext httpContext)
         {
             var userList = appDataContextappDataContext.Users.ToList();
-            if (userList.IsNullOrEmpty())
+            if (userList.Count == 0)
             {
                 httpContext.Response.StatusCode = 401;
                 await httpContext.Response.WriteAsync("Authentication Failed!");
                 _logger.LogInformation("User doesn't exist");
                 return;
-            } 
-            else
-            {
-                var user = userList.FirstOrDefault();
-                var UserID = user.UserID.ToString();
-
-                httpContext.TraceIdentifier = UserID;
-                string id = httpContext.TraceIdentifier;
-                httpContext.Response.Headers["x-user-id"] = id;
-
-                _logger.LogInformation($"User Authentication: {id}.");
             }
+            var user = userList.FirstOrDefault();
+            var UserID = user.UserID.ToString();
+
+            httpContext.TraceIdentifier = UserID;
+            string id = httpContext.TraceIdentifier;
+            httpContext.Response.Headers["x-user-id"] = id;
+
+            _logger.LogInformation($"User Authentication: {id}.");
 
             _logger.LogInformation("Authentication Complete.");
             await _next(httpContext);

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.DTOs;
@@ -9,6 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace S3E1.Controllers.V1
 {
+    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/cart-items")]
     [Produces("application/json")]

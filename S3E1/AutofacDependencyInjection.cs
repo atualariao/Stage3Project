@@ -14,6 +14,7 @@ namespace S3E1
             builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerLifetimeScope();
             builder.RegisterType<CheckoutRepository>().As<ICheckoutRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<AdminRepository>().As<IAdminRepository>().InstancePerLifetimeScope();
 
             // MediatR
             builder.RegisterMediatR(typeof(CartItemRepository).Assembly);
