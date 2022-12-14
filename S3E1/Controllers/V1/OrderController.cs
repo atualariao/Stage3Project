@@ -65,12 +65,12 @@ namespace S3E1.Controllers.V1
             Summary = "Updates items in an order",
             Description = "Updates items in an order")]
         [HttpPut]
-        public async Task<Order> UpdateOrder(Order orders)
+        public async Task<Order> UpdateOrder(OrderDTO orderDTO)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
             try
             {
-                return await _sender.Send(new UpdateOrderCommand(orders));
+                return await _sender.Send(new UpdateOrderCommand(orderDTO));
             }
             catch (Exception ex)
             {

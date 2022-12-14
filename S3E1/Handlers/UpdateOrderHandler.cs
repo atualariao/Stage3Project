@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using S3E1.Commands;
 using S3E1.DTOs;
 using S3E1.Entities;
@@ -9,19 +10,24 @@ namespace S3E1.Handlers
     public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Order>
     {
         private readonly IOrderRepository _orderRepository;
-        public UpdateOrderHandler(IOrderRepository orderRepository) => _orderRepository = orderRepository;
-
+        private readonly IMapper _mapper;
+        public UpdateOrderHandler(IOrderRepository orderRepository, IMapper mapper)
+        {
+            _mapper = mapper;
+            _orderRepository = orderRepository;
+        }
         public async Task<Order> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderUpdate = new Order()
+            var orderUpdate = new OrderDTO()
             {
-                PrimaryID = request.Orders.PrimaryID,
-                UserPrimaryID = request.Orders.UserPrimaryID,
-                OrderTotalPrice = request.Orders.CartItemEntity.Sum(item => item.ItemPrice),
-                CartItemEntity = request.Orders.CartItemEntity
+                PrimaryID = request.OrderDTO.PrimaryID,
+                UserPrimaryID = request.OrderDTO.UserPrimaryID,
+                OrderTotalPrice = request.OrderDTO.CartItemEntity.Sum(item => item.ItemPrice),
+                CartItemEntity = request.OrderDTO.CartItemEntity
             };
 
-            return await _orderRepository.UpdateOrder(orderUpdate);
+            Order order = _mapper.Map<Order>(orderUpdate);
+            return await _orderRepository.UpdateOrder(order);
         }
     }
 }

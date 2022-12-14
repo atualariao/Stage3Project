@@ -9,12 +9,12 @@ namespace Test.Moq
 {
     public class MockCartItemEntityRepository
     {
-        public static List<CartItemEntity> GenerateItems()
+        public static List<CartItem> GenerateItems()
         {
-            Faker<CartItemEntity> itemsGenerator = new Faker<CartItemEntity>()
+            Faker<CartItem> itemsGenerator = new Faker<CartItem>()
                 .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
                 .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
-                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
+                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double(1.0, 100.0));
 
             return itemsGenerator.Generate(4);
         }
@@ -28,32 +28,32 @@ namespace Test.Moq
             //Get all items
             mockRepo.Setup(x => x.GetCartItems()).ReturnsAsync(items);
 
-            //Get specific item (by Id)
-            mockRepo.Setup(x => x.GetCartItemEntity(It.IsAny<Guid>())).ReturnsAsync((Guid guid) =>
-            {
-                return items.First(id => id.ItemID == guid);
-            });
+            ////Get specific item (by Id)
+            //mockRepo.Setup(x => x.GetCartItemEntity(It.IsAny<Guid>())).ReturnsAsync((Guid guid) =>
+            //{
+            //    return items.First(id => id.ItemID == guid);
+            //});
 
-            //Update Existing item (object)
-            mockRepo.Setup(x => x.Updateitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
-            {
-                return cart;
-            });
+            ////Update Existing item (object)
+            //mockRepo.Setup(x => x.Updateitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
+            //{
+            //    return cart;
+            //});
 
-            //Create new item
-            mockRepo.Setup(x => x.Createitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
-            {
-                items.Add(cart);
-                return cart;
-            });
+            ////Create new item
+            //mockRepo.Setup(x => x.Createitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
+            //{
+            //    items.Add(cart);
+            //    return cart;
+            //});
 
-            //Delete Cart Item
-            mockRepo.Setup(x => x.DeleteItem(It.IsAny<Guid>())).ReturnsAsync((Guid guid) =>
-            {
-                var item = items.First(id => id.ItemID == guid);
-                items.Remove(item);
-                return item;
-            });
+            ////Delete Cart Item
+            //mockRepo.Setup(x => x.DeleteItem(It.IsAny<Guid>())).ReturnsAsync((Guid guid) =>
+            //{
+            //    var item = items.First(id => id.ItemID == guid);
+            //    items.Remove(item);
+            //    return item;
+            //});
 
             return mockRepo;
         }

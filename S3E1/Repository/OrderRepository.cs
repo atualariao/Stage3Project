@@ -86,9 +86,8 @@ namespace S3E1.Repository
                 if (orders != null)
                 {
                     var order = await _dbContext.Orders.FindAsync(orders.PrimaryID);
-                    order.PrimaryID = orders.PrimaryID;
-                    order.UserPrimaryID = orders.UserPrimaryID;
-                    order.User = orders.User;
+                    var test = orders.PrimaryID;
+                    var test2 = orders.UserPrimaryID;
                     order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
                     order.CartItemEntity = orders.CartItemEntity;
 
