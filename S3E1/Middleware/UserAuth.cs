@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using S3E1.Data;
+﻿using S3E1.Data;
 
 namespace S3E1.Middleware
 {
@@ -7,24 +6,21 @@ namespace S3E1.Middleware
     public class UserAuth
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<UserAuth> _logger;
-        private readonly AppDataContext appDataContextappDataContext;
+        private readonly AppDataContext _appDataContextappDataContext;
 
-        public UserAuth(RequestDelegate next, ILogger<UserAuth> logger, AppDataContext appDataContextappDataContext)
+        public UserAuth(RequestDelegate next, AppDataContext appDataContextappDataContext)
         {
             _next = next;
-            _logger = logger;
-            this.appDataContextappDataContext = appDataContextappDataContext;
+            _appDataContextappDataContext = appDataContextappDataContext;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var userList = appDataContextappDataContext.Users.ToList();
+            var userList = _appDataContextappDataContext.Users.ToList();
             if (userList.Count == 0)
             {
                 httpContext.Response.StatusCode = 401;
                 await httpContext.Response.WriteAsync("Authentication Failed!");
-                _logger.LogInformation("User doesn't exist");
                 return;
             }
             var user = userList.FirstOrDefault();
@@ -34,9 +30,6 @@ namespace S3E1.Middleware
             string id = httpContext.TraceIdentifier;
             httpContext.Response.Headers["x-user-id"] = id;
 
-            _logger.LogInformation($"User Authentication: {id}.");
-
-            _logger.LogInformation("Authentication Complete.");
             await _next(httpContext);
         }
     }
