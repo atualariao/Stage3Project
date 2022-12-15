@@ -5,13 +5,13 @@ using S3E1.Queries;
 
 namespace S3E1.Handlers
 {
-    public class GetOrdersByIdHandler : IRequestHandler<GetOrdersByIdQuery, OrderEntity>
+    public class GetOrdersByIdHandler : IRequestHandler<GetOrdersByIdQuery, Order>
     {
         private readonly IOrderRepository _orderRepository;
 
         public GetOrdersByIdHandler(IOrderRepository orderRepository) => _orderRepository = orderRepository;
 
-        public Task<OrderEntity> Handle(GetOrdersByIdQuery request, CancellationToken cancellationToken)
+        public Task<Order> Handle(GetOrdersByIdQuery request, CancellationToken cancellationToken)
         {
             return _orderRepository.GetOrderById(request.id);
         }

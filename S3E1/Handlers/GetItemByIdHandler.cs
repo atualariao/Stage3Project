@@ -5,13 +5,13 @@ using S3E1.Queries;
 
 namespace S3E1.Handlers
 {
-    public class GetItemByIdHandler : IRequestHandler<GetItemByIdQuery, CartItemEntity>
+    public class GetItemByIdHandler : IRequestHandler<GetItemByIdQuery, CartItem>
     {
         private readonly ICartItemRepository _cartItemRepository;
 
         public GetItemByIdHandler(ICartItemRepository cartItemRepository) => _cartItemRepository = cartItemRepository;
 
-        public async Task<CartItemEntity> Handle(GetItemByIdQuery request, CancellationToken cancellationToken)
+        public async Task<CartItem> Handle(GetItemByIdQuery request, CancellationToken cancellationToken)
         {
             return await _cartItemRepository.GetCartItemEntity(request.Guid);
         }

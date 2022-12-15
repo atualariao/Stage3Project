@@ -5,10 +5,10 @@ namespace S3E1.IRepository
 {
     public interface ICartItemRepository
     {
-        public Task<List<CartItemEntity>> GetCartItems();
-        public Task<CartItemEntity> GetCartItemEntity(Guid id);
-        public Task<CartItemEntity> Createitem(CartItemEntity cartItems);
-        public Task<CartItemEntity> Updateitem(CartItemEntity cartItems);
-        public Task<CartItemEntity> DeleteItem(Guid id);
+        public Task<List<CartItem>> GetCartItems();
+        public Task<CartItem> GetCartItemEntity(Guid id);
+        public Task<CartItem> Createitem(CartItem cartItems);
+        public Task<CartItem> Updateitem(CartItem cartItems);
+        public Task<CartItem> DeleteItem(Guid id);
     }
 }

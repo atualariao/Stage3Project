@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using S3E1.Commands;
 using S3E1.DTOs;
 using S3E1.Entities;
@@ -6,23 +7,27 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, OrderEntity>
+    public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Order>
     {
         private readonly IOrderRepository _orderRepository;
-        public UpdateOrderHandler(IOrderRepository orderRepository) => _orderRepository = orderRepository;
-
-        public async Task<OrderEntity> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+        private readonly IMapper _mapper;
+        public UpdateOrderHandler(IOrderRepository orderRepository, IMapper mapper)
         {
-            var orderUpdate = new OrderEntity()
+            _mapper = mapper;
+            _orderRepository = orderRepository;
+        }
+        public async Task<Order> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+        {
+            var orderUpdate = new OrderDTO()
             {
-                OrderID = request.Orders.OrderID,
-                UserOrderId = request.Orders.UserOrderId,
-                OrderCreatedDate = request.Orders.OrderCreatedDate,
-                OrderTotalPrice = request.Orders.CartItemEntity.Sum(item => item.ItemPrice),
-                CartItemEntity = request.Orders.CartItemEntity
+                PrimaryID = request.OrderDTO.PrimaryID,
+                UserPrimaryID = request.OrderDTO.UserPrimaryID,
+                OrderTotalPrice = request.OrderDTO.CartItemEntity.Sum(item => item.ItemPrice),
+                CartItemEntity = request.OrderDTO.CartItemEntity
             };
 
-            return await _orderRepository.UpdateOrder(orderUpdate);
+            Order order = _mapper.Map<Order>(orderUpdate);
+            return await _orderRepository.UpdateOrder(order);
         }
     }
 }

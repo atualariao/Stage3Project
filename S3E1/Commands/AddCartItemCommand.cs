@@ -4,5 +4,5 @@ using S3E1.Entities;
 
 namespace S3E1.Commands
 {
-    public record AddCartItemCommand(CartItemDTO CartItems) : IRequest<CartItemEntity>;
+    public record AddCartItemCommand(CreateCartItemDTO CartItems) : IRequest<CartItem>;
 }

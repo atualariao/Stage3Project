@@ -1,61 +1,31 @@
 ﻿using AutoMapper;
-using Bogus;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using S3E1.Commands;
-using S3E1.Data;
 using S3E1.DTOs;
-using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
-using S3E1.Profiles;
+using S3E1.Entities;
 using Shouldly;
 using Test.Moq;
+using S3E1.Configurations;
+using S3E1.Enumerations;
 
 namespace UnitTest.Checkout.Commands
 {
     public class CheckoutRequestHandlersTest
     {
-        public static List<CartItemEntity> GenerateItems()
-        {
-            var items = new Faker<CartItemEntity>()
-            .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
-            .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
-            .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
-
-            return items.Generate(3);
-        }
-        public static OrderEntity GenerateOrder()
-        {
-            var userEntity = new Faker<UserEntity>()
-                .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
-                .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
-
-            Faker<OrderEntity> orderGenerator = new Faker<OrderEntity>()
-                .RuleFor(order => order.OrderID, bogus => bogus.Random.Guid())
-                .RuleFor(order => order.UserOrderId, bogus => bogus.Random.Guid())
-                .RuleFor(order => order.User, bogus => userEntity)
-                .RuleFor(order => order.OrderTotalPrice, bogus => bogus.Random.Double())
-                .RuleFor(order => order.OrderCreatedDate, bogus => bogus.Date.Recent())
-                .RuleFor(order => order.CartItemEntity, bogus => GenerateItems());
-
-            return orderGenerator;
-        }
 
         private readonly Mock<ICheckoutRepository> _mockRepo;
-        private readonly OrderEntity _orderEntity;
         private readonly IMapper _mapper;
 
         public CheckoutRequestHandlersTest()
         {
             _mockRepo = MockCheckoutRepository.CheckoutRepo();
 
-            _orderEntity = GenerateOrder();
-
             MapperConfiguration mapConfig = new(c =>
             {
-                c.AddProfile<Profiles>();
+                c.AddProfile<AutoMapperInitializer>();
             });
             _mapper = mapConfig.CreateMapper();
         }
@@ -65,14 +35,28 @@ namespace UnitTest.Checkout.Commands
         {
             var handler = new CheckoutHandler(_mockRepo.Object, _mapper);
 
-            OrderDTO orderDTO = _mapper.Map<OrderDTO>(_orderEntity);
+            var order = MockCheckoutRepository.GenerateOrder();
+
+            OrderDTO orderDTO = _mapper.Map<OrderDTO>(order);
+
+            orderDTO.OrderStatus = OrderStatus.Processed;
+
             var result = await handler.Handle(new CheckOutCommand(orderDTO), CancellationToken.None);
 
-            result.Should().BeOfType<OrderEntity>();
-            result.ShouldNotBeNull();
-            result.CartItemEntity.Count.Should().Be(3);
-            result.CartItemEntity.Should().NotBeNull();
+            OrderDTO resultDTO = _mapper.Map<OrderDTO>(result);
 
+            resultDTO.PrimaryID = orderDTO.PrimaryID;
+            resultDTO.OrderCreatedDate = orderDTO.OrderCreatedDate;
+            resultDTO.OrderCreatedDate = orderDTO.OrderCreatedDate;
+            resultDTO.OrderStatus = orderDTO.OrderStatus;
+            resultDTO.CartItemEntity = orderDTO.CartItemEntity;
+
+            resultDTO.Should().BeOfType<OrderDTO>();
+            resultDTO.ShouldNotBeNull();
+            resultDTO.OrderStatus.Should().Be(orderDTO.OrderStatus);
+            resultDTO.UserPrimaryID.Should().Be(orderDTO.UserPrimaryID);
+            resultDTO.CartItemEntity.Should().NotBeNull();
+            resultDTO.CartItemEntity.Count.Should().Be(3);
         }
     }
 }

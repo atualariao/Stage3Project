@@ -5,13 +5,13 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class DeleteCartItemsHandler : IRequestHandler<DeleteCartItemCommand, CartItemEntity>
+    public class DeleteCartItemsHandler : IRequestHandler<DeleteCartItemCommand, CartItem>
     {
         private readonly ICartItemRepository _cartItemRepository;
 
         public DeleteCartItemsHandler(ICartItemRepository cartItemRepository) => _cartItemRepository = cartItemRepository;
 
-        public async Task<CartItemEntity> Handle(DeleteCartItemCommand request, CancellationToken cancellationToken)
+        public async Task<CartItem> Handle(DeleteCartItemCommand request, CancellationToken cancellationToken)
         {
             return await _cartItemRepository.DeleteItem(request.id);
         }

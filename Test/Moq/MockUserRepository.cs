@@ -7,19 +7,19 @@ namespace Test.Moq
 {
     public static class MockUserRepository
     {
-        public static List<UserEntity> UserList = GenerateUsers();
-        public static List<UserEntity> GenerateUsers()
+        public static List<User> UserList = GenerateUsers();
+        public static List<User> GenerateUsers()
         {
-            var userEntity = new Faker<UserEntity>()
+            var User = new Faker<User>()
                 .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
                 .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
 
-            return userEntity.Generate(4);
+            return User.Generate(4);
         }
         public static Mock<IUserRepository> UserRepo()
         {
 
-            
+
             var mockRepo = new Mock<IUserRepository>();
 
             //Get specific order (by Id)
@@ -29,7 +29,7 @@ namespace Test.Moq
             });
 
             //Create new user
-            mockRepo.Setup(x => x.CreateUser(It.IsAny<UserEntity>())).ReturnsAsync((UserEntity user) =>
+            mockRepo.Setup(x => x.CreateUser(It.IsAny<User>())).ReturnsAsync((User user) =>
             {
                 UserList.Add(user);
                 return user;

@@ -27,7 +27,7 @@ namespace UnitTest.Users.Queries
 
             var result = await handler.Handle(new GetUserByIdQuery(user.UserID), CancellationToken.None);
 
-            result.Should().BeOfType<UserEntity>();
+            result.Should().BeOfType<User>();
             result.UserID.Should().Be(user.UserID);
             userList.Count.Should().Be(4);
         }

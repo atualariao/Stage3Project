@@ -2,11 +2,11 @@
 using FluentAssertions;
 using Moq;
 using S3E1.Commands;
+using S3E1.Configurations;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
-using S3E1.Profiles;
 using Test.Moq;
 
 namespace Test.Cartitems.Commands
@@ -15,23 +15,22 @@ namespace Test.Cartitems.Commands
     {
         private readonly IMapper _mapper;
         private readonly Mock<ICartItemRepository> _mockRepo;
-        private readonly CartItemEntity _cartItem;
+        private readonly CartItem _cartItem;
 
         public CartItemRequestHandlersTest()
         {
-            _mockRepo = MockCartItemEntityRepository.CartitemRepo();
+            _mockRepo = MockCartItemRepository.CartitemRepo();
 
-            _cartItem = new CartItemEntity()
+            _cartItem = new CartItem()
             {
                 ItemID = Guid.NewGuid(),
                 ItemName = "Test Item",
-                ItemPrice = 45.67,
-                ItemStatus = "Pending"
+                ItemPrice = 45.67
             };
 
             MapperConfiguration mapConfig = new(c =>
             {
-                c.AddProfile<Profiles>();
+                c.AddProfile<AutoMapperInitializer>();
             });
             _mapper = mapConfig.CreateMapper();
 
@@ -41,14 +40,13 @@ namespace Test.Cartitems.Commands
         public async Task Handle_Should_Add_Item()
         {
             var handler = new AddItemsHandler(_mockRepo.Object, _mapper);
+            CartItemDTO cartItemDTO = _mapper.Map<CartItemDTO>(_cartItem);
 
-            CartItemDTO cartItem = _mapper.Map<CartItemDTO>(_cartItem);
-
-            var result = await handler.Handle(new AddCartItemCommand(cartItem), CancellationToken.None);
+            var result = await handler.Handle(new AddCartItemCommand(cartItemDTO), CancellationToken.None);
 
             var cartItems = await _mockRepo.Object.GetCartItems();
 
-            result.Should().BeOfType<CartItemEntity>();
+            result.Should().BeOfType<CartItem>();
 
             cartItems.Count.Should().Be(5);
         }
@@ -64,11 +62,14 @@ namespace Test.Cartitems.Commands
 
                 CartItemDTO cartItem = _mapper.Map<CartItemDTO>(item);
 
+                cartItem.ItemName = "Updated Item Name";
+                cartItem.ItemPrice = 420.69;
+
                 var result = await handler.Handle(new UpdateCartitemCommand(cartItem), CancellationToken.None);
 
                 result.ItemID.Should().Be(item.ItemID);
-                result.ItemName.Should().Be(item.ItemName);
-                result.ItemPrice.Should().Be(item.ItemPrice);
+                result.ItemName.Should().Be(cartItem.ItemName);
+                result.ItemPrice.Should().Be(cartItem.ItemPrice);
             }
         }
 
@@ -83,7 +84,7 @@ namespace Test.Cartitems.Commands
 
             var result = await handler.Handle(new DeleteCartItemCommand(itemToDelete.ItemID), CancellationToken.None);
 
-            result.Should().BeOfType<CartItemEntity>();
+            result.Should().BeOfType<CartItem>();
             itemList.Count.Should().Be(3);
 
         }

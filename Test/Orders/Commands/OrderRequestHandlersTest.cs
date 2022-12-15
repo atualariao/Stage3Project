@@ -2,11 +2,11 @@
 using FluentAssertions;
 using Moq;
 using S3E1.Commands;
+using S3E1.Configurations;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
-using S3E1.Profiles;
 using Test.Moq;
 
 namespace UnitTest.Orders.Commands
@@ -18,10 +18,10 @@ namespace UnitTest.Orders.Commands
 
         public CartItemRequestHandlersTest()
         {
-            _mockRepo = MockOrderEntityRepository.OrderRepo();
+            _mockRepo = MockOrderRepository.OrderRepo();
             MapperConfiguration mapConfig = new(c =>
             {
-                c.AddProfile<Profiles>();
+                c.AddProfile<AutoMapperInitializer>();
             });
             _mapper = mapConfig.CreateMapper();
         }
@@ -33,13 +33,11 @@ namespace UnitTest.Orders.Commands
 
             foreach (var order in orders)
             {
-                var handler = new UpdateOrderHandler(_mockRepo.Object);
+                var handler = new UpdateOrderHandler(_mockRepo.Object, _mapper);
 
                 OrderDTO orderDTO = _mapper.Map<OrderDTO>(order);
 
-                OrderEntity orderEntity = _mapper.Map<OrderEntity>(orderDTO);
-
-                var result = await handler.Handle(new UpdateOrderCommand(orderEntity), CancellationToken.None);
+                var result = await handler.Handle(new UpdateOrderCommand(orderDTO), CancellationToken.None);
             }
             orders.Count.Should().Be(4);
         }
@@ -53,9 +51,9 @@ namespace UnitTest.Orders.Commands
 
             var handler = new DeleteOrderHandler(_mockRepo.Object);
 
-            var result = await handler.Handle(new DeleteOrderCommand(order.OrderID), CancellationToken.None);
+            var result = await handler.Handle(new DeleteOrderCommand(order.PrimaryID), CancellationToken.None);
 
-            result.Should().BeOfType<OrderEntity>();
+            result.Should().BeOfType<Order>();
             orders.Count.Should().Be(3);
         }
     }

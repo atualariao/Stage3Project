@@ -1,20 +1,18 @@
 ﻿using Bogus;
-using Bogus.Extensions;
 using Moq;
-using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
 
 namespace Test.Moq
 {
-    public class MockCartItemEntityRepository
+    public class MockCartItemRepository
     {
-        public static List<CartItemEntity> GenerateItems()
+        public static List<CartItem> GenerateItems()
         {
-            Faker<CartItemEntity> itemsGenerator = new Faker<CartItemEntity>()
+            Faker<CartItem> itemsGenerator = new Faker<CartItem>()
                 .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
                 .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
-                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
+                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double(1.0, 100.0));
 
             return itemsGenerator.Generate(4);
         }
@@ -35,13 +33,13 @@ namespace Test.Moq
             });
 
             //Update Existing item (object)
-            mockRepo.Setup(x => x.Updateitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
+            mockRepo.Setup(x => x.Updateitem(It.IsAny<CartItem>())).ReturnsAsync((CartItem cart) =>
             {
                 return cart;
             });
 
             //Create new item
-            mockRepo.Setup(x => x.Createitem(It.IsAny<CartItemEntity>())).ReturnsAsync((CartItemEntity cart) =>
+            mockRepo.Setup(x => x.Createitem(It.IsAny<CartItem>())).ReturnsAsync((CartItem cart) =>
             {
                 items.Add(cart);
                 return cart;

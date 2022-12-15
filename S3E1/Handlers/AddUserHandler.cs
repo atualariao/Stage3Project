@@ -7,7 +7,7 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class AddUserHandler : IRequestHandler<AddIUserCommand, UserEntity>
+    public class AddUserHandler : IRequestHandler<AddIUserCommand, User>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -17,15 +17,14 @@ namespace S3E1.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<UserEntity> Handle(AddIUserCommand request, CancellationToken cancellationToken)
+        public async Task<User> Handle(AddIUserCommand request, CancellationToken cancellationToken)
         {
-            var user = new UserDTO()
+            var user = new User()
             {
                 Username = request.newUser.Username
             };
 
-            UserEntity userEntity = _mapper.Map<UserEntity>(user);
-            return await _userRepository.CreateUser(userEntity);
+            return await _userRepository.CreateUser(user);
         }
     }
 }

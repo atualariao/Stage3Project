@@ -1,54 +1,60 @@
-﻿using AutoMapper;
-using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
-using System.Data;
+using S3E1.Enumerations;
+using S3E1.Data;
 
 namespace S3E1.Repository
 {
     public class CheckoutRepository : ICheckoutRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<CheckoutRepository> _logger;
-        public CheckoutRepository(DbContext context, ILogger<CheckoutRepository> logger)
+        public CheckoutRepository(AppDataContext context, ILogger<CheckoutRepository> logger)
         {
             _logger = logger;
             _dbContext = context;
         }
 
-        public async Task<OrderEntity> Checkout(OrderEntity orders)
+        public async Task<Order> Checkout(Order orders)
         {
             try
             {
-                var cartItems = _dbContext.Set<CartItemEntity>().ToList();
-
-                var TotalPrice = _dbContext.Set<CartItemEntity>()
-                                        .Where(item => item.ItemStatus == "Pending")
-                                        .Sum(item => item.ItemPrice);
-
-                var newItems = _dbContext.Set<CartItemEntity>().Where(item => item.ItemStatus == "Pending").ToList();
-                foreach (var item in cartItems)
+                var userOrder = _dbContext
+                    .Orders
+                    .FirstOrDefault(user => user.UserPrimaryID == orders.UserPrimaryID);
+                var itemList = _dbContext
+                    .CartItems
+                    .Where(status => status.OrderStatus == OrderStatus.Pending)
+                    .ToList();
+                var orderList = _dbContext
+                    .Orders
+                    .Where(status => status.OrderStatus == OrderStatus.Pending && status.UserPrimaryID == orders.UserPrimaryID)
+                    .ToList();
+                var TotalPrice = itemList
+                    .Sum(x => x.ItemPrice);
+                if (orders != null)
                 {
-                    if (item.ItemStatus == "Pending")
+                    foreach (var order in orderList)
                     {
-                        item.ItemStatus = "Processed";
+                        order.OrderTotalPrice = TotalPrice;
+                        order.OrderStatus = OrderStatus.Processed;
+
+                        _dbContext.Orders.Update(order);
                     }
+
+                    foreach (var item in itemList)
+                    {
+                        item.OrderStatus = OrderStatus.Processed;
+
+                        _dbContext.CartItems.Update(item);
+                    }
+                    await _dbContext.SaveChangesAsync();
                 }
-                var userOrder = new OrderEntity()
-                {
-                    UserOrderId = orders.UserOrderId,
-                    OrderTotalPrice = TotalPrice,
-                    CartItemEntity = newItems,
 
-                };
-                _dbContext.Set<OrderEntity>().Add(userOrder);
-                _dbContext.SaveChanges();
-
-                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(userOrder).ToUpper());
-                return userOrder;
+                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
+                return orders;
             }
             catch (Exception ex)
             {

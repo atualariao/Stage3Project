@@ -1,16 +1,13 @@
-using S3E1.Entities;
-using System.Text;
-using Newtonsoft.Json;
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
-using System.Security.Policy;
-using S3E1.Data;
-using Microsoft.Extensions.DependencyInjection;
-using S3E1.Commands;
 using AutoMapper;
 using S3E1.DTOs;
-using S3E1.Profiles;
+using S3E1.Entities;
+using S3E1.Configurations;
+using S3E1.Enumerations;
+using IntegrationTest.Data;
+using IntegrationTest.Handlers;
 
 namespace IntegrationTest.TestControllers
 {
@@ -21,7 +18,7 @@ namespace IntegrationTest.TestControllers
         {
             MapperConfiguration mapConfig = new(c =>
             {
-                c.AddProfile<Profiles>();
+                c.AddProfile<AutoMapperInitializer>();
             });
             _mapper = mapConfig.CreateMapper();
         }
@@ -29,6 +26,7 @@ namespace IntegrationTest.TestControllers
         [Fact]
         public async Task Test_Cartitem_Controller()
         {
+            _httpClient.DefaultRequestHeaders.Remove(TestAuthHandler.userId);
 
             //POST CART ITEM
             // Arrange
@@ -39,7 +37,7 @@ namespace IntegrationTest.TestControllers
                 ItemPrice = 55.5,
             };
 
-            CartItemEntity itemEntity = _mapper.Map<CartItemEntity>(item);
+            CartItem itemEntity = _mapper.Map<CartItem>(item);
             //Act
             var postResponse = await _httpClient.PostAsJsonAsync(url, itemEntity);
 
@@ -52,7 +50,7 @@ namespace IntegrationTest.TestControllers
 
             //GET ALL ITEMS
             // Arrange
-            var itemList = await _httpClient.GetFromJsonAsync<List<CartItemEntity>>(url);
+            var itemList = await _httpClient.GetFromJsonAsync<List<CartItem>>(url);
 
             //Assert
             var newAddedItem = itemList.First(i => i.ItemName == item.ItemName);
@@ -67,7 +65,7 @@ namespace IntegrationTest.TestControllers
             var urlWithId = url + "/" + id.ToString();
 
             // Act
-            var fetchedItem = await _httpClient.GetFromJsonAsync<CartItemEntity>(urlWithId);
+            var fetchedItem = await _httpClient.GetFromJsonAsync<CartItem>(urlWithId);
 
             // Assert
             newAddedItem.Should().BeEquivalentTo(fetchedItem);
@@ -81,20 +79,20 @@ namespace IntegrationTest.TestControllers
                 ItemPrice = fetchedItem.ItemPrice
             };
 
-            CartItemEntity itemDTO = _mapper.Map<CartItemEntity>(itemToUpdateRequest);
+            CartItem itemDTO = _mapper.Map<CartItem>(itemToUpdateRequest);
             // Act
             var itemUpdateResponse = await _httpClient.PutAsJsonAsync(url, itemDTO);
 
             // Assert
             itemUpdateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             itemUpdateResponse.Content.Should().NotBeNull();
-            var updatedItem = await itemUpdateResponse.Content.ReadFromJsonAsync<CartItemEntity>();
+            var updatedItem = await itemUpdateResponse.Content.ReadFromJsonAsync<CartItem>();
             updatedItem.Should().NotBeNull();
             updatedItem.ItemID.Should().Be(fetchedItem.ItemID);
             updatedItem.ItemName.Should().NotBe(fetchedItem.ItemName);
             updatedItem.ItemPrice.Should().Be(fetchedItem.ItemPrice);
-            updatedItem.ItemStatus.Should().Be(fetchedItem.ItemStatus);
-            updatedItem.OrderEntityOrderID.Should().Be(fetchedItem.OrderEntityOrderID);
+            updatedItem.OrderStatus.Should().Be(fetchedItem.OrderStatus);
+            updatedItem.OrderPrimaryID.Should().Be(fetchedItem.OrderPrimaryID);
 
             //DELETE CART ITEM BY ID
             // Act
@@ -103,7 +101,7 @@ namespace IntegrationTest.TestControllers
             // Assert
             deleteResponse.EnsureSuccessStatusCode();
             deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var deletedItem = await deleteResponse.Content.ReadFromJsonAsync<CartItemEntity>();
+            var deletedItem = await deleteResponse.Content.ReadFromJsonAsync<CartItem>();
             deletedItem.Should().BeEquivalentTo(updatedItem);
         }
 
@@ -113,7 +111,7 @@ namespace IntegrationTest.TestControllers
             //POST CART ITEM
             // Arrange
             string url = "api/v1/users";
-            var user = new UserEntity
+            var user = new User
             {
                 Username = "Username"
             };
@@ -124,7 +122,7 @@ namespace IntegrationTest.TestControllers
             //Assert
             postResponse.EnsureSuccessStatusCode();
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var newUser = await postResponse.Content.ReadFromJsonAsync<UserEntity>();
+            var newUser = await postResponse.Content.ReadFromJsonAsync<User>();
             newUser.Username.Should().Be(user.Username);
 
             //GET CART ITEM BY ID
@@ -133,7 +131,7 @@ namespace IntegrationTest.TestControllers
             var urlWithId = url + "/" + id.ToString();
 
             // Act
-            var fetcheduser = await _httpClient.GetFromJsonAsync<UserEntity>(urlWithId);
+            var fetcheduser = await _httpClient.GetFromJsonAsync<User>(urlWithId);
 
             // Assert
             newUser.Should().BeEquivalentTo(fetcheduser);
@@ -150,36 +148,36 @@ namespace IntegrationTest.TestControllers
             string userUrl = "api/v1/users";
             string itemUrl = "api/v1/cart-items";
 
-            // UserEntity
-            var user = new UserEntity
+            // User
+            var user = new User
             {
                 Username = "Username"
             };
 
             // CartItem
-            var cartItem = new CartItemEntity
+            var cartItem = new CartItem
             {
                 ItemName = "Item 1",
                 ItemPrice = 5.25,
-                OrderEntityOrderID = null
+                OrderPrimaryID = null
             };
 
             // Act
             // User
             var getUserResponse = await _httpClient.PostAsJsonAsync(userUrl, user);
-            var getUser = await getUserResponse.Content.ReadFromJsonAsync<UserEntity>();
+            var getUser = await getUserResponse.Content.ReadFromJsonAsync<User>();
             // CartItems
             var postItemList = await _httpClient.PostAsJsonAsync(itemUrl, cartItem);
-            var getItemList = await _httpClient.GetFromJsonAsync<List<CartItemEntity>>(itemUrl);
-            var getItem = getItemList.First(item => item.ItemStatus == "Pending");
+            var getItemList = await _httpClient.GetFromJsonAsync<List<CartItem>>(itemUrl);
+            var getItem = getItemList.First(item => item.OrderStatus == OrderStatus.Pending);
 
             // Checkout
-            var orderCheckout = new OrderEntity
+            var orderCheckout = new Order
             {
-                UserOrderId = getUser.UserID,
+                UserPrimaryID = getUser.UserID,
                 User = getUser,
                 OrderTotalPrice = 5.5,
-                CartItemEntity = new List<CartItemEntity>
+                CartItemEntity = new List<CartItem>
                 {
                     getItem
                 }
@@ -191,23 +189,23 @@ namespace IntegrationTest.TestControllers
             // Assert
             postResponse.EnsureSuccessStatusCode();
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var newCartitemListFromOrderCheckout = await postResponse.Content.ReadFromJsonAsync<OrderEntity>();
+            var newCartitemListFromOrderCheckout = await postResponse.Content.ReadFromJsonAsync<Order>();
             newCartitemListFromOrderCheckout.Should().NotBeNull();
 
             //GET ALL ORDERS
             // Act
-            var orderResponse = await _httpClient.GetFromJsonAsync<List<OrderEntity>>(orderUrl);
+            var orderResponse = await _httpClient.GetFromJsonAsync<List<Order>>(orderUrl);
 
             // Assert
-            orderResponse.Should().BeOfType<List<OrderEntity>>();
+            orderResponse.Should().BeOfType<List<Order>>();
 
             //GET ORDER BY ID
             // Arrange
-            var orderId = newCartitemListFromOrderCheckout.OrderID;
-            var urlWithOrderId = orderUrl + "/" + orderId.ToString();
+            var PrimaryID = newCartitemListFromOrderCheckout.PrimaryID;
+            var urlWithPrimaryID = orderUrl + "/" + PrimaryID.ToString();
 
             // Act
-            var fetchedOrder = await _httpClient.GetFromJsonAsync<OrderEntity>(urlWithOrderId);
+            var fetchedOrder = await _httpClient.GetFromJsonAsync<Order>(urlWithPrimaryID);
 
             // Assert
             fetchedOrder.Should().NotBeNull();
@@ -215,23 +213,24 @@ namespace IntegrationTest.TestControllers
 
             //UPDATE ORDER
             // Arrange
-            var updateItemInOrder = new CartItemEntity
+            var updateItemInOrder = new CartItem
             {
                 ItemID = getItem.ItemID,
                 ItemName = "Updated Item 1",
                 ItemPrice = 50.5,
-                OrderEntityOrderID = getItem.OrderEntityOrderID
+                OrderPrimaryID = getItem.OrderPrimaryID
             };
             var postItemListFromOrder = await _httpClient.PutAsJsonAsync(itemUrl, updateItemInOrder);
-            var getItemListFromOrder = await postItemListFromOrder.Content.ReadFromJsonAsync<CartItemEntity>();
+            var getItemListFromOrder = await postItemListFromOrder.Content.ReadFromJsonAsync<CartItem>();
 
-            var updateOrder = new OrderEntity
+            var updateOrder = new Order
             {
-                OrderID = orderCheckout.OrderID,
-                UserOrderId = orderCheckout.UserOrderId,
+                PrimaryID = orderCheckout.PrimaryID,
+                UserPrimaryID = orderCheckout.UserPrimaryID,
+                User = orderCheckout.User,
                 OrderTotalPrice = orderCheckout.OrderTotalPrice,
                 OrderCreatedDate = orderCheckout.OrderCreatedDate,
-                CartItemEntity = new List<CartItemEntity> { updateItemInOrder }
+                CartItemEntity = new List<CartItem> { updateItemInOrder }
             };
 
             // Act
@@ -240,21 +239,21 @@ namespace IntegrationTest.TestControllers
             // Assert
             orderUpdateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             orderUpdateResponse.Content.Should().NotBeNull();
-            var updatedOrder = await orderUpdateResponse.Content.ReadFromJsonAsync<OrderEntity>();
+            var updatedOrder = await orderUpdateResponse.Content.ReadFromJsonAsync<Order>();
             updatedOrder.Should().NotBeNull();
-            updatedOrder.OrderID.Should().Be(fetchedOrder.OrderID);
+            updatedOrder.PrimaryID.Should().Be(fetchedOrder.PrimaryID);
             updatedOrder.OrderTotalPrice.Should().NotBe(fetchedOrder.OrderTotalPrice);
             updatedOrder.OrderCreatedDate.Should().Be(fetchedOrder.OrderCreatedDate);
             updatedOrder.CartItemEntity.Should().NotBeEquivalentTo(fetchedOrder.CartItemEntity);
 
             //DELETE ORDER
             // Act
-            var deleteOrderResponse = await _httpClient.DeleteAsync(urlWithOrderId);
+            var deleteOrderResponse = await _httpClient.DeleteAsync(urlWithPrimaryID);
 
             // Assert
             deleteOrderResponse.EnsureSuccessStatusCode();
             deleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var deletedItem = await deleteOrderResponse.Content.ReadFromJsonAsync<OrderEntity>();
+            var deletedItem = await deleteOrderResponse.Content.ReadFromJsonAsync<Order>();
             deletedItem.Should().BeEquivalentTo(updatedOrder);
         }
     }

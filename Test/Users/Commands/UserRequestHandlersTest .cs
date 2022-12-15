@@ -3,11 +3,11 @@ using Bogus;
 using FluentAssertions;
 using Moq;
 using S3E1.Commands;
+using S3E1.Configurations;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
 using S3E1.IRepository;
-using S3E1.Profiles;
 using Shouldly;
 using Test.Moq;
 
@@ -17,24 +17,24 @@ namespace UnitTest.Users.Commands
     {
         private readonly IMapper _mapper;
         private readonly Mock<IUserRepository> _mockRepo;
-        private readonly UserEntity _userEntity;
+        private readonly User _User;
 
-        public static UserEntity CreateNewUser()
+        public static User CreateNewUser()
         {
-            var newUserEntity = new Faker<UserEntity>()
+            var newUser = new Faker<User>()
                 .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
                 .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
 
-            return newUserEntity;
+            return newUser;
         }
         public CartItemRequestHandlersTest()
         {
             _mockRepo = MockUserRepository.UserRepo();
-            _userEntity = CreateNewUser();
+            _User = CreateNewUser();
 
             MapperConfiguration mapConfig = new(c =>
             {
-                c.AddProfile<Profiles>();
+                c.AddProfile<AutoMapperInitializer>();
             });
             _mapper = mapConfig.CreateMapper();
         }
@@ -44,12 +44,12 @@ namespace UnitTest.Users.Commands
         {
             var handler = new AddUserHandler(_mockRepo.Object, _mapper);
 
-            UserDTO userDTO = _mapper.Map<UserDTO>(_userEntity);
+            UserDTO userDTO = _mapper.Map<UserDTO>(_User);
 
             var result = await handler.Handle(new AddIUserCommand(userDTO), CancellationToken.None);
 
             result.ShouldNotBeNull();
-            result.Should().BeOfType<UserEntity>();
+            result.Should().BeOfType<User>();
         }
     }
 }

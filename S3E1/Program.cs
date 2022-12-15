@@ -1,18 +1,17 @@
 using Autofac;
-using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using S3E1;
-using S3E1.Controllers.V1;
+using S3E1.Configurations;
 using S3E1.Data;
+using S3E1.Handlers;
 using S3E1.Middleware;
-using S3E1.Profiles;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +29,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 builder.Services.AddControllers();
 
 //AutoMapper
-builder.Services.AddAutoMapper(typeof(Profiles).Assembly);
+builder.Services.AddAutoMapper(typeof(AutoMapperInitializer).Assembly);
 
 //API Versioning
 builder.Services.AddApiVersioning(opt =>
@@ -54,28 +53,18 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-//DB Context Factory
-builder.Services.AddScoped<DbContext>(s =>
-{
-    var dbContextFactory = new MsSqlDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
-    return dbContextFactory.CreateDbContext();
-});
-
-//builder.Services.AddDbContextFactory<AppDataContext>(o =>
-//           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
-//           ServiceLifetime.Scoped);
-
-////DB Context
-//builder.Services.AddDbContext<AppDataContext>(contextOptions => contextOptions.UseSqlServer(
-//    builder.Configuration.GetConnectionString("DefaultConnection")
-//));
+//AppDataContext DI
+builder.Services.AddDbContextFactory<AppDataContext>(o =>
+           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+           ServiceLifetime.Scoped);
 
 //Auth
-//builder.Services.AddAuthentication();
+builder.Services.AddAuthentication();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
+    //Swagger Documentation
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
@@ -94,7 +83,34 @@ builder.Services.AddSwaggerGen(c => {
             Url = new Uri("https://example.com/license"),
         }
     });
+    //Swagger Annotation
+    c.EnableAnnotations();
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        In = ParameterLocation.Header,
+        Description = "Basic Authorization header using the Bearer scheme."
+    });
+    //Swagger Basic Authorization
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 var app = builder.Build();
 
@@ -119,7 +135,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseUserAuth();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

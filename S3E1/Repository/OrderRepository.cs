@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using S3E1.Data;
 using S3E1.Entities;
 using S3E1.IRepository;
 using System.Data;
@@ -9,31 +10,30 @@ namespace S3E1.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<OrderRepository> _logger;
-        private IDbConnection _connection;
 
-        public OrderRepository(DbContext dbContext, ILogger<OrderRepository> logger)
+        public OrderRepository(AppDataContext dbContext, ILogger<OrderRepository> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
         }
 
-        public async Task<List<OrderEntity>> GetOrders()
+        public async Task<List<Order>> GetOrders()
         {
             try
             {
-                var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserOrderId = u.UserID INNER JOIN CartItems c ON o.OrderID = c.OrderEntityOrderID";
-                Dictionary<Guid, OrderEntity> orderDict = new();
+                var query = "SELECT * FROM Orders o INNER JOIN Users u ON o.UserPrimaryID = u.UserID INNER JOIN CartItems c ON o.PrimaryID = c.OrderPrimaryID";
+                Dictionary<Guid, Order> orderDict = new();
                 using (var connection = _dbContext.Database.GetDbConnection())
                 {
-                    var orders = (await connection.QueryAsync<OrderEntity, UserEntity, CartItemEntity, OrderEntity>(query, (order, user, item) =>
+                    var orders = (await connection.QueryAsync<Order, User, CartItem, Order>(query, (order, user, item) =>
                     {
-                        if (!orderDict.TryGetValue(order.OrderID, out OrderEntity? orderEntity))
+                        if (!orderDict.TryGetValue(order.PrimaryID, out Order? orderEntity))
                         {
                             orderEntity = order;
-                            orderEntity.CartItemEntity ??= new List<CartItemEntity>();
-                            orderDict.Add(order.OrderID, orderEntity);
+                            orderEntity.CartItemEntity ??= new List<CartItem>();
+                            orderDict.Add(order.PrimaryID, orderEntity);
                         }
 
                         if (item is not null) orderEntity.CartItemEntity.Add(item);
@@ -54,21 +54,21 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<OrderEntity> GetOrderById(Guid id)
+        public async Task<Order> GetOrderById(Guid id)
         {
             try
             {
-                var query = "SELECT * FROM Orders WHERE OrderID = @id;" +
-                                "SELECT * FROM CartItems WHERE OrderEntityOrderID = @id";
+                var query = "SELECT * FROM Orders WHERE PrimaryID = @id;" +
+                                "SELECT * FROM CartItems WHERE OrderPrimaryID = @id";
 
                 using (var connection = _dbContext.Database.GetDbConnection())
                 using (var multi = await connection.QueryMultipleAsync(query, new { id }))
                 {
-                    var order = await multi.ReadSingleOrDefaultAsync<OrderEntity>();
+                    var order = await multi.ReadSingleOrDefaultAsync<Order>();
                     if (order != null)
-                        order.CartItemEntity = (await multi.ReadAsync<CartItemEntity>()).ToList();
+                        order.CartItemEntity = (await multi.ReadAsync<CartItem>()).ToList();
 
-                    _logger.LogInformation("Order retrieved from the database, Guid: {0}", order.OrderID.ToString().ToUpper());
+                    _logger.LogInformation("Order retrieved from the database, Guid: {0}", order.PrimaryID.ToString().ToUpper());
                     return order;
                 }
             }
@@ -79,16 +79,15 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<OrderEntity> UpdateOrder(OrderEntity orders)
+        public async Task<Order> UpdateOrder(Order orders)
         {
             try
             {
                 if (orders != null)
                 {
-                    var order = await _dbContext.Set<OrderEntity>().FindAsync(orders.OrderID);
-                    order.OrderID = orders.OrderID;
-                    order.UserOrderId = orders.UserOrderId;
-                    order.OrderCreatedDate = orders.OrderCreatedDate;
+                    var order = await _dbContext.Orders.FindAsync(orders.PrimaryID);
+                    var test = orders.PrimaryID;
+                    var test2 = orders.UserPrimaryID;
                     order.OrderTotalPrice = orders.CartItemEntity.Sum(item => item.ItemPrice);
                     order.CartItemEntity = orders.CartItemEntity;
 
@@ -105,21 +104,21 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<OrderEntity> DeleteOrderById(Guid id)
+        public async Task<Order> DeleteOrderById(Guid id)
         {
             try
             {
-                var order = _dbContext.Set<OrderEntity>().Find(id);
-                var cartitem = _dbContext.Set<CartItemEntity>().Where(item => item.OrderEntityOrderID == order.OrderID);
+                var order = _dbContext.Orders.Find(id);
+                var cartitem = _dbContext.CartItems.Where(item => item.OrderPrimaryID == order.PrimaryID);
                 foreach (var item in cartitem)
                 {
-                    _dbContext.Set<CartItemEntity>().Remove(item);
+                    _dbContext.CartItems.Remove(item);
                 }
 
-                _dbContext.Set<OrderEntity>().Remove(order);
+                _dbContext.Orders.Remove(order);
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Order has been removed from the database, Guid: {0}", order.OrderID.ToString().ToUpper());
+                _logger.LogInformation("Order has been removed from the database, Guid: {0}", order.PrimaryID.ToString().ToUpper());
                 return order;
             }
             catch (Exception ex)

@@ -7,7 +7,7 @@ using S3E1.IRepository;
 
 namespace S3E1.Handlers
 {
-    public class UpdateCartItemHandler : IRequestHandler<UpdateCartitemCommand, CartItemEntity>
+    public class UpdateCartItemHandler : IRequestHandler<UpdateCartitemCommand, CartItem>
     {
         private readonly ICartItemRepository _repository;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace S3E1.Handlers
             _mapper = mapper;
         }
 
-        public async Task<CartItemEntity> Handle(UpdateCartitemCommand request, CancellationToken cancellationToken)
+        public async Task<CartItem> Handle(UpdateCartitemCommand request, CancellationToken cancellationToken)
         {
             var item = new CartItemDTO()
             {
@@ -26,7 +26,7 @@ namespace S3E1.Handlers
                 ItemPrice = request.CartItems.ItemPrice
             };
 
-            CartItemEntity cartItemEntity = _mapper.Map<CartItemEntity>(item);
+            CartItem cartItemEntity = _mapper.Map<CartItem>(item);
             return await _repository.Updateitem(cartItemEntity);
         }
     }

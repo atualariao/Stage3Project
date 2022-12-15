@@ -22,55 +22,60 @@ namespace S3E1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("S3E1.Entities.CartItemEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.CartItem", b =>
                 {
                     b.Property<Guid>("ItemID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ItemName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("ItemPrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("ItemStatus")
+                    b.Property<Guid?>("OrderPrimaryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("OrderEntityOrderID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ItemID");
 
-                    b.HasIndex("OrderEntityOrderID");
+                    b.HasIndex("OrderPrimaryID");
 
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.Order", b =>
                 {
-                    b.Property<Guid>("OrderID")
+                    b.Property<Guid>("PrimaryID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OrderCreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("OrderTotalPrice")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("UserOrderId")
+                    b.Property<Guid>("UserPrimaryID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("OrderID");
+                    b.HasKey("PrimaryID");
 
-                    b.HasIndex("UserOrderId");
+                    b.HasIndex("UserPrimaryID");
 
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.UserEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.User", b =>
                 {
                     b.Property<Guid>("UserID")
                         .ValueGeneratedOnAdd()
@@ -85,30 +90,30 @@ namespace S3E1.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.CartItemEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.CartItem", b =>
                 {
-                    b.HasOne("S3E1.Entities.OrderEntity", null)
+                    b.HasOne("S3E1.Entities.Order", null)
                         .WithMany("CartItemEntity")
-                        .HasForeignKey("OrderEntityOrderID");
+                        .HasForeignKey("OrderPrimaryID");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.Order", b =>
                 {
-                    b.HasOne("S3E1.Entities.UserEntity", "User")
+                    b.HasOne("S3E1.Entities.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserOrderId")
+                        .HasForeignKey("UserPrimaryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.OrderEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.Order", b =>
                 {
                     b.Navigation("CartItemEntity");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.UserEntity", b =>
+            modelBuilder.Entity("S3E1.Entities.User", b =>
                 {
                     b.Navigation("Orders");
                 });

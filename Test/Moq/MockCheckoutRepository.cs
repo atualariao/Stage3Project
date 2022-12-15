@@ -2,46 +2,47 @@
 using Moq;
 using S3E1.Entities;
 using S3E1.IRepository;
+using S3E1.Enumerations;
 
 namespace Test.Moq
 {
     public static class MockCheckoutRepository
     {
-        public static List<CartItemEntity> GenerateItems()
+        public static List<CartItem> GenerateItems()
         {
-            var items = new Faker<CartItemEntity>()
+            var items = new Faker<CartItem>()
             .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
             .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
             .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double());
 
             return items.Generate(3);
         }
-        public static List<OrderEntity> GenerateOrders()
+        public static Order GenerateOrder()
         {
-            var userEntity = new Faker<UserEntity>()
+            var User = new Faker<User>()
                 .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
                 .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
 
-            Faker<OrderEntity> orderGenerator = new Faker<OrderEntity>()
-                .RuleFor(order => order.OrderID, bogus => bogus.Random.Guid())
-                .RuleFor(order => order.UserOrderId, bogus => bogus.Random.Guid())
-                .RuleFor(order => order.User, bogus => userEntity)
+            Faker<Order> orderGenerator = new Faker<Order>()
+                .RuleFor(order => order.PrimaryID, bogus => bogus.Random.Guid())
+                .RuleFor(order => order.UserPrimaryID, bogus => bogus.Random.Guid())
+                .RuleFor(order => order.User, bogus => User)
+                .RuleFor(order => order.OrderStatus, OrderStatus.Pending)
                 .RuleFor(order => order.OrderTotalPrice, bogus => bogus.Random.Double())
                 .RuleFor(order => order.OrderCreatedDate, bogus => bogus.Date.Recent())
                 .RuleFor(order => order.CartItemEntity, bogus => GenerateItems());
 
-            return orderGenerator.Generate(2);
+            return orderGenerator.Generate();
         }
         public static Mock<ICheckoutRepository> CheckoutRepo()
         {
-            var checkoutOrders = GenerateOrders();
+            var checkoutOrders = GenerateOrder();
 
             var mockRepo = new Mock<ICheckoutRepository>();
 
             //Create new user
-            mockRepo.Setup(x => x.Checkout(It.IsAny<OrderEntity>())).ReturnsAsync((OrderEntity order) =>
+            mockRepo.Setup(x => x.Checkout(It.IsAny<Order>())).ReturnsAsync((Order order) =>
             {
-                checkoutOrders.Add(order);
                 return order;
             });
 

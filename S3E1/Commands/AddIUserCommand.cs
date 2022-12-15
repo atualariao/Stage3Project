@@ -4,5 +4,5 @@ using S3E1.Entities;
 
 namespace S3E1.Commands
 {
-    public record AddIUserCommand(UserDTO newUser) : IRequest<UserEntity>;
+    public record AddIUserCommand(CreateUserDTO newUser) : IRequest<User>;
 }

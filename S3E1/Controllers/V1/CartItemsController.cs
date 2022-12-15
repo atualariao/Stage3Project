@@ -1,12 +1,16 @@
-﻿using MediatR;
+﻿using Azure;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Queries;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace S3E1.Controllers.V1
 {
+    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/cart-items")]
     [Produces("application/json")]
@@ -22,8 +26,11 @@ namespace S3E1.Controllers.V1
             _sender = sender;
         }
 
+        [SwaggerOperation(
+            Summary = "Returns all the items from the cart",
+            Description = "Returns all the items from the cart")]
         [HttpGet]
-        public async Task<List<CartItemEntity>> Get()
+        public async Task<List<CartItemDTO>> Get()
         {
             _logger.LogInformation("GET all cart items executing...");
             try
@@ -37,13 +44,16 @@ namespace S3E1.Controllers.V1
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<CartItemEntity> Get(Guid id)
+        [SwaggerOperation(
+            Summary = "Returns a specific item from the cart",
+            Description = "Returns a specific item from the cart")]
+        [HttpGet("{itemID}")]
+        public async Task<CartItem> Get(Guid itemID)
         {
             _logger.LogInformation("GET cart item by Guid executing...");
             try
             {
-                return await _sender.Send(new GetItemByIdQuery(id));
+                return await _sender.Send(new GetItemByIdQuery(itemID));
             }
             catch (Exception ex)
             {
@@ -52,8 +62,11 @@ namespace S3E1.Controllers.V1
             }
         }
 
+        [SwaggerOperation(
+            Summary = "Adds an item to the cart",
+            Description = "Adds an item to the cart")]
         [HttpPost]
-        public async Task<CartItemEntity> Post(CartItemDTO cartItems)
+        public async Task<CartItem> Post([FromBody] CreateCartItemDTO cartItems)
         {
             _logger.LogInformation("POST cart items executing...");
             try
@@ -67,8 +80,11 @@ namespace S3E1.Controllers.V1
             }
         }
 
+        [SwaggerOperation(
+            Summary = "Updates an item from the cart",
+            Description = "Updates an item from the cart")]
         [HttpPut]
-        public async Task<CartItemEntity> Update(CartItemDTO cartItems)
+        public async Task<CartItem> Update(CartItemDTO cartItems)
         {
             _logger.LogInformation("PUT/UPDATE cart item executing...");
             try
@@ -82,13 +98,16 @@ namespace S3E1.Controllers.V1
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<CartItemEntity> Delete(Guid id)
+        [SwaggerOperation(
+            Summary = "Deletes an item from the cart",
+            Description = "Deletes an item from the cart")]
+        [HttpDelete("{itemID}")]
+        public async Task<CartItem> Delete(Guid itemID)
         {
             _logger.LogInformation("DELETE cart item executing...");
             try
             {
-                return await _sender.Send(new DeleteCartItemCommand(id));
+                return await _sender.Send(new DeleteCartItemCommand(itemID));
             }
             catch (Exception ex)
             {

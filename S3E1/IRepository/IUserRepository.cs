@@ -4,7 +4,7 @@ namespace S3E1.IRepository
 {
     public interface IUserRepository
     {
-        public Task<UserEntity> GetUserById(Guid id);
-        public Task<UserEntity> CreateUser(UserEntity users);
+        public Task<User> GetUserById(Guid id);
+        public Task<User> CreateUser(User users);
     }
 }

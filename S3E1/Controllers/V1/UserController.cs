@@ -1,12 +1,15 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using S3E1.Commands;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Queries;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace S3E1.Controllers.V1
 {
+    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/users")]
     [Produces("application/json")]
@@ -22,13 +25,16 @@ namespace S3E1.Controllers.V1
             _sender = sender;
         }
 
-        [HttpGet("{id}")]
-        public async Task<UserEntity> Get(Guid id)
+        [SwaggerOperation(
+            Summary = "Returns a specific user",
+            Description = "Returns a specific user")]
+        [HttpGet("{UserID}")]
+        public async Task<User> Get(Guid UserID)
         {
             _logger.LogInformation("GET user by Guid executing...");
             try
             {
-                return await _sender.Send(new GetUserByIdQuery(id));
+                return await _sender.Send(new GetUserByIdQuery(UserID));
             }
             catch (Exception ex)
             {
@@ -37,8 +43,11 @@ namespace S3E1.Controllers.V1
             }
         }
 
+        [SwaggerOperation(
+            Summary = "Creates a new user",
+            Description = "Creates a new user")]
         [HttpPost]
-        public async Task<UserEntity> Post(UserDTO users)
+        public async Task<User> Post([FromBody]CreateUserDTO users)
         {
             _logger.LogInformation("POST user executing...");
             try

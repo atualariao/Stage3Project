@@ -1,37 +1,33 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.Data;
-using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.IRepository;
-using System.Data;
+using S3E1.Enumerations;
+using S3E1.Data;
 
 namespace S3E1.Repository
 {
     public class CartItemRepository : ICartItemRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDataContext _dbContext;
         private readonly ILogger<CartItemRepository> _logger;
-        private readonly IMapper _mapper;
 
-        public CartItemRepository(DbContext dbContext, ILogger<CartItemRepository> logger, IMapper mapper)
+        public CartItemRepository(AppDataContext dbContext, ILogger<CartItemRepository> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
-        public async Task<List<CartItemEntity>> GetCartItems()
+        public async Task<List<CartItem>> GetCartItems()
         {
             var query = "SELECT * FROM CartItems";
             try
             {
                 using (var connection = _dbContext.Database.GetDbConnection())
                 {
-                    var itemList = await connection.QueryAsync<CartItemEntity>(query);
+                    var itemList = await connection.QueryAsync<CartItem>(query);
 
                     _logger.LogInformation("Cart Item List retrieved from the database");
                     return itemList.ToList();
@@ -43,7 +39,7 @@ namespace S3E1.Repository
             }
 
         }
-        public async Task<CartItemEntity> GetCartItemEntity(Guid id)
+        public async Task<CartItem> GetCartItemEntity(Guid id)
         {
             var query = $"SELECT * FROM CartItems WHERE ItemID = @id";
 
@@ -51,7 +47,7 @@ namespace S3E1.Repository
             {
                 using (var connection = _dbContext.Database.GetDbConnection())
                 {
-                    var cartItem = await connection.QuerySingleOrDefaultAsync<CartItemEntity>(query, new { id });
+                    var cartItem = await connection.QuerySingleOrDefaultAsync<CartItem>(query, new { id });
 
                     _logger.LogInformation("Cart Item retrieved from database, Guid: {0}", cartItem.ItemID.ToString().ToUpper());
                     return cartItem;
@@ -63,11 +59,43 @@ namespace S3E1.Repository
                 throw;
             }
         }
-        public async Task<CartItemEntity> Createitem(CartItemEntity cartItems)
+        public async Task<CartItem> Createitem(CartItem cartItems)
         {
             try
             {
-                _dbContext.Set<CartItemEntity>().Add(cartItems);
+
+                var user = _dbContext
+                    .Users
+                    .FirstOrDefault();
+                var userOrder = _dbContext
+                    .Orders
+                    .FirstOrDefault(userOrder => userOrder.UserPrimaryID == user.UserID && userOrder.OrderStatus == OrderStatus.Pending);
+                var itemlist = _dbContext
+                    .CartItems
+                    .Where(status => status.OrderStatus == OrderStatus.Pending)
+                    .ToList();
+                itemlist.Add(cartItems);
+                var totalPrice = itemlist
+                    .Sum(x => x.ItemPrice);
+                if (userOrder != null && userOrder.OrderStatus == OrderStatus.Pending)
+                {
+                        userOrder.OrderTotalPrice = totalPrice;
+                        userOrder.CartItemEntity = itemlist;
+
+                        _dbContext.Orders.Update(userOrder);
+                }
+                else
+                {
+                    var order = new Order()
+                    {
+                        UserPrimaryID = user.UserID,
+                        OrderTotalPrice = cartItems.ItemPrice,
+                        OrderStatus = OrderStatus.Pending,
+                        CartItemEntity = itemlist
+                    };
+
+                    _dbContext.Orders.Add(order);
+                }
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("New Item Created in the Database, Object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
@@ -80,20 +108,20 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<CartItemEntity> Updateitem(CartItemEntity cartItems)
+        public async Task<CartItem> Updateitem(CartItem cartItems)
         {
             try
             {
                 if (cartItems != null)
                 {
-                    var item = await _dbContext.Set<CartItemEntity>().FindAsync(cartItems.ItemID);
+                    var item = await _dbContext.CartItems.FindAsync(cartItems.ItemID);
                     item.ItemName = cartItems.ItemName;
                     item.ItemPrice = cartItems.ItemPrice;
 
                     await _dbContext.SaveChangesAsync();
                 }
-                    _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
-                    return cartItems;
+                _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
+                return cartItems;
             }
             catch (Exception ex)
             {
@@ -102,13 +130,13 @@ namespace S3E1.Repository
             }
         }
 
-        public async Task<CartItemEntity> DeleteItem(Guid id)
+        public async Task<CartItem> DeleteItem(Guid id)
         {
             try
             {
-                var item = _dbContext.Set<CartItemEntity>().Find(id);
+                var item = _dbContext.CartItems.Find(id);
 
-                _dbContext.Set<CartItemEntity>().Remove(item);
+                _dbContext.CartItems.Remove(item);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("Cart Item Has been Removed from the database, Guid: {0}", item.ItemID.ToString().ToUpper());

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntegrationTest
+namespace IntegrationTest.Data
 {
     public class TestDbFactory
     {
@@ -17,6 +17,7 @@ namespace IntegrationTest
             builder.UseSqlite("DataSource=file::memory:");
 
             return new AppDataContext(builder.Options);
-;        }
+            ;
+        }
     }
 }
