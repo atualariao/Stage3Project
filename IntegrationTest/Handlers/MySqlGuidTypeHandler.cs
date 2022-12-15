@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntegrationTest
+namespace IntegrationTest.Handlers
 {
     public class MySqlGuidTypeHandler : SqlMapper.TypeHandler<Guid>
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntegrationTest
+namespace IntegrationTest.Handlers
 {
     class GuidHandler : SqliteTypeHandler<Guid>
     {
