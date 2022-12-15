@@ -18,7 +18,7 @@ namespace Test.Cartitems.Queries
 
         public GetCartItemsRequestHandlerTest()
         {
-            _mockRepo = MockCartItemEntityRepository.CartitemRepo();
+            _mockRepo = MockCartItemRepository.CartitemRepo();
             MapperConfiguration mapConfig = new(c =>
             {
                 c.AddProfile<AutoMapperInitializer>();
@@ -48,7 +48,7 @@ namespace Test.Cartitems.Queries
 
             var result = await handler.Handle(new GetItemByIdQuery(item.ItemID), CancellationToken.None);
 
-            result.Should().BeOfType<CartItemDTO>();
+            result.Should().BeOfType<CartItem>();
             result.ItemID.Should().Be(item.ItemID);
         }
     }

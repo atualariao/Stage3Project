@@ -1,48 +1,58 @@
-﻿//using FluentAssertions;
-//using Moq;
-//using S3E1.Entities;
-//using S3E1.Handlers;
-//using S3E1.IRepository;
-//using S3E1.Queries;
-//using Shouldly;
-//using Test.Moq;
+﻿using AutoMapper;
+using FluentAssertions;
+using Moq;
+using S3E1.Configurations;
+using S3E1.DTOs;
+using S3E1.Entities;
+using S3E1.Handlers;
+using S3E1.IRepository;
+using S3E1.Queries;
+using Shouldly;
+using Test.Moq;
 
-//namespace UnitTest.Orders.Queries
-//{
-//    public class GetOrdersRequestHandlerTest
-//    {
-//        private readonly Mock<IOrderRepository> _mockRepo;
+namespace UnitTest.Orders.Queries
+{
+    public class GetOrdersRequestHandlerTest
+    {
+        private readonly Mock<IOrderRepository> _mockRepo;
+        private readonly IMapper _mapper;
 
-//        public GetOrdersRequestHandlerTest()
-//        {
-//            _mockRepo = MockOrderEntityRepository.OrderRepo();
-//        }
+        public GetOrdersRequestHandlerTest()
+        {
+            _mockRepo = MockOrderRepository.OrderRepo();
 
-//        [Fact]
-//        public async Task Handle_Should_Get_Orders()
-//        {
-//            var handler = new GetOrdersHandler(_mockRepo.Object);
+            MapperConfiguration mapConfig = new(c =>
+            {
+                c.AddProfile<AutoMapperInitializer>();
+            });
+            _mapper = mapConfig.CreateMapper();
+        }
 
-//            var result = await handler.Handle(new GetOrdersQuery(), CancellationToken.None);
+        [Fact]
+        public async Task Handle_Should_Get_Orders()
+        {
+            var handler = new GetOrdersHandler(_mockRepo.Object, _mapper);
 
-//            result.Should().BeOfType<List<OrderEntity>>();
-//            result.Count.Should().Be(4);
-//        }
+            var result = await handler.Handle(new GetOrdersQuery(), CancellationToken.None);
 
-//        [Fact]
-//        public async Task Handle_Should_Get_Order_Id()
-//        {
-//            var orders = await _mockRepo.Object.GetOrders();
+            result.Should().BeOfType<List<OrderDTO>>();
+            result.Count.Should().Be(4);
+        }
 
-//            var order = orders.FirstOrDefault();
+        [Fact]
+        public async Task Handle_Should_Get_Order_Id()
+        {
+            var orders = await _mockRepo.Object.GetOrders();
 
-//            var handler = new GetOrdersByIdHandler(_mockRepo.Object);
+            var order = orders.FirstOrDefault();
 
-//            var result = await handler.Handle(new GetOrdersByIdQuery(order.OrderID), CancellationToken.None);
+            var handler = new GetOrdersByIdHandler(_mockRepo.Object);
 
-//            result.Should().BeOfType<OrderEntity>();
-//            result.OrderID.Should().Be(order.OrderID);
-//            result.CartItemEntity.ShouldNotBeNull();
-//        }
-//    }
-//}
+            var result = await handler.Handle(new GetOrdersByIdQuery(order.PrimaryID), CancellationToken.None);
+
+            result.Should().BeOfType<Order>();
+            result.PrimaryID.Should().Be(order.PrimaryID);
+            result.CartItemEntity.ShouldNotBeNull();
+        }
+    }
+}
