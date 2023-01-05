@@ -1,4 +1,4 @@
-# Stage3Project
+# Stage3Project (Practice)
 ASP.NET Web API ecommerce - CQRS MediatR pattern, Testing Implementation - (UnitTest, Integration), API Versioning and Serilog implemented for Controllers - (+Serilog - db) + Swagger Documentation and Basic Authentication
 
 # Bearer Token
