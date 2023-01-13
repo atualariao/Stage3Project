@@ -7,6 +7,8 @@ using S3E1.Entities;
 using S3E1.Configurations;
 using S3E1.Enumerations;
 using IntegrationTest.Data;
+using System.Net.Http.Headers;
+using System.Text;
 using IntegrationTest.Handlers;
 
 namespace IntegrationTest.TestControllers
@@ -26,8 +28,17 @@ namespace IntegrationTest.TestControllers
         [Fact]
         public async Task Test_Cartitem_Controller()
         {
-            _httpClient.DefaultRequestHeaders.Remove(TestAuthHandler.userId);
+            string userUrl = "api/v1/users";
 
+            var user = new User
+            {
+                Username= "Test user",
+            };
+
+            var userResponse = await _httpClient.PostAsJsonAsync(userUrl, user);
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("basic",
+                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{user.Username}:{user.UserID}")));
             //POST CART ITEM
             // Arrange
             string url = "api/v1/cart-items";

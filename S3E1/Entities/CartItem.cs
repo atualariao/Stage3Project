@@ -14,5 +14,6 @@ namespace S3E1.Entities
         public double ItemPrice { get; set; }
         public Guid? OrderPrimaryID { get; set; }
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
+        //public Guid? CustomerID { get; set; }
     }
 }
