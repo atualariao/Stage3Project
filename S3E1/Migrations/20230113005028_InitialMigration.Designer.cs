@@ -12,7 +12,7 @@ using S3E1.Data;
 namespace S3E1.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20221210032407_InitialMigration")]
+    [Migration("20230113005028_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace S3E1.Migrations
                 {
                     b.Property<Guid>("ItemID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CustomerID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ItemName")

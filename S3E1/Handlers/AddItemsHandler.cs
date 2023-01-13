@@ -24,6 +24,7 @@ namespace S3E1.Handlers
             {
                 ItemName = request.CartItems.ItemName,
                 ItemPrice = request.CartItems.ItemPrice,
+                CustomerID = request.CartItems.CustomerID,
             };
 
             return await _cartItemRepository.Createitem(item);

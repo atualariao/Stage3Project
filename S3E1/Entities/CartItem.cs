@@ -8,12 +8,10 @@ namespace S3E1.Entities
     {
         [Key]
         public Guid ItemID { get; set; }
-        [Required]
         public string? ItemName { get; set; }
-        [Required]
         public double ItemPrice { get; set; }
         public Guid? OrderPrimaryID { get; set; }
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
-        //public Guid? CustomerID { get; set; }
+        public Guid? CustomerID { get; set; }
     }
 }

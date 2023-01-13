@@ -28,6 +28,9 @@ namespace S3E1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CustomerID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

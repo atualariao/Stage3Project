@@ -64,15 +64,15 @@ namespace S3E1.Repository
             try
             {
 
+                //var user = _dbContext
+                //    .Users
+                //    .FirstOrDefault();
                 var user = _dbContext
                     .Users
-                    .FirstOrDefault();
-    //            var user = _dbContext
-    //.Users
-    //.Where(x => x.UserID == cartItems.UserID);
+                    .FirstOrDefault(x => x.UserID == cartItems.CustomerID);
                 var userOrder = _dbContext
                     .Orders
-                    .FirstOrDefault(userOrder => userOrder.UserPrimaryID == user.UserID && userOrder.OrderStatus == OrderStatus.Pending);
+                    .FirstOrDefault(userOrder => userOrder.UserPrimaryID == cartItems.CustomerID && userOrder.OrderStatus == OrderStatus.Pending);
                 var itemlist = _dbContext
                     .CartItems
                     .Where(status => status.OrderStatus == OrderStatus.Pending)
@@ -82,10 +82,10 @@ namespace S3E1.Repository
                     .Sum(x => x.ItemPrice);
                 if (userOrder != null && userOrder.OrderStatus == OrderStatus.Pending)
                 {
-                    userOrder.OrderTotalPrice = totalPrice;
-                    userOrder.CartItemEntity = itemlist;
+                        userOrder.OrderTotalPrice = totalPrice;
+                        userOrder.CartItemEntity = itemlist;
 
-                    _dbContext.Orders.Update(userOrder);
+                        _dbContext.Orders.Update(userOrder);
                 }
                 else
                 {
