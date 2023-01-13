@@ -5,14 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using S3E1.Data;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace IntegrationTest.Data
 {
     public class IntegrationTestBaseClass
     {
         protected readonly HttpClient _httpClient;
-        public Guid DefaultUserId { get; set; } = new Guid("ED9C2025-018D-4135-BEC9-BC17AEA8AD47");
-
         public IntegrationTestBaseClass()
         {
             var appFactory = new WebApplicationFactory<Program>()
@@ -20,12 +19,6 @@ namespace IntegrationTest.Data
                 {
                     builder.ConfigureServices(services =>
                     {
-                        services.Configure<TestAuthHandlerOptions>(options => options.UserID = DefaultUserId);
-                        services.Configure<TestAuthHandlerOptions>(options => options.Username = "Test User");
-                        services.AddAuthentication(TestAuthHandler.AutheticationScheme)
-                        .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AutheticationScheme, 
-                        options => { });
-
                         services.RemoveAll(typeof(AppDataContext));
                         services.AddScoped(s =>
                         {
@@ -42,9 +35,7 @@ namespace IntegrationTest.Data
                         SqlMapper.AddTypeHandler(new GuidHandler());
                     });
                 });
-
             _httpClient = appFactory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         }
     }
 }

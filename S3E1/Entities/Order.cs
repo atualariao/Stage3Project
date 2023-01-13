@@ -10,7 +10,6 @@ namespace S3E1.Entities
         [Key]
         public Guid PrimaryID { get; set; }
         [ForeignKey(nameof(User))]
-        [Required]
         public Guid UserPrimaryID { get; set; }
         public User User { get; set; } = null!;
         public double OrderTotalPrice { get; set; }

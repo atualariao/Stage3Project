@@ -50,7 +50,8 @@ namespace S3E1.Migrations
                     ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemPrice = table.Column<double>(type: "float", nullable: false),
                     OrderPrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
