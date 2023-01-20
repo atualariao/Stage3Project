@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerceWebAPI", "S3E1\eCommerceWebAPI.csproj", "{598FACD1-4C6D-413E-B760-1C8BA6F5D2B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerceWebAPI", "src\eCommerceWebAPI\eCommerceWebAPI.csproj", "{598FACD1-4C6D-413E-B760-1C8BA6F5D2B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "Test\UnitTest.csproj", "{A7BC1C6B-307C-4633-A8C4-6B80514435B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "tests\UnitTest\UnitTest.csproj", "{A7BC1C6B-307C-4633-A8C4-6B80514435B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{3A28F657-8D71-41DB-BAB6-4A978E824EF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "tests\IntegrationTest\IntegrationTest.csproj", "{3A28F657-8D71-41DB-BAB6-4A978E824EF4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4A9F9B7B-A1F5-472A-B526-5C35370B31CC}"
 EndProject
