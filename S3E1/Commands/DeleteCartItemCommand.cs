@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using S3E1.Entities;
+using eCommerceWebAPI.Entities;
 
-namespace S3E1.Commands
+namespace eCommerceWebAPI.Commands
 {
     public record DeleteCartItemCommand(Guid id) : IRequest<CartItem>;
     

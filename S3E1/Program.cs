@@ -1,22 +1,22 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using S3E1;
-using S3E1.Configurations;
-using S3E1.Data;
-using S3E1.Handlers;
-using S3E1.Middleware;
+using eCommerceWebAPI.Configurations;
+using eCommerceWebAPI.Data;
+using eCommerceWebAPI.Handlers;
+using eCommerceWebAPI.Middleware;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Environment Variable Strings
+string msSQLConnectionString = Environment.GetEnvironmentVariable("MSSQL_CONNECTION_STRING") ?? "";
+
 
 //Autofac DIs
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
@@ -24,26 +24,6 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     {
         builder.RegisterModule(new AutofacDependencyInjection());
     });
-
-//Add Controllers
-builder.Services.AddControllers();
-
-//AutoMapper
-builder.Services.AddAutoMapper(typeof(AutoMapperInitializer).Assembly);
-
-//API Versioning
-builder.Services.AddApiVersioning(opt =>
-{
-    opt.ReportApiVersions = true;
-    opt.AssumeDefaultVersionWhenUnspecified = true;
-    opt.DefaultApiVersion = ApiVersion.Default;
-    opt.ApiVersionReader = new UrlSegmentApiVersionReader();
-});
-builder.Services.AddVersionedApiExplorer(setup =>
-{
-    setup.GroupNameFormat = "'v'VVV";
-    setup.SubstituteApiVersionInUrl = true;
-});
 
 //Serilog Logger
 var logger = new LoggerConfiguration()
@@ -53,9 +33,31 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
+//Add services to the container.
+//Add Controllers
+builder.Services.AddControllers();
+
+//AutoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperInitializer).Assembly);
+
+//API Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = ApiVersion.Default;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+
+builder.Services.AddVersionedApiExplorer(setup =>
+{
+    setup.GroupNameFormat = "'v'VVV";
+    setup.SubstituteApiVersionInUrl = true;
+});
+
 //AppDataContext DI
-builder.Services.AddDbContextFactory<AppDataContext>(o =>
-           o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+builder.Services.AddDbContextFactory<AppDataContext>(options =>
+           options.UseSqlServer(msSQLConnectionString),
            ServiceLifetime.Scoped);
 
 //Auth
@@ -83,6 +85,7 @@ builder.Services.AddSwaggerGen(c => {
             Url = new Uri("https://example.com/license"),
         }
     });
+
     //Swagger Annotation
     c.EnableAnnotations();
     c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
@@ -93,6 +96,7 @@ builder.Services.AddSwaggerGen(c => {
         In = ParameterLocation.Header,
         Description = "Basic Authorization header using the Bearer scheme."
     });
+
     //Swagger Basic Authorization
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -109,6 +113,7 @@ builder.Services.AddSwaggerGen(c => {
         }
     });
 });
+
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 

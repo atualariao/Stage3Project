@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
-using S3E1.DTOs;
-using S3E1.Entities;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
 
-namespace S3E1.Configurations
+namespace eCommerceWebAPI.Configurations
 {
     public class AutoMapperInitializer : Profile
     {
         public AutoMapperInitializer()
         {
+            //Mapping (with enum value to string)
+
             // Cart Items
             CreateMap<CartItem, CartItemDTO>().ReverseMap()
                 .ForMember(t => t.OrderStatus,

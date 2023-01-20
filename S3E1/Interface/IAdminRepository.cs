@@ -1,4 +1,4 @@
-﻿namespace S3E1.Interface
+﻿namespace eCommerceWebAPI.Interface
 {
     public interface IAdminRepository
     {

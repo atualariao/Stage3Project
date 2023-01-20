@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
-using S3E1.Commands;
-using S3E1.DTOs;
-using S3E1.Handlers;
-using S3E1.Interface;
-using S3E1.Entities;
+using eCommerceWebAPI.Commands;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Handlers;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Entities;
 using Shouldly;
 using Test.Moq;
-using S3E1.Configurations;
-using S3E1.Enumerations;
+using eCommerceWebAPI.Configurations;
+using eCommerceWebAPI.Enumerations;
 
 namespace UnitTest.Checkout.Commands
 {

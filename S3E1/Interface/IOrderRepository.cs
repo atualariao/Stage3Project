@@ -1,8 +1,8 @@
 ﻿
-using S3E1.DTOs;
-using S3E1.Entities;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
 
-namespace S3E1.Interface
+namespace eCommerceWebAPI.Interface
 {
     public interface IOrderRepository
     {

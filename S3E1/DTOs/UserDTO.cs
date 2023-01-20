@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace S3E1.DTOs
+namespace eCommerceWebAPI.DTOs
 {
     public class CreateUserDTO
     {

@@ -1,8 +1,8 @@
-﻿using S3E1.Enumerations;
+﻿using eCommerceWebAPI.Enumerations;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace S3E1.DTOs
+namespace eCommerceWebAPI.DTOs
 {
     public class CreateCartItemDTO
     {

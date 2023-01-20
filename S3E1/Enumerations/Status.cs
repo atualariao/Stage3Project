@@ -1,4 +1,4 @@
-﻿namespace S3E1.Enumerations
+﻿namespace eCommerceWebAPI.Enumerations
 {
     public enum OrderStatus
     {

@@ -1,7 +1,7 @@
-﻿using S3E1.Data;
-using S3E1.Interface;
+﻿using eCommerceWebAPI.Data;
+using eCommerceWebAPI.Interface;
 
-namespace S3E1.Repository
+namespace eCommerceWebAPI.Repository
 {
     public class AdminRepository : IAdminRepository
     {

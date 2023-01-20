@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.Entities;
-using S3E1.Interface;
-using S3E1.Enumerations;
-using S3E1.Data;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Enumerations;
+using eCommerceWebAPI.Data;
 
-namespace S3E1.Repository
+namespace eCommerceWebAPI.Repository
 {
     public class CheckoutRepository : ICheckoutRepository
     {

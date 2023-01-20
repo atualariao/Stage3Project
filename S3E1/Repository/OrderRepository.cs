@@ -1,12 +1,12 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using S3E1.Data;
-using S3E1.Entities;
-using S3E1.Interface;
+using eCommerceWebAPI.Data;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
 using System.Data;
 
-namespace S3E1.Repository
+namespace eCommerceWebAPI.Repository
 {
     public class OrderRepository : IOrderRepository
     {

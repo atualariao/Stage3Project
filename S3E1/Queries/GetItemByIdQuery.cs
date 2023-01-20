@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using S3E1.Entities;
+using eCommerceWebAPI.Entities;
 
-namespace S3E1.Queries
+namespace eCommerceWebAPI.Queries
 {
     public record GetItemByIdQuery(Guid Guid) : IRequest<CartItem>;
 }

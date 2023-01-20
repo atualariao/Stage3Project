@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using S3E1.Entities;
-using S3E1.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.DTOs;
 
-namespace S3E1.Commands
+namespace eCommerceWebAPI.Commands
 {
     public record CheckOutCommand(CheckOutDTO Orders) : IRequest<Order>;
 }

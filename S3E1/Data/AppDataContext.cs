@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using S3E1.Entities;
-using S3E1.Enumerations;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Enumerations;
 
-namespace S3E1.Data
+namespace eCommerceWebAPI.Data
 {
     public class AppDataContext : DbContext
     {
@@ -11,6 +11,7 @@ namespace S3E1.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users{ get; set; }
 
+        //Parsing OrderStatus enum value to string
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             modelbuilder.Entity<Order>()

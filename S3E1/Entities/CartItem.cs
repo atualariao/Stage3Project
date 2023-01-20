@@ -1,8 +1,8 @@
-﻿using S3E1.Enumerations;
+﻿using eCommerceWebAPI.Enumerations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace S3E1.Entities
+namespace eCommerceWebAPI.Entities
 {
     public class CartItem
     {

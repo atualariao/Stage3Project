@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using Moq;
-using S3E1.Entities;
-using S3E1.Interface;
-using S3E1.Enumerations;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Enumerations;
 
 namespace Test.Moq
 {

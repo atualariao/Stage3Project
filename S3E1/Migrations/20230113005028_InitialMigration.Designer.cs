@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using S3E1.Data;
+using eCommerceWebAPI.Data;
 
 #nullable disable
 
-namespace S3E1.Migrations
+namespace eCommerceWebAPI.Migrations
 {
     [DbContext(typeof(AppDataContext))]
     [Migration("20230113005028_InitialMigration")]
@@ -24,7 +24,7 @@ namespace S3E1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("S3E1.Entities.CartItem", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.CartItem", b =>
                 {
                     b.Property<Guid>("ItemID")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace S3E1.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.Order", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.Order", b =>
                 {
                     b.Property<Guid>("PrimaryID")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace S3E1.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.User", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.User", b =>
                 {
                     b.Property<Guid>("UserID")
                         .ValueGeneratedOnAdd()
@@ -95,16 +95,16 @@ namespace S3E1.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.CartItem", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.CartItem", b =>
                 {
-                    b.HasOne("S3E1.Entities.Order", null)
+                    b.HasOne("eCommerceWebAPI.Entities.Order", null)
                         .WithMany("CartItemEntity")
                         .HasForeignKey("OrderPrimaryID");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.Order", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.Order", b =>
                 {
-                    b.HasOne("S3E1.Entities.User", "User")
+                    b.HasOne("eCommerceWebAPI.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserPrimaryID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -113,12 +113,12 @@ namespace S3E1.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.Order", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.Order", b =>
                 {
                     b.Navigation("CartItemEntity");
                 });
 
-            modelBuilder.Entity("S3E1.Entities.User", b =>
+            modelBuilder.Entity("eCommerceWebAPI.Entities.User", b =>
                 {
                     b.Navigation("Orders");
                 });

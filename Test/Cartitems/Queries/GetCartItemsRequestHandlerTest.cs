@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
-using S3E1.Configurations;
-using S3E1.DTOs;
-using S3E1.Entities;
-using S3E1.Handlers;
-using S3E1.Interface;
-using S3E1.Queries;
+using eCommerceWebAPI.Configurations;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Handlers;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Queries;
 using Test.Moq;
 
 namespace Test.Cartitems.Queries

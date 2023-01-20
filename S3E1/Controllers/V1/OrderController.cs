@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using S3E1.Commands;
-using S3E1.DTOs;
-using S3E1.Entities;
-using S3E1.Queries;
+using eCommerceWebAPI.Commands;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Queries;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace S3E1.Controllers.V1
+namespace eCommerceWebAPI.Controllers.V1
 {
     [Authorize]
     [ApiVersion("1.0")]

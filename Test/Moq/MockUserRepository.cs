@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Moq;
-using S3E1.Entities;
-using S3E1.Interface;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
 
 namespace Test.Moq
 {

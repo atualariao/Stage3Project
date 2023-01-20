@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using MediatR.Extensions.Autofac.DependencyInjection;
-using S3E1.Interface;
-using S3E1.Repository;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Repository;
 
-namespace S3E1.Configurations
+namespace eCommerceWebAPI.Configurations
 {
     public class AutofacDependencyInjection : Module
     {

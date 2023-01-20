@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using S3E1.DTOs;
-using S3E1.Entities;
-using S3E1.Interface;
-using S3E1.Queries;
-using S3E1.Repository;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.Queries;
+using eCommerceWebAPI.Repository;
 
-namespace S3E1.Handlers
+namespace eCommerceWebAPI.Handlers
 {
     public class GetItemsHandler : IRequestHandler<GetItemsQuery, List<CartItemDTO>>
     {

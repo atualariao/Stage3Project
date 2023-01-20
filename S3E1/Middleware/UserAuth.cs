@@ -1,6 +1,6 @@
-﻿using S3E1.Data;
+﻿using eCommerceWebAPI.Data;
 
-namespace S3E1.Middleware
+namespace eCommerceWebAPI.Middleware
 {
     // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class UserAuth

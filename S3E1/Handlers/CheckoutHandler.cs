@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using S3E1.Commands;
-using S3E1.Enumerations;
-using S3E1.Entities;
-using S3E1.Interface;
-using S3E1.DTOs;
+using eCommerceWebAPI.Commands;
+using eCommerceWebAPI.Enumerations;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
+using eCommerceWebAPI.DTOs;
 
-namespace S3E1.Handlers
+namespace eCommerceWebAPI.Handlers
 {
     public class CheckoutHandler : IRequestHandler<CheckOutCommand, Order>
     {

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
-using S3E1.Commands;
-using S3E1.DTOs;
-using S3E1.Entities;
-using S3E1.Interface;
+using eCommerceWebAPI.Commands;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Interface;
 
-namespace S3E1.Handlers
+namespace eCommerceWebAPI.Handlers
 {
     public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Order>
     {
