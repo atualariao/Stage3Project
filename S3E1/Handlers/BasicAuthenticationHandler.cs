@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
-using S3E1.IRepository;
+using S3E1.Interface;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;

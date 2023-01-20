@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using MediatR.Extensions.Autofac.DependencyInjection;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.Repository;
 
-namespace S3E1
+namespace S3E1.Configurations
 {
     public class AutofacDependencyInjection : Module
     {

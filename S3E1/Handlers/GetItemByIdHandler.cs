@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using S3E1.Entities;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.Queries;
 
 namespace S3E1.Handlers

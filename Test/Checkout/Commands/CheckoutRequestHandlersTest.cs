@@ -4,7 +4,7 @@ using Moq;
 using S3E1.Commands;
 using S3E1.DTOs;
 using S3E1.Handlers;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.Entities;
 using Shouldly;
 using Test.Moq;

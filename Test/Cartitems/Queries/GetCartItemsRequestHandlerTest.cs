@@ -5,7 +5,7 @@ using S3E1.Configurations;
 using S3E1.DTOs;
 using S3E1.Entities;
 using S3E1.Handlers;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.Queries;
 using Test.Moq;
 

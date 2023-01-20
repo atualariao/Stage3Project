@@ -3,7 +3,7 @@ using MediatR;
 using S3E1.Commands;
 using S3E1.Enumerations;
 using S3E1.Entities;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.DTOs;
 
 namespace S3E1.Handlers

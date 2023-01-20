@@ -3,7 +3,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using S3E1.Entities;
-using S3E1.IRepository;
+using S3E1.Interface;
 using S3E1.Enumerations;
 using S3E1.Data;
 

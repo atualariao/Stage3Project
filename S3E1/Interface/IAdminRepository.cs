@@ -1,4 +1,4 @@
-﻿namespace S3E1.IRepository
+﻿namespace S3E1.Interface
 {
     public interface IAdminRepository
     {
