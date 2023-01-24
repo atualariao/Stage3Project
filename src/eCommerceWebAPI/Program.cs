@@ -61,7 +61,7 @@ builder.Services.AddDbContextFactory<AppDataContext>(options =>
            ServiceLifetime.Scoped);
 
 //Auth
-builder.Services.AddAuthentication();
+//builder.Services.AddAuthentication();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -88,30 +88,32 @@ builder.Services.AddSwaggerGen(c => {
 
     //Swagger Annotation
     c.EnableAnnotations();
-    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "basic",
-        In = ParameterLocation.Header,
-        Description = "Basic Authorization header using the Bearer scheme."
-    });
+
+    //Swagger security
+    //c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    //{
+    //    Name = "Authorization",
+    //    Type = SecuritySchemeType.Http,
+    //    Scheme = "basic",
+    //    In = ParameterLocation.Header,
+    //    Description = "Basic Authorization header using the Bearer scheme."
+    //});
 
     //Swagger Basic Authorization
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "basic"
-                }
-            },
-            new string[] {}
-        }
-    });
+    //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //{
+    //    {
+    //        new OpenApiSecurityScheme
+    //        {
+    //            Reference = new OpenApiReference
+    //            {
+    //                Type = ReferenceType.SecurityScheme,
+    //                Id = "basic"
+    //            }
+    //        },
+    //        new string[] {}
+    //    }
+    //});
 });
 
 builder.Services.AddAuthentication("BasicAuthentication")
@@ -122,7 +124,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger( c => { c.RouteTemplate = "swagger/{documentName}/swagger.json"; });
     app.UseSwaggerUI(options =>
     {
         var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -138,9 +140,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+//Use Middleware
 app.UseUserAuth();
 
-app.UseAuthentication();
+//Use Authentication
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
