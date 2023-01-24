@@ -29,12 +29,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Returns all orders",
             Description = "Returns all orders")]
         [HttpGet]
-        public async Task<List<OrderDTO>> Get()
+        public async Task<ActionResult<List<OrderDTO>>> Get()
         {
             _logger.LogInformation("GET all orders executing");
             try
             {
-                return await _sender.Send(new GetOrdersQuery());
+                return Ok(await _sender.Send(new GetOrdersQuery()));
             }
             catch (Exception ex)
             {
@@ -47,12 +47,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Returns a specific order",
             Description = "Returns a specific order")]
         [HttpGet("{PrimaryID}")]
-        public async Task<Order> GetById(Guid PrimaryID)
+        public async Task<ActionResult<Order>> GetById([FromRoute] Guid PrimaryID)
         {
             _logger.LogInformation("GET order by Guid executing");
             try
             {
-                return await _sender.Send(new GetOrdersByIdQuery(PrimaryID));
+                return Ok(await _sender.Send(new GetOrdersByIdQuery(PrimaryID)));
             }
             catch (Exception ex)
             {
@@ -65,12 +65,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Updates items in an order",
             Description = "Updates items in an order")]
         [HttpPut]
-        public async Task<Order> UpdateOrder(OrderDTO orderDTO)
+        public async Task<ActionResult<Order>> UpdateOrder([FromBody] OrderDTO orderDTO)
         {
             _logger.LogInformation("PUT/UPDATE order executing");
             try
             {
-                return await _sender.Send(new UpdateOrderCommand(orderDTO));
+                return Ok(await _sender.Send(new UpdateOrderCommand(orderDTO)));
             }
             catch (Exception ex)
             {
@@ -83,12 +83,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Deletes a specific order",
             Description = "Deletes a specific order")]
         [HttpDelete("{PrimaryID}")]
-        public async Task<Order> DeleteOrder(Guid PrimaryID)
+        public async Task<ActionResult<Order>> DeleteOrder([FromRoute] Guid PrimaryID)
         {
             _logger.LogInformation("DELETE order by Guid executing");
             try
             {
-                return await _sender.Send(new DeleteOrderCommand(PrimaryID));
+                return Ok(await _sender.Send(new DeleteOrderCommand(PrimaryID)));
             }
             catch (Exception ex) 
             { 

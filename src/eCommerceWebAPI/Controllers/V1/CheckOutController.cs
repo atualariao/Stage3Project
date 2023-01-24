@@ -32,7 +32,7 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Updates order and cart item status to processed",
             Description = "Updates order and cart item status to processed")]
         [HttpPost]
-        public async Task<ActionResult<Order>> Checkout(CheckOutDTO orders)
+        public async Task<ActionResult<Order>> Checkout([FromBody] CheckOutDTO orders)
         {
             _logger.LogInformation("POST order checkout executing...");
             var order = _dbContext

@@ -3,7 +3,7 @@ using IntegrationTest.Handlers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using S3E1.Data;
+using eCommerceWebAPI.Data;
 using System.Net.Http.Headers;
 using System.Text;
 

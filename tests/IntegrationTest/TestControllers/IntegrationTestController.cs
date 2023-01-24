@@ -2,10 +2,10 @@ using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
 using AutoMapper;
-using S3E1.DTOs;
-using S3E1.Entities;
-using S3E1.Configurations;
-using S3E1.Enumerations;
+using eCommerceWebAPI.DTOs;
+using eCommerceWebAPI.Entities;
+using eCommerceWebAPI.Configurations;
+using eCommerceWebAPI.Enumerations;
 using IntegrationTest.Data;
 using System.Net.Http.Headers;
 using System.Text;
@@ -28,34 +28,33 @@ namespace IntegrationTest.TestControllers
         [Fact]
         public async Task Test_Cartitem_Controller()
         {
-            string userUrl = "api/v1/users";
+            //AUTHORIZATION
+            var username = "Troy";
+            var password = "78cf4910-a00e-499f-a6ad-385bbcc5bbf7";
 
-            var user = new User
-            {
-                Username= "Test user",
-            };
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
 
-            var userResponse = await _httpClient.PostAsJsonAsync(userUrl, user);
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("basic",
-                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{user.Username}:{user.UserID}")));
             //POST CART ITEM
-            // Arrange
+            //Arrange
             string url = "api/v1/cart-items";
-            var item = new CartItemDTO
+            var item = new CartItem
             {
+                ItemID = Guid.NewGuid(),
                 ItemName = "Item Name",
                 ItemPrice = 55.5,
+                OrderStatus = OrderStatus.Pending,
+                CustomerID = null,
+                OrderPrimaryID = null
             };
 
-            CartItem itemEntity = _mapper.Map<CartItem>(item);
             //Act
-            var postResponse = await _httpClient.PostAsJsonAsync(url, itemEntity);
+            var postResponse = await _httpClient.PostAsJsonAsync(url, item);
 
             //Assert
             postResponse.EnsureSuccessStatusCode();
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var newItem = await postResponse.Content.ReadFromJsonAsync<CartItemDTO>();
+            var newItem = await postResponse.Content.ReadFromJsonAsync<CartItem>();
             newItem.ItemName.Should().Be(item.ItemName);
             newItem.ItemPrice.Should().Be(item.ItemPrice);
 
