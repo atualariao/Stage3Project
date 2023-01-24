@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\S3E1\S3E1.csproj" />
+    <ProjectReference Include="..\..\src\eCommerceWebAPI\eCommerceWebAPI.csproj" />
   </ItemGroup>
 
 </Project>

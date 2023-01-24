@@ -29,12 +29,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Returns a specific user",
             Description = "Returns a specific user")]
         [HttpGet("{UserID}")]
-        public async Task<User> Get(Guid UserID)
+        public async Task<ActionResult<User>> Get([FromRoute] Guid UserID)
         {
             _logger.LogInformation("GET user by Guid executing...");
             try
             {
-                return await _sender.Send(new GetUserByIdQuery(UserID));
+                return Ok(await _sender.Send(new GetUserByIdQuery(UserID)));
             }
             catch (Exception ex)
             {
@@ -47,12 +47,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Creates a new user",
             Description = "Creates a new user")]
         [HttpPost]
-        public async Task<User> Post([FromBody]CreateUserDTO users)
+        public async Task<ActionResult<User>> Post([FromBody] CreateUserDTO users)
         {
             _logger.LogInformation("POST user executing...");
             try
             {
-                return await _sender.Send(new AddIUserCommand(users));
+                return Ok(await _sender.Send(new AddIUserCommand(users)));
             }
             catch (Exception ex)
             {

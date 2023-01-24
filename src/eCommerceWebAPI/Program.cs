@@ -12,7 +12,7 @@ using eCommerceWebAPI.Handlers;
 using eCommerceWebAPI.Middleware;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 //Environment Variable Strings
 string msSQLConnectionString = Environment.GetEnvironmentVariable("MSSQL_CONNECTION_STRING") ?? "";

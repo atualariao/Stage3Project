@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using S3E1.Data;
+using eCommerceWebAPI.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
@@ -14,7 +14,8 @@ namespace IntegrationTest.Data
         public AppDataContext CreateDbContext()
         {
             var builder = new DbContextOptionsBuilder<AppDataContext>();
-            builder.UseSqlite("DataSource=file::memory:");
+            //builder.UseSqlite("DataSource=file::memory:");
+            builder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=eCommerceWebAPIDev;Trusted_Connection=True;");
 
             return new AppDataContext(builder.Options);
             ;

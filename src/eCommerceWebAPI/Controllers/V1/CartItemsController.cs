@@ -30,12 +30,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Returns all the items from the cart",
             Description = "Returns all the items from the cart")]
         [HttpGet]
-        public async Task<List<CartItemDTO>> Get()
+        public async Task<ActionResult<List<CartItemDTO>>> Get()
         {
             _logger.LogInformation("GET all cart items executing...");
             try
             {
-                return await _sender.Send(new GetItemsQuery());
+                return Ok(await _sender.Send(new GetItemsQuery()));
             }
             catch (Exception ex)
             {
@@ -48,12 +48,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Returns a specific item from the cart",
             Description = "Returns a specific item from the cart")]
         [HttpGet("{itemID}")]
-        public async Task<CartItem> Get(Guid itemID)
+        public async Task<ActionResult<CartItem>> Get([FromRoute] Guid itemID)
         {
             _logger.LogInformation("GET cart item by Guid executing...");
             try
             {
-                return await _sender.Send(new GetItemByIdQuery(itemID));
+                return Ok(await _sender.Send(new GetItemByIdQuery(itemID)));
             }
             catch (Exception ex)
             {
@@ -66,12 +66,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Adds an item to the cart",
             Description = "Adds an item to the cart")]
         [HttpPost]
-        public async Task<CartItem> Post([FromBody] CreateCartItemDTO cartItems)
+        public async Task<ActionResult<CartItem>> Post([FromBody] CreateCartItemDTO cartItems)
         {
             _logger.LogInformation("POST cart items executing...");
             try
             {
-                return await _sender.Send(new AddCartItemCommand(cartItems));
+                return Ok(await _sender.Send(new AddCartItemCommand(cartItems)));
             }
             catch (Exception ex)
             {
@@ -84,12 +84,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Updates an item from the cart",
             Description = "Updates an item from the cart")]
         [HttpPut]
-        public async Task<CartItem> Update(CartItemDTO cartItems)
+        public async Task<ActionResult<CartItem>> Update([FromBody] CartItemDTO cartItems)
         {
             _logger.LogInformation("PUT/UPDATE cart item executing...");
             try
             {
-                return await _sender.Send(new UpdateCartitemCommand(cartItems));
+                return Ok(await _sender.Send(new UpdateCartitemCommand(cartItems)));
             }
             catch (Exception ex)
             {
@@ -102,12 +102,12 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Deletes an item from the cart",
             Description = "Deletes an item from the cart")]
         [HttpDelete("{itemID}")]
-        public async Task<CartItem> Delete(Guid itemID)
+        public async Task<ActionResult<CartItem>> Delete([FromRoute] Guid itemID)
         {
             _logger.LogInformation("DELETE cart item executing...");
             try
             {
-                return await _sender.Send(new DeleteCartItemCommand(itemID));
+                return Ok(await _sender.Send(new DeleteCartItemCommand(itemID)));
             }
             catch (Exception ex)
             {
