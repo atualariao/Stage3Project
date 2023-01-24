@@ -77,12 +77,15 @@ namespace eCommerceWebAPI.Repository
                     .CartItems
                     .Where(status => status.OrderStatus == OrderStatus.Pending)
                     .ToList();
+                var totalPrice = _dbContext
+                    .CartItems
+                    .Where(status => status.OrderStatus == OrderStatus.Pending)
+                    .Sum(items => items.ItemPrice);
                 itemlist.Add(cartItems);
-                var totalPrice = itemlist
-                    .Sum(x => x.ItemPrice);
+
                 if (userOrder != null && userOrder.OrderStatus == OrderStatus.Pending)
                 {
-                        userOrder.OrderTotalPrice = totalPrice;
+                        userOrder.OrderTotalPrice = totalPrice + cartItems.ItemPrice;
                         userOrder.CartItemEntity = itemlist;
 
                         _dbContext.Orders.Update(userOrder);
@@ -92,7 +95,7 @@ namespace eCommerceWebAPI.Repository
                     var order = new Order()
                     {
                         UserPrimaryID = user.UserID,
-                        OrderTotalPrice = cartItems.ItemPrice,
+                        OrderTotalPrice = totalPrice,
                         OrderStatus = OrderStatus.Pending,
                         CartItemEntity = itemlist
                     };
@@ -138,8 +141,18 @@ namespace eCommerceWebAPI.Repository
             try
             {
                 var item = _dbContext.CartItems.Find(id);
+                var totalPrice = _dbContext
+                    .CartItems
+                    .Where(status => status.OrderStatus == OrderStatus.Pending)
+                    .Sum(price => price.ItemPrice);
+                var order = _dbContext
+                    .Orders
+                    .FirstOrDefault(id => id.PrimaryID == item.OrderPrimaryID);
+
+                order.OrderTotalPrice = totalPrice - item.ItemPrice;
 
                 _dbContext.CartItems.Remove(item);
+                _dbContext.Orders.Update(order);
                 await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("Cart Item Has been Removed from the database, Guid: {0}", item.ItemID.ToString().ToUpper());
