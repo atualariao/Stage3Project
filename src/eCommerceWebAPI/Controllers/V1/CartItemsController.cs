@@ -35,11 +35,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("GET all cart items executing...");
             try
             {
-                return Ok(await _sender.Send(new GetItemsQuery()));
+                var result = await _sender.Send(new GetItemsQuery());
+                return result.Any() ? Ok(result) : NotFound("Item list is empty.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("GET Method Error Details: {0}", ex);
+                _logger.LogError($"GET Method Error Details: {ex}");
                 throw;
             }
         }
@@ -53,11 +54,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("GET cart item by Guid executing...");
             try
             {
-                return Ok(await _sender.Send(new GetItemByIdQuery(itemID)));
+                var result = await _sender.Send(new GetItemByIdQuery(itemID));
+                return result == null ? NotFound("Item does not exist.") : Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError("GET Cart By Item Guid Error Details: {0}", ex);
+                _logger.LogError($"GET Cart By Item Guid Error Details: {ex}");
                 throw;
             }
         }
@@ -71,11 +73,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("POST cart items executing...");
             try
             {
-                return Ok(await _sender.Send(new AddCartItemCommand(cartItems)));
+                await _sender.Send(new AddCartItemCommand(cartItems));
+                return cartItems == null ? BadRequest("An error occured when adding item.") : Ok($"Item {cartItems.ItemName} successfully added to order.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("POST Cart Item Error Details: {0}", ex);
+                _logger.LogError($"POST Cart Item Error Details: {ex}");
                 throw;
             }
         }
@@ -89,11 +92,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("PUT/UPDATE cart item executing...");
             try
             {
-                return Ok(await _sender.Send(new UpdateCartitemCommand(cartItems)));
+                await _sender.Send(new UpdateCartitemCommand(cartItems));
+                return cartItems == null ? BadRequest("An error occured when updating item.") : Ok($"Item {cartItems.ItemName} successfully updated.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("PUT/UPDATE Cart Item Error Details: {0}", ex);
+                _logger.LogError($"PUT/UPDATE Cart Item Error Details: {ex}");
                 throw;
             }
         }
@@ -107,11 +111,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("DELETE cart item executing...");
             try
             {
-                return Ok(await _sender.Send(new DeleteCartItemCommand(itemID)));
+                await _sender.Send(new DeleteCartItemCommand(itemID));
+                return itemID == Guid.Empty ? NotFound("item was not found.") : Ok($"Item {itemID} successfully removed from order.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("DELETE Cart Item Error Details: {0}", ex);
+                _logger.LogError($"DELETE Cart Item Error Details: {ex}");
                 throw;
             }
         }

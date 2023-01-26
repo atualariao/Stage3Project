@@ -49,7 +49,7 @@ namespace eCommerceWebAPI.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in retrieving Order list, Details: {0}", ex);
+                _logger.LogError($"Error in retrieving Order list, Details: {ex}");
                 throw;
             }
         }
@@ -66,15 +66,18 @@ namespace eCommerceWebAPI.Repository
                 {
                     var order = await multi.ReadSingleOrDefaultAsync<Order>();
                     if (order != null)
+                    {
                         order.CartItemEntity = (await multi.ReadAsync<CartItem>()).ToList();
+                        _logger.LogInformation($"Order retrieved from the database, Guid: {order.PrimaryID.ToString().ToUpper()}");
+                    }
 
-                    _logger.LogInformation("Order retrieved from the database, Guid: {0}", order.PrimaryID.ToString().ToUpper());
+                    _logger.LogError("Order retrieved does not exist.");
                     return order;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in retrieving cart item, Details: {0}", ex);
+                _logger.LogError($"Error in retrieving cart item, Details: {ex}");
                 throw;
             }
         }
@@ -94,12 +97,12 @@ namespace eCommerceWebAPI.Repository
                     await _dbContext.SaveChangesAsync();
                 }
 
-                _logger.LogInformation("Order Updated from database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
+                _logger.LogInformation($"Order Updated from database, Object: {JsonConvert.SerializeObject(orders).ToUpper()}");
                 return orders;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Updating Order Details: {0}", ex);
+                _logger.LogError($"Error in Updating Order Details: {ex}");
                 throw;
             }
         }
@@ -110,20 +113,26 @@ namespace eCommerceWebAPI.Repository
             {
                 var order = _dbContext.Orders.Find(id);
                 var cartitem = _dbContext.CartItems.Where(item => item.OrderPrimaryID == order.PrimaryID);
-                foreach (var item in cartitem)
+
+                if (order != null)
                 {
-                    _dbContext.CartItems.Remove(item);
+                    foreach (var item in cartitem)
+                    {
+                        _dbContext.CartItems.Remove(item);
+                    }
+
+                    _dbContext.Orders.Remove(order);
+                    await _dbContext.SaveChangesAsync();
+
+                    _logger.LogInformation($"Order has been removed from the database, Guid: {order.PrimaryID.ToString().ToUpper()}");
                 }
 
-                _dbContext.Orders.Remove(order);
-                await _dbContext.SaveChangesAsync();
-
-                _logger.LogInformation("Order has been removed from the database, Guid: {0}", order.PrimaryID.ToString().ToUpper());
+                _logger.LogError($"Order does not exist.");
                 return order;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Deleting Order Details: {0}", ex);
+                _logger.LogError($"Error in Deleting Order Details: {ex}");
                 throw;
             }
         }

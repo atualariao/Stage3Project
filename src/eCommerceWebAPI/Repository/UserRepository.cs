@@ -31,15 +31,18 @@ namespace eCommerceWebAPI.Repository
                 {
                     var user = await multi.ReadSingleOrDefaultAsync<User>();
                     if (user != null)
+                    {
                         user.Orders = (await multi.ReadAsync<Order>()).ToList();
+                        _logger.LogInformation($"User retrieved from database, Guid: {user.UserID.ToString().ToUpper()}");
+                    }
 
-                    _logger.LogInformation("User retrieved from database, Guid: {0}", user.UserID.ToString().ToUpper());
+                    _logger.LogError("User retrieved does not exist.");
                     return user;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in retrieving user, Details: {0}", ex);
+                _logger.LogError($"Error in retrieving user, Details: {ex}");
                 throw;
             }
         }
@@ -51,12 +54,12 @@ namespace eCommerceWebAPI.Repository
                 _dbContext.Users.Add(user);
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("New User Created in the Database, Object: {0}", JsonConvert.SerializeObject(user).ToUpper());
+                _logger.LogInformation($"New User Created in the Database, Object: {JsonConvert.SerializeObject(user).ToUpper()}");
                 return user;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Creating User Details: {0}", ex);
+                _logger.LogError($"Error in Creating User Details: {ex}");
                 throw;
             }
         }
