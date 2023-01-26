@@ -10,6 +10,7 @@ using IntegrationTest.Data;
 using System.Net.Http.Headers;
 using System.Text;
 using IntegrationTest.Handlers;
+using Bogus;
 
 namespace IntegrationTest.TestControllers
 {
@@ -28,25 +29,13 @@ namespace IntegrationTest.TestControllers
         [Fact]
         public async Task Test_Cartitem_Controller()
         {
-            //AUTHORIZATION
-            var username = "Troy";
-            var password = "78cf4910-a00e-499f-a6ad-385bbcc5bbf7";
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
-
             //POST CART ITEM
             //Arrange
             string url = "api/v1/cart-items";
-            var item = new CartItem
-            {
-                ItemID = Guid.NewGuid(),
-                ItemName = "Item Name",
-                ItemPrice = 55.5,
-                OrderStatus = OrderStatus.Pending,
-                CustomerID = null,
-                OrderPrimaryID = null
-            };
+            var order = GenerateOrder();
+            var user = order.User;
+            var itemList = GenerateItems(order.PrimaryID, order.UserPrimaryID);
+            var item = itemList[0];
 
             //Act
             var postResponse = await _httpClient.PostAsJsonAsync(url, item);
@@ -60,10 +49,10 @@ namespace IntegrationTest.TestControllers
 
             //GET ALL ITEMS
             // Arrange
-            var itemList = await _httpClient.GetFromJsonAsync<List<CartItem>>(url);
+            var getAllItemList = await _httpClient.GetFromJsonAsync<List<CartItem>>(url);
 
             //Assert
-            var newAddedItem = itemList.First(i => i.ItemName == item.ItemName);
+            var newAddedItem = getAllItemList.First(i => i.ItemName == item.ItemName);
             newAddedItem.Should().NotBeNull();
             newAddedItem.Should().BeEquivalentTo(newItem);
             newAddedItem.ItemName.Should().Be(newItem.ItemName);
@@ -266,5 +255,39 @@ namespace IntegrationTest.TestControllers
             var deletedItem = await deleteOrderResponse.Content.ReadFromJsonAsync<Order>();
             deletedItem.Should().BeEquivalentTo(updatedOrder);
         }
+        public static List<CartItem> GenerateItems(Guid orderPrimaryID, Guid orderUserPrimaryID)
+        {
+            Faker<CartItem> itemsGenerator = new Faker<CartItem>()
+                .RuleFor(item => item.ItemID, bogus => bogus.Random.Guid())
+                .RuleFor(item => item.ItemName, bogus => bogus.Commerce.ProductName())
+                .RuleFor(item => item.ItemPrice, bogus => bogus.Random.Double(1.0, 100.0))
+                .RuleFor(item => item.CustomerID, orderUserPrimaryID)
+                .RuleFor(item => item.OrderPrimaryID, orderPrimaryID);
+
+            return itemsGenerator.Generate(4);
+        }
+
+        public static Order GenerateOrder()
+        {
+            var User = new Faker<User>()
+                .RuleFor(user => user.UserID, bogus => bogus.Random.Guid())
+                .RuleFor(user => user.Username, bogus => bogus.Name.FullName());
+
+            Guid orderPrimaryID = Guid.NewGuid();
+
+            Faker<Order> orderGenerator = new Faker<Order>()
+                .RuleFor(order => order.PrimaryID, orderPrimaryID)
+                .RuleFor(order => order.UserPrimaryID, bogus => bogus.Random.Guid())
+                .RuleFor(order => order.User, bogus => User)
+                .RuleFor(order => order.OrderStatus, OrderStatus.Pending)
+                .RuleFor(order => order.OrderTotalPrice, bogus => bogus.Random.Double())
+                .RuleFor(order => order.OrderCreatedDate, bogus => bogus.Date.Recent());
+
+            var order = orderGenerator.Generate();
+            order.CartItemEntity = GenerateItems(order.PrimaryID, order.UserPrimaryID);
+
+            return order;
+        }
     }
+
 }

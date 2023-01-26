@@ -16,20 +16,20 @@ namespace eCommerceWebAPI.Middleware
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var userList = _appDataContextappDataContext.Users.ToList();
-            var user = userList.FirstOrDefault(x => x.UserID == new Guid("78cf4910-a00e-499f-a6ad-385bbcc5bbf7"));
-            var UserID = user.UserID.ToString();
+            //var userList = _appDataContextappDataContext.Users.ToList();
+            //var user = userList.FirstOrDefault(x => x.UserID == new Guid("78cf4910-a00e-499f-a6ad-385bbcc5bbf7"));
+            //var UserID = user.UserID.ToString();
 
-            if (userList.Count == 0)
-            {
-                httpContext.Response.StatusCode = 401;
-                await httpContext.Response.WriteAsync("Authentication Failed!");
-                return;
-            }
+            //if (userList.Count == 0)
+            //{
+            //    httpContext.Response.StatusCode = 401;
+            //    await httpContext.Response.WriteAsync("Authentication Failed!");
+            //    return;
+            //}
 
-            httpContext.TraceIdentifier = UserID;
-            string id = httpContext.TraceIdentifier;
-            httpContext.Response.Headers["x-user-id"] = id;
+            //httpContext.TraceIdentifier = UserID;
+            //string id = httpContext.TraceIdentifier;
+            //httpContext.Response.Headers["x-user-id"] = id;
 
             await _next(httpContext);
         }
