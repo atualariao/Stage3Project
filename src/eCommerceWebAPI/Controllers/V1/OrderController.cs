@@ -34,11 +34,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("GET all orders executing");
             try
             {
-                return Ok(await _sender.Send(new GetOrdersQuery()));
+                var result = await _sender.Send(new GetOrdersQuery());
+                return result.Any() ? Ok(result) : NotFound("Order list is empty.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("GET All Method Order Error Details: {0}", ex);
+                _logger.LogError($"GET All Method Order Error Details: {ex}");
                 throw;
             }
         }
@@ -52,11 +53,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("GET order by Guid executing");
             try
             {
-                return Ok(await _sender.Send(new GetOrdersByIdQuery(PrimaryID)));
+                var result = await _sender.Send(new GetOrdersByIdQuery(PrimaryID));
+                return result == null ? NotFound("Order does not exist.") : Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError("GET by Guid Method Order Error Details: {0}", ex);
+                _logger.LogError($"GET by Guid Method Order Error Details: {ex}");
                 throw;
             }
         }
@@ -70,11 +72,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("PUT/UPDATE order executing");
             try
             {
-                return Ok(await _sender.Send(new UpdateOrderCommand(orderDTO)));
+                var result = await _sender.Send(new UpdateOrderCommand(orderDTO));
+                return result == null ? BadRequest("An error occured when updating order.") : Ok($"Order {result.PrimaryID} updated successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("PUT/UPDATE Method Order Error Details: {0}", ex);
+                _logger.LogError($"PUT/UPDATE Method Order Error Details: {ex}");
                 throw;
             }
         }
@@ -88,11 +91,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("DELETE order by Guid executing");
             try
             {
-                return Ok(await _sender.Send(new DeleteOrderCommand(PrimaryID)));
+                var result = await _sender.Send(new DeleteOrderCommand(PrimaryID));
+                return result == null ? NotFound("Order does not exist.") : Ok($"Order {result.UserPrimaryID} deleted successfully.");
             }
             catch (Exception ex) 
             { 
-                _logger.LogError("DELETE by Guid Method Order Error Details: {0}", ex); 
+                _logger.LogError($"DELETE by Guid Method Order Error Details: {ex}"); 
                 throw; 
             }
         }

@@ -49,7 +49,12 @@ namespace eCommerceWebAPI.Repository
                 {
                     var cartItem = await connection.QuerySingleOrDefaultAsync<CartItem>(query, new { id });
 
-                    _logger.LogInformation("Cart Item retrieved from database, Guid: {0}", cartItem.ItemID.ToString().ToUpper());
+                    if(cartItem != null)
+                    {
+                        _logger.LogInformation($"Cart Item retrieved from database, Guid: {cartItem.ItemID.ToString().ToUpper()}");
+                    }
+
+                    _logger.LogError("Cart item retrieved does not exist.");
                     return cartItem;
                 }
             }
@@ -104,12 +109,12 @@ namespace eCommerceWebAPI.Repository
                 }
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("New Item Created in the Database, Object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
+                _logger.LogInformation($"New Item Created in the Database, Object: {JsonConvert.SerializeObject(cartItems).ToUpper()}");
                 return cartItems;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Creating Cart Item Details: {0}", ex);
+                _logger.LogError($"Error in Creating Cart Item Details: {ex}");
                 throw;
             }
         }
@@ -126,12 +131,12 @@ namespace eCommerceWebAPI.Repository
 
                     await _dbContext.SaveChangesAsync();
                 }
-                _logger.LogInformation("Cart Updated from database, object: {0}", JsonConvert.SerializeObject(cartItems).ToUpper());
+                _logger.LogInformation($"Cart Updated from database, object: {JsonConvert.SerializeObject(cartItems).ToUpper()}");
                 return cartItems;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Updating Cart Item Details: {0}", ex);
+                _logger.LogError($"Error in Updating Cart Item Details: {ex}");
                 throw;
             }
         }
@@ -155,12 +160,12 @@ namespace eCommerceWebAPI.Repository
                 _dbContext.Orders.Update(order);
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Cart Item Has been Removed from the database, Guid: {0}", item.ItemID.ToString().ToUpper());
+                _logger.LogInformation($"Cart Item Has been Removed from the database, Guid: {item.ItemID.ToString().ToUpper()}");
                 return item;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Deleting Cart Item Details: {0}", ex);
+                _logger.LogError($"Error in Deleting Cart Item Details: {ex}");
                 throw;
             }
         }

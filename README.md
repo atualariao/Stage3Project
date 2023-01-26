@@ -4,3 +4,4 @@ ASP.NET Web API ecommerce - CQRS MediatR and Repository pattern, Testing Impleme
 # For Basic Authentication in Swagger //(Disabled)
 Username is Troy.
 Password is located in http header x-user-id (78cf4910-a00e-499f-a6ad-385bbcc5bbf7).
+Hard-coded with one default user and passed onto a middleware UserAuth.cs.

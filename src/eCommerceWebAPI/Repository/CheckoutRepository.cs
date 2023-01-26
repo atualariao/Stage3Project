@@ -53,12 +53,12 @@ namespace eCommerceWebAPI.Repository
                     await _dbContext.SaveChangesAsync();
                 }
 
-                _logger.LogInformation("New Order Checkout has been added in the database, Object: {0}", JsonConvert.SerializeObject(orders).ToUpper());
+                _logger.LogInformation($"New Order Checkout has been added in the database, Object: {JsonConvert.SerializeObject(orders).ToUpper()}");
                 return orders;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Checkout Order Details: {0}", ex);
+                _logger.LogError($"Error in Checkout Order Details: {ex}");
                 throw;
             }
         }

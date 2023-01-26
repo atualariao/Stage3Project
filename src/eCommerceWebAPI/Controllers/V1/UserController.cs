@@ -34,11 +34,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("GET user by Guid executing...");
             try
             {
-                return Ok(await _sender.Send(new GetUserByIdQuery(UserID)));
+                var result = await _sender.Send(new GetUserByIdQuery(UserID));
+                return result == null ? NotFound("User does not exist.") : Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError("GET by Guid Method User Error Details: {0}", ex);
+                _logger.LogError($"GET by Guid Method User Error Details: {ex}");
                 throw;
             }
         }
@@ -52,11 +53,12 @@ namespace eCommerceWebAPI.Controllers.V1
             _logger.LogInformation("POST user executing...");
             try
             {
-                return Ok(await _sender.Send(new AddIUserCommand(users)));
+                var result = await _sender.Send(new AddIUserCommand(users));
+                return users == null ? BadRequest("An error occured when adding user.") : Ok($"User {result.Username} added successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("POST Method User Error Details: {0}", ex);
+                _logger.LogError($"POST Method User Error Details: {ex}");
                 throw;
             }
         }
