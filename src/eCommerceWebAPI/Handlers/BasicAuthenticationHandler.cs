@@ -26,13 +26,14 @@ namespace eCommerceWebAPI.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            string username = null;
+            await Task.Yield();
+            string? username = null;
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter)).Split(':');
-                username = credentials.FirstOrDefault();
-                var password = credentials.LastOrDefault();
+                var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader?.Parameter)).Split(':');
+                username = credentials?.FirstOrDefault();
+                var password = credentials?.LastOrDefault();
 
                 if (!_adminRepo.ValidateCredentials(username, password))
                     throw new ArgumentException("Invalid Credentials");
