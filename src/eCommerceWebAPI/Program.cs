@@ -17,7 +17,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 //Environment Variable Strings
 string msSQLConnectionString = Environment.GetEnvironmentVariable("MSSQL_CONNECTION_STRING") ?? "";
 
-
 //Autofac DIs
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     .ConfigureContainer<ContainerBuilder>(builder =>
@@ -125,6 +124,17 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
+//CORS Policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -146,6 +156,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+//Use cors
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 //Use Middleware
 app.UseUserAuth();
