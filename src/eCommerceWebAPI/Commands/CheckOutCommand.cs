@@ -4,5 +4,8 @@ using eCommerceWebAPI.DTOs;
 
 namespace eCommerceWebAPI.Commands
 {
-    public record CheckOutCommand(CheckOutDTO Orders) : IRequest<Order>;
+    public record CheckOutCommand : IRequest<Order>
+    {
+        public Guid UserId { get; set; }
+    }
 }

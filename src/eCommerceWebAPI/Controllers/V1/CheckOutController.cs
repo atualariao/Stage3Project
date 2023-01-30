@@ -35,14 +35,17 @@ namespace eCommerceWebAPI.Controllers.V1
         public async Task<ActionResult<Order>> Checkout([FromBody] CheckOutDTO orders)
         {
             _logger.LogInformation("POST order checkout executing...");
-            var order = _dbContext
-                .Orders
-                .Where(user => user.UserPrimaryID == orders.UserPrimaryID && user.OrderStatus == OrderStatus.Pending)
-                .ToList();
+
+            var command = new CheckOutCommand
+            {
+                UserId = orders.UserPrimaryID
+            };
+
             try
             {
-                await _sender.Send(new CheckOutCommand(orders));
-                return order.Count == 0 ? BadRequest("Your cart is empty") : Ok("Checkout Complete");
+                var result = await _sender.Send(command);
+
+                return result == null ? BadRequest("Your cart is empty") : Ok("Checkout Complete");
             }
             catch (Exception ex)
             {

@@ -1,12 +1,9 @@
 ﻿using eCommerceWebAPI.Configurations;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 using Microsoft.OpenApi.Models;
 using eCommerceWebAPI.Handlers;
 using Microsoft.AspNetCore.Authentication;
-using Autofac.Extensions.DependencyInjection;
-using Autofac;
 
 namespace eCommerceWebAPI.Extensions
 {
@@ -113,13 +110,5 @@ namespace eCommerceWebAPI.Extensions
         public static void ConfigureBasicAuth(this IServiceCollection services) =>
             services.AddAuthentication("BasicAuthentication")
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
-        //Autofac
-        public static void ConfigureAutofac(this IHostBuilder host) =>
-            host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-            .ConfigureContainer<ContainerBuilder>(builder =>
-            {
-                builder.RegisterModule(new AutofacDependencyInjection());
-            });
     }
 }
