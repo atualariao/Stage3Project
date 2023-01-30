@@ -21,13 +21,7 @@ namespace eCommerceWebAPI.Handlers
 
         public async Task<Order> Handle(CheckOutCommand request, CancellationToken cancellationToken)
         {
-            var orderCheckout = new OrderDTO()
-            {
-                UserPrimaryID = request.Orders.UserPrimaryID,
-            };
-
-            Order order = _mapper.Map<Order>(orderCheckout);
-            return await _checkoutRepository.Checkout(order);
+            return await _checkoutRepository.Checkout(request.UserId);
         }
     }
 }

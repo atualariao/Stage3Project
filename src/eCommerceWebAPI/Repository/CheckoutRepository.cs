@@ -17,32 +17,26 @@ namespace eCommerceWebAPI.Repository
             _dbContext = context;
         }
 
-        public async Task<Order> Checkout(Order orders)
+        public async Task<Order> Checkout(Guid userId)
         {
             try
             {
-                var userOrder = _dbContext
-                    .Orders
-                    .FirstOrDefault(user => user.UserPrimaryID == orders.UserPrimaryID);
                 var itemList = _dbContext
                     .CartItems
                     .Where(status => status.OrderStatus == OrderStatus.Pending)
                     .ToList();
-                var orderList = _dbContext
+                var order = _dbContext
                     .Orders
-                    .Where(status => status.OrderStatus == OrderStatus.Pending && status.UserPrimaryID == orders.UserPrimaryID)
-                    .ToList();
+                    .Where(status => status.OrderStatus == OrderStatus.Pending && status.UserPrimaryID == userId)
+                    .FirstOrDefault<Order>();
                 var TotalPrice = itemList
                     .Sum(x => x.ItemPrice);
-                if (orders != null)
+                if (order != null)
                 {
-                    foreach (var order in orderList)
-                    {
-                        order.OrderTotalPrice = TotalPrice;
-                        order.OrderStatus = OrderStatus.Processed;
+                    order.OrderTotalPrice = TotalPrice;
+                    order.OrderStatus = OrderStatus.Processed;
 
-                        _dbContext.Orders.Update(order);
-                    }
+                    _dbContext.Orders.Update(order);
 
                     foreach (var item in itemList)
                     {
@@ -53,8 +47,8 @@ namespace eCommerceWebAPI.Repository
                     await _dbContext.SaveChangesAsync();
                 }
 
-                _logger.LogInformation($"New Order Checkout has been added in the database, Object: {JsonConvert.SerializeObject(orders).ToUpper()}");
-                return orders;
+                _logger.LogInformation($"New Order Checkout has been added in the database, Object: {JsonConvert.SerializeObject(order).ToUpper()}");
+                return order;
             }
             catch (Exception ex)
             {

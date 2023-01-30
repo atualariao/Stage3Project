@@ -29,8 +29,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwaggerDocumentation();
 //Add AuthScheme
 builder.Services.ConfigureBasicAuth();
-//Autofac DIs
-builder.Host.ConfigureAutofac();
 //AppDataContext DI
 builder.Services.AddDbContextFactory<AppDataContext>(options =>
            options.UseSqlServer(msSQLConnectionString),
@@ -43,6 +41,9 @@ var logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
+
+//Autofac DIs
+builder.Host.ConfigureAutofac();
 
 //Add Controllers
 builder.Services.AddControllers();

@@ -1,4 +1,5 @@
 ﻿using eCommerceWebAPI.Data;
+using Microsoft.IdentityModel.Tokens;
 
 namespace eCommerceWebAPI.Middleware
 {
@@ -29,9 +30,21 @@ namespace eCommerceWebAPI.Middleware
 
             //httpContext.TraceIdentifier = UserID;
             //string id = httpContext.TraceIdentifier;
-            //httpContext.Response.Headers["x-user-id"] = id;
 
-            await _next(httpContext);
+            string id = "78cf4910-a00e-499f-a6ad-385bbcc5bbf7";
+            httpContext.Response.Headers["x-user-id"] = id;
+
+            if(id.IsNullOrEmpty())
+            {
+                httpContext.Response.StatusCode = 401;
+                return;
+            }
+            else
+            {
+                await _next(httpContext);
+            }
+
+            
         }
     }
 

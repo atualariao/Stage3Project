@@ -100,7 +100,7 @@ namespace eCommerceWebAPI.Repository
                     var order = new Order()
                     {
                         UserPrimaryID = user.UserID,
-                        OrderTotalPrice = totalPrice,
+                        OrderTotalPrice = cartItems.ItemPrice,
                         OrderStatus = OrderStatus.Pending,
                         CartItemEntity = itemlist
                     };
