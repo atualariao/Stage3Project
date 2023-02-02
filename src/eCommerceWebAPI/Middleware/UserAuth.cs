@@ -7,44 +7,45 @@ namespace eCommerceWebAPI.Middleware
     public class UserAuth
     {
         private readonly RequestDelegate _next;
-        private readonly AppDataContext _appDataContextappDataContext;
+        private readonly AppDataContext _context;
 
-        public UserAuth(RequestDelegate next, AppDataContext appDataContextappDataContext)
+        public UserAuth(RequestDelegate next, AppDataContext context)
         {
             _next = next;
-            _appDataContextappDataContext = appDataContextappDataContext;
+            _context = context;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            //var userList = _appDataContextappDataContext.Users.ToList();
-            //var user = userList.FirstOrDefault(x => x.UserID == new Guid("78cf4910-a00e-499f-a6ad-385bbcc5bbf7"));
-            //var UserID = user.UserID.ToString();
-
-            //if (userList.Count == 0)
-            //{
-            //    httpContext.Response.StatusCode = 401;
-            //    await httpContext.Response.WriteAsync("Authentication Failed!");
-            //    return;
-            //}
-
-            //httpContext.TraceIdentifier = UserID;
-            //string id = httpContext.TraceIdentifier;
-
-            string id = "78cf4910-a00e-499f-a6ad-385bbcc5bbf7";
-            httpContext.Response.Headers["x-user-id"] = id;
-
-            if(id.IsNullOrEmpty())
+            if (!httpContext.Request.Headers.ContainsKey("x-user-id"))
             {
                 httpContext.Response.StatusCode = 401;
                 return;
             }
-            else
+
+            string userId = httpContext.Request.Headers["x-user-id"];
+            Guid parsedUserId = Guid.Parse(userId);
+
+            if (!IsValidUserId(parsedUserId))
             {
-                await _next(httpContext);
+                httpContext.Response.StatusCode = 401;
+                return;
             }
 
-            
+            await _next(httpContext);
+        }
+
+        private bool IsValidUserId(Guid userId)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.UserID == userId);
+            if (user == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 

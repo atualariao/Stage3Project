@@ -72,9 +72,9 @@ namespace eCommerceWebAPI.Repository
                 //var user = _dbContext
                 //    .Users
                 //    .FirstOrDefault();
-                var user = _dbContext
-                    .Users
-                    .FirstOrDefault(x => x.UserID == cartItems.CustomerID);
+                //var user = _dbContext
+                //    .Users
+                //    .FirstOrDefault(x => x.UserID == cartItems.CustomerID);
                 var userOrder = _dbContext
                     .Orders
                     .FirstOrDefault(userOrder => userOrder.UserPrimaryID == cartItems.CustomerID && userOrder.OrderStatus == OrderStatus.Pending);
@@ -99,7 +99,7 @@ namespace eCommerceWebAPI.Repository
                 {
                     var order = new Order()
                     {
-                        UserPrimaryID = user.UserID,
+                        UserPrimaryID = (Guid)cartItems.CustomerID,
                         OrderTotalPrice = cartItems.ItemPrice,
                         OrderStatus = OrderStatus.Pending,
                         CartItemEntity = itemlist

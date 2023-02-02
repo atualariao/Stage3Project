@@ -41,7 +41,7 @@ namespace UnitTest.Checkout.Commands
 
             orderDTO.OrderStatus = OrderStatus.Processed;
 
-            var result = await handler.Handle(new CheckOutCommand(orderDTO), CancellationToken.None);
+            var result = await handler.Handle(new CheckOutCommand(), CancellationToken.None);
 
             OrderDTO resultDTO = _mapper.Map<OrderDTO>(result);
 
@@ -51,7 +51,7 @@ namespace UnitTest.Checkout.Commands
             resultDTO.OrderStatus = orderDTO.OrderStatus;
             resultDTO.CartItemEntity = orderDTO.CartItemEntity;
 
-            resultDTO.Should().BeOfType<OrderDTO>();
+            resultDTO.Should().BeOfType<Guid>();
             resultDTO.ShouldNotBeNull();
             resultDTO.OrderStatus.Should().Be(orderDTO.OrderStatus);
             resultDTO.UserPrimaryID.Should().Be(orderDTO.UserPrimaryID);

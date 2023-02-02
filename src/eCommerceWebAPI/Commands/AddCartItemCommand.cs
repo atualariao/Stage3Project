@@ -4,5 +4,5 @@ using eCommerceWebAPI.Entities;
 
 namespace eCommerceWebAPI.Commands
 {
-    public record AddCartItemCommand(CreateCartItemDTO CartItems) : IRequest<CartItem>;
+    public record AddCartItemCommand(CreateCartItemDTO CartItems, Guid Guid) : IRequest<CartItem>;
 }

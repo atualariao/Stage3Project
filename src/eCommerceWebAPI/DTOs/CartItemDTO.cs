@@ -10,13 +10,12 @@ namespace eCommerceWebAPI.DTOs
         public string ItemName { get; set; } = null!;
         [Required]
         public double ItemPrice { get; set; }
-        [Required]
-        public Guid? CustomerID { get; set; }
     }
     public class CartItemDTO : CreateCartItemDTO
     {
         public Guid ItemID { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public OrderStatus OrderStatus { get; set; }
+        public Guid? CustomerID { get; set; }
     }
 }
