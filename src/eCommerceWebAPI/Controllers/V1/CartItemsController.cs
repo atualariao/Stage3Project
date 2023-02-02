@@ -70,10 +70,13 @@ namespace eCommerceWebAPI.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<CartItem>> Post([FromBody] CreateCartItemDTO cartItems)
         {
+            var user = Request.Headers["x-user-id"].FirstOrDefault();
+            var parsedUserId = Guid.Parse(user);
+
             _logger.LogInformation("POST cart items executing...");
             try
             {
-                await _sender.Send(new AddCartItemCommand(cartItems));
+                await _sender.Send(new AddCartItemCommand(cartItems, parsedUserId));
                 return cartItems == null ? BadRequest("An error occured when adding item.") : Ok($"Item {cartItems.ItemName} successfully added to order.");
             }
             catch (Exception ex)

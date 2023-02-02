@@ -5,6 +5,7 @@ using eCommerceWebAPI.Middleware;
 using eCommerceWebAPI.Extensions;
 using Serilog;
 using Microsoft.AspNetCore.HttpOverrides;
+using eCommerceWebAPI.Configurations;
 
 //Environment Variable Strings
 string msSQLConnectionString = Environment.GetEnvironmentVariable("MSSQL_CONNECTION_STRING") ?? "";
@@ -28,7 +29,7 @@ builder.Services.ConfigureSwaggerVersioningExplorer();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwaggerDocumentation();
 //Add AuthScheme
-builder.Services.ConfigureBasicAuth();
+//builder.Services.ConfigureBasicAuth();
 //AppDataContext DI
 builder.Services.AddDbContextFactory<AppDataContext>(options =>
            options.UseSqlServer(msSQLConnectionString),

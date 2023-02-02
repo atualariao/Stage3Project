@@ -21,7 +21,10 @@ namespace eCommerceWebAPI.Handlers
 
         public async Task<Order> Handle(CheckOutCommand request, CancellationToken cancellationToken)
         {
-            return await _checkoutRepository.Checkout(request.UserId);
+            var newCommand = new CheckOutCommand(request.userId);
+            var userId = newCommand.userId;
+
+            return await _checkoutRepository.Checkout(userId);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace eCommerceWebAPI.Handlers
             {
                 ItemName = request.CartItems.ItemName,
                 ItemPrice = request.CartItems.ItemPrice,
-                CustomerID = request.CartItems.CustomerID,
+                CustomerID = request.Guid,
             };
 
             return await _cartItemRepository.Createitem(item);
