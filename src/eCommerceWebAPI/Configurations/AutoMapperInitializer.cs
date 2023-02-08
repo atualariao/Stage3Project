@@ -11,20 +11,12 @@ namespace eCommerceWebAPI.Configurations
             //Mapping (with enum value to string)
 
             // Cart Items
-            CreateMap<CartItem, CartItemDTO>().ReverseMap()
-                .ForMember(t => t.OrderStatus,
-                s => s.ToString());
-            CreateMap<CartItem, CreateCartItemDTO>().ReverseMap()
-                .ForMember(t => t.OrderStatus,
-                s => s.ToString());
+            CreateMap<CartItem, CartItemDTO>().ReverseMap();
+            CreateMap<CartItem, CreateCartItemDTO>().ReverseMap();
 
             // Order & Checkout
-            CreateMap<Order, OrderDTO>().ReverseMap()
-                .ForMember(d => d.OrderStatus,
-                op => op.ToString());
-            CreateMap<Order, CheckOutDTO>().ReverseMap()
-                .ForMember(d => d.OrderStatus,
-                op => op.ToString());
+            CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<Order, CheckOutDTO>().ReverseMap();
 
             // User
             CreateMap<User, UserDTO>().ReverseMap();
