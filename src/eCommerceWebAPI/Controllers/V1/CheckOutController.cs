@@ -32,16 +32,17 @@ namespace eCommerceWebAPI.Controllers.V1
             Summary = "Updates order and cart item status to processed",
             Description = "Updates order and cart item status to processed")]
         [HttpPost]
-        public async Task<ActionResult<Order>> Checkout()
+        public async Task<ActionResult<Order>> Checkout([FromBody] Guid guid)
         {
             var user = Request.Headers["x-user-id"].FirstOrDefault();
             var parsedUserId = Guid.Parse(user);
+            guid = parsedUserId;
 
             _logger.LogInformation("POST order checkout executing...");
 
             try
             {
-                var newCommand = new CheckOutCommand(parsedUserId);
+                var newCommand = new CheckOutCommand(guid);
                 var result = await _sender.Send(newCommand);
 
                 return result == null ? BadRequest("Your cart is empty") : Ok("Checkout Complete");
