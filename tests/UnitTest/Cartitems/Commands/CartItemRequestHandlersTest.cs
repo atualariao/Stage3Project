@@ -25,7 +25,8 @@ namespace Test.Cartitems.Commands
             {
                 ItemID = Guid.NewGuid(),
                 ItemName = "Test Item",
-                ItemPrice = 45.67
+                ItemPrice = 45.67,
+                CustomerID = Guid.NewGuid(),
             };
 
             MapperConfiguration mapConfig = new(c =>
@@ -42,12 +43,13 @@ namespace Test.Cartitems.Commands
             var handler = new AddItemsHandler(_mockRepo.Object, _mapper);
             CartItemDTO cartItemDTO = _mapper.Map<CartItemDTO>(_cartItem);
 
-            var result = await handler.Handle(new AddCartItemCommand(cartItemDTO), CancellationToken.None);
+            var userGuid = Guid.NewGuid();
+
+            var result = await handler.Handle(new AddCartItemCommand(cartItemDTO, userGuid), CancellationToken.None);
 
             var cartItems = await _mockRepo.Object.GetCartItems();
 
             result.Should().BeOfType<CartItem>();
-
             cartItems.Count.Should().Be(5);
         }
 

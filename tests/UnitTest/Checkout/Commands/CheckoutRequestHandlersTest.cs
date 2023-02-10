@@ -10,6 +10,7 @@ using Shouldly;
 using Test.Moq;
 using eCommerceWebAPI.Configurations;
 using eCommerceWebAPI.Enumerations;
+using Azure;
 
 namespace UnitTest.Checkout.Commands
 {
@@ -35,28 +36,11 @@ namespace UnitTest.Checkout.Commands
         {
             var handler = new CheckoutHandler(_mockRepo.Object, _mapper);
 
-            var order = MockCheckoutRepository.GenerateOrder();
+            var userGuid = Guid.NewGuid();
 
-            OrderDTO orderDTO = _mapper.Map<OrderDTO>(order);
+            var result = await handler.Handle(new CheckOutCommand(userGuid), CancellationToken.None);
 
-            orderDTO.OrderStatus = OrderStatus.Processed;
-
-            var result = await handler.Handle(new CheckOutCommand(), CancellationToken.None);
-
-            OrderDTO resultDTO = _mapper.Map<OrderDTO>(result);
-
-            resultDTO.PrimaryID = orderDTO.PrimaryID;
-            resultDTO.OrderCreatedDate = orderDTO.OrderCreatedDate;
-            resultDTO.OrderCreatedDate = orderDTO.OrderCreatedDate;
-            resultDTO.OrderStatus = orderDTO.OrderStatus;
-            resultDTO.CartItemEntity = orderDTO.CartItemEntity;
-
-            resultDTO.Should().BeOfType<Guid>();
-            resultDTO.ShouldNotBeNull();
-            resultDTO.OrderStatus.Should().Be(orderDTO.OrderStatus);
-            resultDTO.UserPrimaryID.Should().Be(orderDTO.UserPrimaryID);
-            resultDTO.CartItemEntity.Should().NotBeNull();
-            resultDTO.CartItemEntity.Count.Should().Be(3);
+            result.ShouldBeOfType<Guid>();
         }
     }
 }
