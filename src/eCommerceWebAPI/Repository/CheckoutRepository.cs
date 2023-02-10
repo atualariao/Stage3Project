@@ -17,7 +17,7 @@ namespace eCommerceWebAPI.Repository
             _dbContext = context;
         }
 
-        public async Task<Order> Checkout(Guid userId)
+        public async Task<Guid> Checkout(Guid userId)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace eCommerceWebAPI.Repository
                 }
 
                 _logger.LogInformation($"New Order Checkout has been added in the database, Object: {JsonConvert.SerializeObject(order).ToUpper()}");
-                return order;
+                return userId;
             }
             catch (Exception ex)
             {

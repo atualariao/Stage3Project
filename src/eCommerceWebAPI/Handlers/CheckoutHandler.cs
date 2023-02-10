@@ -8,7 +8,7 @@ using eCommerceWebAPI.DTOs;
 
 namespace eCommerceWebAPI.Handlers
 {
-    public class CheckoutHandler : IRequestHandler<CheckOutCommand, Order>
+    public class CheckoutHandler : IRequestHandler<CheckOutCommand, Guid>
     {
         private readonly ICheckoutRepository _checkoutRepository;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace eCommerceWebAPI.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Order> Handle(CheckOutCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CheckOutCommand request, CancellationToken cancellationToken)
         {
             var newCommand = new CheckOutCommand(request.userId);
             var userId = newCommand.userId;

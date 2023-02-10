@@ -41,7 +41,7 @@ namespace Test.Moq
             var mockRepo = new Mock<ICheckoutRepository>();
 
             //Create new user
-            mockRepo.Setup(x => x.Checkout(It.IsAny<Guid>())).ReturnsAsync((Order order) =>
+            mockRepo.Setup(x => x.Checkout(It.IsAny<Guid>())).ReturnsAsync((Guid order) =>
             {
                 return order;
             });

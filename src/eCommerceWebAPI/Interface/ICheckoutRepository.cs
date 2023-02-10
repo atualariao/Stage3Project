@@ -4,6 +4,6 @@ namespace eCommerceWebAPI.Interface
 {
     public interface ICheckoutRepository
     {
-        public Task<Order> Checkout(Guid userId);
+        public Task<Guid> Checkout(Guid userId);
     }
 }
