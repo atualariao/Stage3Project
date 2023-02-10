@@ -12,7 +12,7 @@ using eCommerceWebAPI.Data;
 namespace eCommerceWebAPI.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20230113005028_InitialMigration")]
+    [Migration("20230210020911_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace eCommerceWebAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ItemName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("ItemPrice")
@@ -43,9 +42,8 @@ namespace eCommerceWebAPI.Migrations
                     b.Property<Guid?>("OrderPrimaryID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("ItemID");
 
@@ -63,9 +61,8 @@ namespace eCommerceWebAPI.Migrations
                     b.Property<DateTime>("OrderCreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.Property<double>("OrderTotalPrice")
                         .HasColumnType("float");
@@ -87,7 +84,6 @@ namespace eCommerceWebAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserID");

@@ -32,7 +32,6 @@ namespace eCommerceWebAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ItemName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("ItemPrice")
@@ -41,9 +40,8 @@ namespace eCommerceWebAPI.Migrations
                     b.Property<Guid?>("OrderPrimaryID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("ItemID");
 
@@ -61,9 +59,8 @@ namespace eCommerceWebAPI.Migrations
                     b.Property<DateTime>("OrderCreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.Property<double>("OrderTotalPrice")
                         .HasColumnType("float");
@@ -85,7 +82,6 @@ namespace eCommerceWebAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserID");
