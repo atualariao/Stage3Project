@@ -14,7 +14,7 @@ namespace eCommerceWebAPI.Migrations
                 columns: table => new
                 {
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,7 +29,7 @@ namespace eCommerceWebAPI.Migrations
                     UserPrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderTotalPrice = table.Column<double>(type: "float", nullable: false),
                     OrderCreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    OrderStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,10 +47,10 @@ namespace eCommerceWebAPI.Migrations
                 columns: table => new
                 {
                     ItemID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ItemPrice = table.Column<double>(type: "float", nullable: false),
                     OrderPrimaryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderStatus = table.Column<int>(type: "int", nullable: false),
                     CustomerID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>

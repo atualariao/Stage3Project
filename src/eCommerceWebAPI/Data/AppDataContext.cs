@@ -11,7 +11,7 @@ namespace eCommerceWebAPI.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users{ get; set; }
 
-        ////Parsing OrderStatus enum value to string
+        //Parsing OrderStatus enum value to string
         //protected override void OnModelCreating(ModelBuilder modelbuilder)
         //{
         //    modelbuilder.Entity<Order>()

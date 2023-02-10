@@ -8,8 +8,6 @@ namespace eCommerceWebAPI.Configurations
     {
         public AutoMapperInitializer()
         {
-            //Mapping (with enum value to string)
-
             // Cart Items
             CreateMap<CartItem, CartItemDTO>().ReverseMap();
             CreateMap<CartItem, CreateCartItemDTO>().ReverseMap();
